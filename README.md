@@ -1,4 +1,4 @@
-##### If you represent Activision or GitHub and want this fork to be deleted, please contact me first.
+##### If you represent Activision and want this fork to be deleted, please contact me first.
 ___
 # Client extension for Call of Duty ([CoD1](https://en.wikipedia.org/wiki/Call_of_Duty_(video_game)))
 It works for the multiplayer patch 1.1  
@@ -16,8 +16,8 @@ ___
 You can build this project for free using [Visual Studio](https://en.wikipedia.org/wiki/Visual_Studio) Community edition.  
 You can build in Release mode to avoid the debugging setup.
 
-1. Where your "CoDMP" file is located, rename "mss32" to "miles32".
-2. Put the compiled mss32 file at this location.
+1. Where your *CoDMP* file is located, rename *mss32* to *miles32*
+2. Put the compiled *mss32* file at this location.
 
 The game will now be hooked with the extension.
 ___
