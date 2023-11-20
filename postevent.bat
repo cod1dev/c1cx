@@ -1,3 +1,3 @@
 @echo off
-cd ..\Build\Debug
+cd build\Debug
 copy mss32.dll "C:\Call of Duty"
