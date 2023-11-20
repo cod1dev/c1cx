@@ -241,73 +241,14 @@ void RGL_DrawPic(float x, float y, float w, float h, unsigned int tex) {
 	glFlush();
 }
 
-void RB_ShowImages() {
-	if (*cls_keyCatchers & KEYCATCH_CONSOLE) {
 
-	}
-	else {
-
-		cvar_t *xui_alt_chat = Cvar_Get("cg_xui_chat", "0", CVAR_ARCHIVE);
-
-		if (xui_alt_chat->integer) {
-			if (*cls_state > CA_CONNECTED) {
-				if (cg_chat_font->modified) {
-
-					if (fontIngameChatMessage) {
-						glDeleteLists(fontIngameChatMessage, 96);
-						fontIngameChatMessage = 0;
-					}
-
-					GenerateFont(14, cg_chat_font->string, &fontIngameChatMessage);
-				}
-				glDisable(GL_TEXTURE_2D);
-				glColor3f(1, 1, 1);
-				void CG_RenderChatMessages();
-				CG_RenderChatMessages();
-				glEnable(GL_TEXTURE_2D);
-
-				glDisable(GL_BLEND);
-			}
-		}
-		if (*cls_keyCatchers & KEYCATCH_UI) {
-			if (xui != nullptr) {
-				for (auto &i : xui->menus) {
-					if (!i->IsOpen())
-						continue;
-
-					if (!i->isGL)
-						continue;
-					/* custom menus */
-					bool Menu_IsMainOpen();
-					if (!Menu_IsMainOpen() && i->bMainHook)
-						continue;
-					/* end */
-
-					i->Render(false);
-				}
-			}
-
-			extern image_t *cursorImage;
-			//draw here own cursor
-			if (ui_cursor != nullptr && cursorImage != nullptr) {
-				glEnable(GL_BLEND);
-				glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-				RGL_DrawPic(ui_cursor->x - 16, ui_cursor->y - 16, 32, 32, cursorImage->texnum);
-				glDisable(GL_BLEND);
-			}
-
-		}
-	}
-}
 
 /* Render stuff texture / geometry etc */
-
 shader_t *lastShader;
-extern cvar_t *cl_findshader;
-
 bool hook_bind = false;
 
-void GL_Bind() {
+void GL_Bind()
+{
 	/*image_t* image;
 	*/
 	int image;
@@ -319,42 +260,10 @@ void GL_Bind() {
 	call();
 }
 
-void RB_EndSurface(void);
-cJMP endsurface(0x5027C0, (int)RB_EndSurface);
-void RB_EndSurface(void) {
-	endsurface.Restore();
-	void(*call)(void);
-	*(int*)&call = endsurface.from;
-
-	call();
-	endsurface.Apply();
-}
-
 void APIENTRY qglBindTexture(GLenum target, GLuint texture) {
 	glBindTexture(target, texture);
 }
 
-/*
-void __stdcall RB_BeginSurface() {
-	shader_t* shader;
-	__asm {
-		mov shader, ecx
-	}
-	lastShader = shader;
-
-	if (strstr(lastShader->name, cl_findshader->string) != NULL) {
-		hook_bind = true;
-	}
-
-	void(__stdcall *call)();
-	*(int*)&call = 0x4FF570;
-	__asm {
-		push 3
-			mov ecx, shader
-	}
-	call();
-}
-*/
 
 static GLfloat rot = 0.0;
 static time_t rot_time = 0;

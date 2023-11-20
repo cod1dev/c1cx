@@ -17,23 +17,14 @@
 // Windows Header Files:
 #include <windows.h>
 
-#if 0
-#ifdef DEBUG
-#define _CRTDBG_MAP_ALLOC
-#include <crtdbg.h>
-#endif
-#endif
-
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <varargs.h>
 #include <ctime>
-
 #include <string>
 #include <vector>
 #include <map>
-
 #include "mem_util.h"
 
 #define QDECL __cdecl
@@ -42,10 +33,7 @@ typedef unsigned char byte;
 #define DLL_EXPORT __declspec(dllexport)
 #define DLL_IMPORT __declspec(dllimport)
 
-//#define MsgBox(a) MessageBoxA(NULL, a, __TITLE, MB_OK | MB_ICONINFORMATION | MB_APPLMODAL)
-
 extern bool bDeveloper;
-
 static bool CopyToClipboard(const char *s) {
 
 	if (OpenClipboard(NULL))
@@ -65,8 +53,11 @@ static bool CopyToClipboard(const char *s) {
 	return true;
 }
 
-static void MsgBox(const char *msg) {
-	if (bDeveloper) {
+static void MsgBox(const char *msg)
+{
+#if 0
+	if (bDeveloper)
+	{
 		if (OpenClipboard(NULL))
 		{
 			HGLOBAL clipbuffer;
@@ -80,11 +71,13 @@ static void MsgBox(const char *msg) {
 			CloseClipboard();
 		}
 	}
+#endif
 	MessageBoxA(NULL, msg, __TITLE, MB_OK | MB_ICONINFORMATION);
 }
 #define XCRASH _memset((void*)0x400000, 0, 0xffff);
 
-typedef enum {
+typedef enum
+{
 	COD_UNKNOWN,
 	COD_1,
 	COD_1_SP,
@@ -93,19 +86,16 @@ typedef enum {
 	COD_5_STEAM, //steam version
 	CODUO_41,
 	CODUO_51,
-	
 	COD2_0,
 	COD2_1,
 	COD2_2,
 	COD2_3,
-
 	COD4_7,
-
-
 	COD_END_OF_LIST
 } cod_v;
 
-static const char *codversion_strings[] = {
+static const char *codversion_strings[] =
+{
 	"UNKNOWN",
 	"1.1",
 	"1.1 SP",
@@ -123,10 +113,9 @@ static const char *codversion_strings[] = {
 };
 
 #define CODVERSION CODUO_51
-
 extern int codversion;
-
-static const char *get_codversion_string() {
+static const char *get_codversion_string()
+{
 	return codversion_strings[codversion];
 }
 
@@ -143,10 +132,6 @@ extern std::vector<threadInfo_t> threadsinfo;
 extern bool thrIsExit;
 
 std::string GetLastErrorAsString();
-std::string GetOpenFileNameS(HWND owner);
-bool download_file(std::string url, char* filename);
-
-unsigned int getxuid();
 
 static bool FileExists(const char *fn) {
 	DWORD attr = GetFileAttributesA(fn);
@@ -162,7 +147,6 @@ enum HashType
 	HashSha1, HashMd5, HashSha256
 };
 std::string GetHashText(const void * data, const size_t data_size, HashType hashType);
-
 
 #define __call6to5(x, y) do {\
 XUNLOCK((void*)x, 6); \
@@ -188,51 +172,3 @@ T call(size_t addr, Ts ... ts) {
 	*(T*)&f = (T)addr;
 	return f(ts...);
 }
-
-class cJMP {
-public:
-	UINT32 from;
-	UINT32 to;
-	BYTE bytes[5];
-	bool active;
-
-	cJMP() : active(false) {}
-
-	cJMP(UINT32 from_, UINT32 to_) : cJMP() {
-#ifndef PROJECT_EXE
-		from = from_;
-		to = to_;
-		memcpy((void*)&bytes[0], (void*)from, 5);
-#endif
-	}
-
-	void Initialize(UINT32 from_, UINT32 to_) {
-		active = false;
-		from = from_;
-		to = to_;
-		memcpy((void*)&bytes[0], (void*)from, 5);
-	}
-
-	void Initialize(UINT32 from_, UINT32 to_, bool apply) {
-		active = false;
-		from = from_;
-		to = to_;
-		memcpy((void*)&bytes[0], (void*)from, 5);
-		if (apply)
-			this->Apply();
-	}
-
-	void Apply() {
-		if (active)
-			return;
-		__jmp(from, to);
-		active = true;
-	}
-
-	void Restore() {
-		if (!active)
-			return;
-		_memcpy((void*)from, bytes, 5);
-		active = false;
-	}
-};

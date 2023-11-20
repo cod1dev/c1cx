@@ -4,7 +4,6 @@
 #pragma comment(lib, "libs/libcurl/libcurl.lib")
 #include "libs/libcurl/curl.h"
 #include <iostream>
-#include "version.h"
 
 #define APP_NAME        "ID_DOWNLOAD"
 #define APP_VERSION     "2.0"
@@ -184,9 +183,9 @@ int DL_BeginDownload(const char *localName, const char *remoteName, int debug) {
 // (maybe this should be CL_DL_DownloadLoop)
 dlStatus_t DL_DownloadLoop() {
 	CURLMcode status;
-	CURLMsg *msg;
+	CURLMsg* msg;
 	int dls = 0;
-	const char *err = NULL;
+	const char* err = NULL;
 
 	if (!dl_request) {
 		Com_DPrintf("DL_DownloadLoop: unexpected call with dl_request == NULL\n");
@@ -240,6 +239,6 @@ dlStatus_t DL_DownloadLoop() {
 	}
 
 	*localDownloadName = '\0';
-	((void(*)())0x40F640)(); //CL_Reconnect_f
+	// ((void(*)())0x40F640)(); //CL_Reconnect_f
 	return DL_DONE;
 }

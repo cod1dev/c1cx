@@ -12,51 +12,6 @@ void Q_strncpyz(char *dest, const char *src, int destsize);
 
 int codversion = COD_UNKNOWN;
 
-std::string file_get_contents(const char *fn) {
-	FILE *fp = NULL;
-
-	fp = fopen(fn, "r");
-
-	if (fp == NULL)
-		return "";
-
-	char *buf = NULL;
-	size_t fs = 0;
-	fseek(fp, 0, SEEK_END);
-	fs = ftell(fp);
-	rewind(fp);
-
-	buf = (char*)malloc(fs);
-	if (fread(buf, 1, fs, fp) != fs) {
-		fclose(fp);
-		return "";
-	}
-	std::string res(buf);
-	free(buf);
-	fclose(fp);
-	return res;
-}
-
-std::string GetOpenFileNameS(HWND owner)
-{
-	char buffer[MAX_PATH] = "";
-
-	OPENFILENAME ofn = { 0 };
-
-	ofn.lStructSize = sizeof(ofn);
-	ofn.hwndOwner = owner;
-	ofn.lpstrFilter = "JPG\0*.jpg\0All Files\0*\0\0";
-	ofn.nFilterIndex = 1;
-	ofn.lpstrFile = buffer;
-	ofn.nMaxFile = MAX_PATH;
-	ofn.Flags = OFN_HIDEREADONLY | OFN_FILEMUSTEXIST;
-
-	if (!GetOpenFileName(&ofn))
-		return "";
-
-	return buffer;
-}
-
 std::string GetLastErrorAsString()
 {
 	//Get the error message, if any.

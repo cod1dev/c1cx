@@ -216,8 +216,8 @@ typedef struct {
 	byte		unsentBuffer[MAX_MSGLEN];
 } netchan_t;
 
-typedef struct {
-
+typedef struct
+{
 	int			clientNum;
 	int			lastPacketSentTime;			// for retransmits during connection
 	int			lastPacketTime;				// for timeouts
@@ -276,6 +276,83 @@ typedef struct {
 	netchan_t	netchan;
 } clientConnection_t;
 
+typedef struct playerState_s
+{
+	int commandTime;
+	int pm_type;
+	int bobCycle;
+	int pm_flags;
+	int pm_time;
+	vec3_t origin;
+	vec3_t velocity;
+	char gap_2C[20];
+	float leanf;
+	int speed;
+	char gap_48[12];
+	int groundEntityNum;
+	char gap_58[12];
+	int jumpTime;
+	int field_68;
+	int legsTime;
+	int legsAnim;
+	int torsoTime;
+	int torsoAnim;
+	int movementDir;
+	int eFlags;
+	char gap_84[24];
+	int field_9C;
+	int field_A0;
+	int field_A4;
+	int field_A8;
+	int clientNum;
+	int weapon;
+	int field_B4;
+	char gap_B8;
+	char gap_B9;
+	char gap_BA[2];
+	int field_BC;
+	vec3_t viewangles;
+	char gap_CC[40];
+	int health;
+	char gap_F8[556];
+	vec3_t mins;
+	vec3_t maxs;
+	float viewheight_prone;
+	int viewheight_crouched;
+	float viewheight_standing;
+	int field_348;
+	float runSpeedScale;
+	float sprintSpeedScale;
+	char gap_354[40];
+	float friction;
+	char gap_380[68];
+	float fTorsoHeight;
+	float fTorsoPitch;
+	float fWaistPitch;
+	char rest[7416];
+	int end;
+} playerState_t;
+
+typedef struct usercmd_s
+{
+	int serverTime;
+	byte buttons; //console,chat talking, aim down the sight, attackbutton, usebutton
+	byte wbuttons; //lean right,left,reload
+	byte weapon;
+	byte flags;
+	int angles[3];
+
+	signed char forwardmove, rightmove, upmove;
+	byte unknown; //could be doubleTap or client
+} usercmd_t;
+
+typedef struct //usercmd_s i defined in server.h?
+{ 
+	playerState_t* ps;
+	usercmd_t cmd;
+	//some remaining
+} pmove_t;
+
 typedef void(*Cvar_Set_t)(char*, char*);
 typedef cvar_t* (*Cvar_Get_t)(const char*, const char*, int);
 typedef cvar_t* (*Cvar_FindVar_t)(const char*);
@@ -319,11 +396,11 @@ extern NET_OutOfBandPrint_t NET_OutOfBandPrint;
 typedef void(*NET_SendPacket_t)(netsrc_t,int,void*,netadr_t);
 extern NET_SendPacket_t NET_SendPacket;
 
-typedef void(__fastcall *Sys_SendPacket_t)(void*, int, netadr_t);
+//typedef void(__fastcall *Sys_SendPacket_t)(void*, int, netadr_t);
 //typedef void (*Sys_SendPacket_t)( int length, const void *data, netadr_t to );
-extern Sys_SendPacket_t Sys_SendPackett;
+//extern Sys_SendPacket_t Sys_SendPackett;
 
-void Sys_SendPacket(int packet_size, void *packet, netadr_t to);
+//void Sys_SendPacket(int packet_size, void *packet, netadr_t to);
 
 qboolean    NET_StringToAdr(const char *s, netadr_t *a);
 const char  *NET_AdrToString(netadr_t a);

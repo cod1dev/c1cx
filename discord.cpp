@@ -1,3 +1,9 @@
+
+#ifndef DEBUG
+
+
+
+
 #include "shared.h"
 #include "client.h"
 #pragma comment(lib, "libs/discord/discord-rpc.lib")
@@ -202,3 +208,6 @@ void Discord_JoinRequest(const DiscordUser* request) {
 	Discord_Respond(request->userId, DISCORD_REPLY_YES);
 }
 */
+
+
+#endif

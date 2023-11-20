@@ -1,6 +1,5 @@
 #include "shared.h"
 
-
 /*
 ============================================================================
 
@@ -285,8 +284,6 @@ char *COM_ParseExt(char **data_p, qboolean allowLineBreaks) {
 }
 
 
-
-
 /*
 ==================
 COM_MatchToken
@@ -370,7 +367,6 @@ void SkipRestOfLine(char **data) {
 	*data = p;
 }
 
-
 void Parse1DMatrix(char **buf_p, int x, float *m) {
 	char    *token;
 	int i;
@@ -384,7 +380,6 @@ void Parse1DMatrix(char **buf_p, int x, float *m) {
 
 	COM_MatchToken(buf_p, ")");
 }
-
 void Parse2DMatrix(char **buf_p, int y, int x, float *m) {
 	int i;
 
@@ -396,7 +391,6 @@ void Parse2DMatrix(char **buf_p, int y, int x, float *m) {
 
 	COM_MatchToken(buf_p, ")");
 }
-
 void Parse3DMatrix(char **buf_p, int z, int y, int x, float *m) {
 	int i;
 
@@ -408,7 +402,6 @@ void Parse3DMatrix(char **buf_p, int z, int y, int x, float *m) {
 
 	COM_MatchToken(buf_p, ")");
 }
-
 
 /*
 ===============
@@ -461,23 +454,25 @@ int Com_ParseInfos(char *buf, int max, char infos[][MAX_INFO_STRING]) {
 	return count;
 }
 
-void Q_strncpyz(char *dest, const char *src, int destsize) {
-	if (!src) {
+void Q_strncpyz(char *dest, const char *src, int destsize)
+{
+	if (!src)
+	{
 		Com_Error(ERR_FATAL, "Q_strncpyz: NULL src");
 	}
-	if (destsize < 1) {
+	if (destsize < 1)
+	{
 		Com_Error(ERR_FATAL, "Q_strncpyz: destsize < 1");
 	}
 
 	strncpy(dest, src, destsize - 1);
 	dest[destsize - 1] = 0;
 }
-
-
-int Q_stricmpn(const char *s1, const char *s2, int n) {
+int Q_stricmpn(const char *s1, const char *s2, int n)
+{
 	int c1, c2;
-
-	do {
+	do
+	{
 		c1 = *s1++;
 		c2 = *s2++;
 
@@ -500,11 +495,12 @@ int Q_stricmpn(const char *s1, const char *s2, int n) {
 
 	return 0;       // strings are equal
 }
-
-int Q_strncmp(const char *s1, const char *s2, int n) {
+int Q_strncmp(const char *s1, const char *s2, int n)
+{
 	int c1, c2;
 
-	do {
+	do
+	{
 		c1 = *s1++;
 		c2 = *s2++;
 
@@ -519,12 +515,12 @@ int Q_strncmp(const char *s1, const char *s2, int n) {
 
 	return 0;       // strings are equal
 }
-
-int Q_stricmp(const char *s1, const char *s2) {
+int Q_stricmp(const char *s1, const char *s2)
+{
 	return (s1 && s2) ? Q_stricmpn(s1, s2, 99999) : -1;
 }
-
-void Q_strcat(char *dest, int size, const char *src) {
+void Q_strcat(char *dest, int size, const char *src)
+{
 	int l1;
 
 	l1 = strlen(dest);
@@ -534,25 +530,27 @@ void Q_strcat(char *dest, int size, const char *src) {
 	Q_strncpyz(dest + l1, src, size - l1);
 }
 
-void QDECL Com_sprintf(char *dest, int size, const char *fmt, ...) {
+void QDECL Com_sprintf(char *dest, int size, const char *fmt, ...)
+{
 	int ret;
 	va_list argptr;
 
 	va_start(argptr, fmt);
 	ret = vsnprintf(dest, size, fmt, argptr);
 	va_end(argptr);
-	if (ret == -1) {
+	if (ret == -1)
+	{
 		Com_Printf("Com_sprintf: overflow of %i bytes buffer\n", size);
 	}
 }
 
-int Cmd_Argc() {
+int Cmd_Argc()
+{
 	return *(int*)0x8930F0;
 }
-
 char** cmd_argv = (char**)0x890BF0;
-
-char* Cmd_Argv(int index) {
+char* Cmd_Argv(int index)
+{
 	if (index >= Cmd_Argc())
 		return "";
 	return cmd_argv[index];
@@ -576,7 +574,8 @@ key and returns the associated value, or an empty string.
 FIXME: overflow check?
 ===============
 */
-char *Info_ValueForKey(const char *s, const char *key) {
+char *Info_ValueForKey(const char *s, const char *key)
+{
 	char pkey[BIG_INFO_KEY];
 	static char value[2][BIG_INFO_VALUE];   // use two buffers so compares
 	// work without stomping on each other
@@ -629,7 +628,6 @@ char *Info_ValueForKey(const char *s, const char *key) {
 	return "";
 }
 
-
 /*
 ===================
 Info_NextPair
@@ -670,13 +668,13 @@ void Info_NextPair(const char **head, char *key, char *value) {
 	*head = s;
 }
 
-
 /*
 ===================
 Info_RemoveKey
 ===================
 */
-void Info_RemoveKey(char *s, const char *key) {
+void Info_RemoveKey(char *s, const char *key)
+{
 	char    *start;
 	char pkey[MAX_INFO_KEY];
 	char value[MAX_INFO_VALUE];
@@ -736,7 +734,8 @@ void Info_RemoveKey(char *s, const char *key) {
 Info_RemoveKey_Big
 ===================
 */
-void Info_RemoveKey_Big(char *s, const char *key) {
+void Info_RemoveKey_Big(char *s, const char *key)
+{
 	char    *start;
 	char pkey[BIG_INFO_KEY];
 	char value[BIG_INFO_VALUE];
@@ -790,8 +789,6 @@ void Info_RemoveKey_Big(char *s, const char *key) {
 }
 
 
-
-
 /*
 ==================
 Info_Validate
@@ -800,7 +797,8 @@ Some characters are illegal in info strings because they
 can mess up the server's parsing
 ==================
 */
-qboolean Info_Validate(const char *s) {
+qboolean Info_Validate(const char *s)
+{
 	if (strchr(s, '\"')) {
 		return qfalse;
 	}
@@ -817,7 +815,8 @@ Info_SetValueForKey
 Changes or adds a key/value pair
 ==================
 */
-void Info_SetValueForKey(char *s, const char *key, const char *value) {
+void Info_SetValueForKey(char *s, const char *key, const char *value)
+{
 	char newi[MAX_INFO_STRING];
 
 	if (strlen(s) >= MAX_INFO_STRING) {
@@ -861,44 +860,45 @@ Info_SetValueForKey_Big
 Changes or adds a key/value pair
 ==================
 */
-void Info_SetValueForKey_Big(char *s, const char *key, const char *value) {
+void Info_SetValueForKey_Big(char *s, const char *key, const char *value)
+{
 	char newi[BIG_INFO_STRING];
 
-	if (strlen(s) >= BIG_INFO_STRING) {
+	if (strlen(s) >= BIG_INFO_STRING)
+	{
 		Com_Error(ERR_DROP, "Info_SetValueForKey: oversize infostring [%s] [%s] [%s]", s, key, value);
 	}
-
-	if (strchr(key, '\\') || strchr(value, '\\')) {
+	if (strchr(key, '\\') || strchr(value, '\\'))
+	{
 		Com_Printf("Can't use keys or values with a \\\n");
 		return;
 	}
-
-	if (strchr(key, ';') || strchr(value, ';')) {
+	if (strchr(key, ';') || strchr(value, ';'))
+	{
 		Com_Printf("Can't use keys or values with a semicolon\n");
 		return;
 	}
-
-	if (strchr(key, '\"') || strchr(value, '\"')) {
+	if (strchr(key, '\"') || strchr(value, '\"'))
+	{
 		Com_Printf("Can't use keys or values with a \"\n");
 		return;
 	}
-
 	Info_RemoveKey_Big(s, key);
-	if (!value || !strlen(value)) {
+	if (!value || !strlen(value))
+	{
 		return;
 	}
-
 	Com_sprintf(newi, sizeof(newi), "\\%s\\%s", key, value);
-
-	if (strlen(newi) + strlen(s) > BIG_INFO_STRING) {
+	if (strlen(newi) + strlen(s) > BIG_INFO_STRING)
+	{
 		Com_Printf("BIG Info string length exceeded\n");
 		return;
 	}
-
 	strcat(s, newi);
 }
 
-char* Q_CleanStr(char* string, bool colors) {
+char* Q_CleanStr(char* string, bool colors)
+{
 	char* d;
 	char* s;
 	int c;
@@ -906,10 +906,12 @@ char* Q_CleanStr(char* string, bool colors) {
 	s = string;
 	d = string;
 	while ((c = *s) != 0) {
-		if (Q_IsColorString(s) && !colors) {
+		if (Q_IsColorString(s) && !colors)
+		{
 			s++;
 		}
-		else if (c >= 0x20 && c <= 0x7E) {
+		else if (c >= 0x20 && c <= 0x7E)
+		{
 			*d++ = c;
 		}
 		s++;
@@ -920,31 +922,30 @@ char* Q_CleanStr(char* string, bool colors) {
 }
 
 #define MAX_HOSTNAME_LENGTH 1024
-char* Com_CleanHostname(char* string, bool colors) {
+char* Com_CleanHostname(char* string, bool colors)
+{
 	char hostname[MAX_HOSTNAME_LENGTH];
 	Q_strncpyz(hostname, string, sizeof(hostname));
-
 	// Remove symbols (and colors for RPC).
 	Q_CleanStr(hostname, colors);
-
 	// Check if hostname is empty when symbols are removed.
 	if (hostname[0] == '\0') strncpy(hostname, "Unnamed Server", sizeof(hostname));
-
 	// Remove leading spaces.
 	int i = 0;
-	while (isspace(hostname[0]) || hostname[0] == '!' || hostname[0] == '\'') {
+	while (isspace(hostname[0]) || hostname[0] == '!' || hostname[0] == '\'')
+	{
 		i = 0;
-		while (hostname[i]) {
+		while (hostname[i])
+		{
 			hostname[i] = hostname[i + 1];
 			i++;
 		}
 	}
-
 	// Check if hostname is empty when leading spaces are removed.
 	if (hostname[0] == '\0') strncpy(hostname, "Unnamed Server", sizeof(hostname));
-
 	// Check if hostname is empty when colors are removed.
-	if (colors) {
+	if (colors)
+	{
 		char tempHostname[MAX_HOSTNAME_LENGTH];
 		Q_strncpyz(tempHostname, hostname, sizeof(tempHostname));
 		Q_CleanStr(tempHostname, false);
@@ -954,7 +955,8 @@ char* Com_CleanHostname(char* string, bool colors) {
 	return hostname;
 }
 
-char* Com_CleanMapname(char* mapname) {
+char* Com_CleanMapname(char* mapname)
+{
 	for (int i = 0; mapname[i]; i++) // All to lowercase.
 		mapname[i] = tolower(mapname[i]);
 
@@ -962,7 +964,6 @@ char* Com_CleanMapname(char* mapname) {
 		mapname = mapname + 3;
 
 	mapname[0] = toupper(mapname[0]); // First letter uppercase.
-
 	for (int i = 0; mapname[i]; i++) { // Replace _ with space and uppercase next letter.
 		if (mapname[i] == '_') {
 			mapname[i] = ' ';
@@ -973,7 +974,8 @@ char* Com_CleanMapname(char* mapname) {
 	return mapname;
 }
 
-char* GetStockGametypeName(char* gt) {
+char* GetStockGametypeName(char* gt)
+{
 	char s[64] = { 0 };
 	Q_strncpyz(s, gt, sizeof(s));
 
@@ -991,7 +993,8 @@ char* GetStockGametypeName(char* gt) {
 	return false;
 }
 
-char* GetTxtGametypeName(char* gt, bool colors) {
+char* GetTxtGametypeName(char* gt, bool colors)
+{
 	char* name;
 	char* file = va("maps/mp/gametypes/%s.txt", gt);
 	FS_ReadFile(file, (void**)&name);
@@ -1001,7 +1004,8 @@ char* GetTxtGametypeName(char* gt, bool colors) {
 	// Reimplementation of Q_CleanStr (remove quotes too).
 	char* d = name, * s = name;
 	int c;
-	while ((c = *s) != 0) {
+	while ((c = *s) != 0)
+	{
 		if (Q_IsColorString(s) && !colors) s++;
 		else if (c >= 0x20 && c <= 0x7E && c != 0x22) *d++ = c;
 		s++;
@@ -1011,12 +1015,12 @@ char* GetTxtGametypeName(char* gt, bool colors) {
 	return name;
 }
 
-const char* Com_GametypeName(char* gt, bool colors) { // Keep colors for loading screen, remove for RPC.
+const char* Com_GametypeName(char* gt, bool colors) // Keep colors for loading screen, remove for RPC.
+{
 	if (!gt || !*gt) return "Unknown Gametype";
 
 	char* name = GetStockGametypeName(gt);
 	if (!name) name = GetTxtGametypeName(gt, colors);
-
 	if (name)
 		return name;
 	else

@@ -1,6 +1,5 @@
 #include "shared.h"
 #include "gl/gl.h"
-
 #pragma comment(lib, "libs/detours/detours.lib")
 #include "libs/detours/detours.h"
 
@@ -16,7 +15,8 @@ __int64 FileSize(std::string name)
 }
 
 HMODULE(WINAPI *orig_LoadLibraryA)(LPCSTR lpFileName);
-HMODULE WINAPI hLoadLibraryA(LPSTR lpFileName) {
+HMODULE WINAPI hLoadLibraryA(LPSTR lpFileName)
+{
 	if (strstr(lpFileName, "codextended"))
 		return NULL;
 
@@ -40,15 +40,16 @@ HMODULE WINAPI hLoadLibraryA(LPSTR lpFileName) {
 
 		void UI_Init(DWORD);
 		UI_Init(pBase);
-
 	}
-	else if (strstr(lpFileName, "cgame_mp") != NULL) {
+	else if (strstr(lpFileName, "cgame_mp") != NULL)
+	{
 		if (codversion != COD_1)
 			return hModule;
 		void CG_Init(DWORD);
 		CG_Init(pBase);
 	}
-	else if (strstr(lpFileName, "game_mp") && !strstr(lpFileName, "cgame")) {
+	else if (strstr(lpFileName, "game_mp") && !strstr(lpFileName, "cgame"))
+	{
 		void G_Init(DWORD);
 		G_Init(pBase);
 	}

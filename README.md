@@ -1,38 +1,26 @@
-# Call of Duty Extended [Client]
+#### If you represent Activision or GitHub and want this fork to be deleted, please contact me first.
+___
+### This is a client extension for Call of Duty (2003 https://en.wikipedia.org/wiki/Call_of_Duty)
+It works for the first multiplayer patch (1.1)
+You can get info for this game at cod.pm (https://cod.pm/)
+___
+### This adds improvements to the original game, such as:
 
-CoDExtended Client (1.1x), is a client-side modification for Call of Duty 1 1.1.
+- Security features to protect from servers
+- Bug fixes
+- Sensitivity aim multiplier
+- Fast downloading support
+___
+### Installation instructions:
 
-## Requirements
+You can build this project for free using Visual Studio Community edition: https://en.wikipedia.org/wiki/Visual_Studio
+You can build in Release mode to avoid the debugging setup.
 
-- At least PC with Windows XP SP3 Update, but recommended is Windows 10. (Supported OS'es: Win XP SP3,Win 7,Win 10, Win 11), non tested OS'es: Win Vista, Win 8
-- Disabled VirtualStore
+1. Where your "CoDMP" file is located, rename "mss32" to "miles32".
+2. Put the compiled mss32 file at this location.
 
-## Changes/additions
+The game will now be hooked with the extension.
+___
+#### Notes:
 
-- server list name cleanup (removed invalid characters which pushed servers to top)
-- fixed  "invalid CD-Key" when using fs_game / mods
-- cURL (HTTP/fast) download
-- new UI elements (cg_xui_scoreboard, cg_xui_connect, cg_xui_fps)
-- Discord Rich Presence
-- unlocked FOV
-- bugfixes
-
-## Building from source
-
-Build with Visual Studio<br>
-Rename old mss32.dll to miles32.dll<br>
-Copy newly compiled DLL to game directory and rename it to mss32.dll<br>
-???<br>
-PROFIT<br>
-
-## Notice
-
-The official 1.1x source code is private. This build will not let you play on 1.1x-enforced servers.  
-If you wish to add your own features, add your features with a pull request so we can include them in the next official release.
-
-Forum: http://xtnded.org  
-Discord: http://discord.cod1x.eu  
-
-## License
-
-CoDExtended Client is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+- 11/20/2023: Fork creation, more is planned

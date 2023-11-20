@@ -25,31 +25,30 @@ int Q_vsnprintf(char *dest, int size, const char *fmt, va_list argptr) {
 	return ret;
 }
 
-char *va(char *format, ...) {
+char *va(char *format, ...)
+{
 	va_list argptr;
-#define MAX_VA_STRING   32000
+#define MAX_VA_STRING 32000
 	static char temp_buffer[MAX_VA_STRING];
 	static char string[MAX_VA_STRING];      // in case va is called by nested functions
 	static int index = 0;
-	char    *buf;
+	char *buf;
 	int len;
-
 
 	va_start(argptr, format);
 	vsprintf(temp_buffer, format, argptr);
 	va_end(argptr);
 
-	if ((len = strlen(temp_buffer)) >= MAX_VA_STRING) {
+	if ((len = strlen(temp_buffer)) >= MAX_VA_STRING)
+	{
 		Com_Error( ERR_DROP, "Attempted to overrun string in call to va()\n" );
 	}
-
-	if (len + index >= MAX_VA_STRING - 1) {
+	if (len + index >= MAX_VA_STRING - 1)
+	{
 		index = 0;
 	}
-
 	buf = &string[index];
 	memcpy(buf, temp_buffer, len + 1);
-
 	index += len + 1;
 
 	return buf;

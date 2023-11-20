@@ -3,44 +3,7 @@
 #include "gl/glu.h"
 #pragma comment(lib, "opengl32")
 #pragma comment(lib, "glu32.lib")
-#include "keys.h"
 #include <memory>
-
-class XTexture {
-public:
-
-	unsigned int width, height;
-	unsigned int textureID;
-	union {
-		struct {
-			unsigned int bp1, bp2;
-		};
-		unsigned long long blendparms;
-	};
-
-	bool loaded;
-
-	void Delete();
-
-	void Bind();
-
-	void SetBlending(unsigned int a, unsigned int b) {
-		blendparms = (a << 32) | (b & 0xfffffffff);
-	}
-
-	bool Load(const char*);
-	bool LoadFromMemory(const unsigned char*, size_t);
-
-	XTexture() : loaded(false), blendparms(-1) {}
-
-	XTexture(const char* fn) : XTexture() {
-		Load(fn);
-	}
-
-	XTexture(const unsigned char *buf, size_t buflen) : XTexture() {
-		LoadFromMemory(buf, buflen);
-	}
-};
 
 #pragma push(pack, 1)
 typedef struct image_s {
@@ -48,7 +11,6 @@ typedef struct image_s {
 	char mid[24];
 	unsigned int texnum;
 	char rest[40];
-
 	//at 88 is texnum
 } image_t; //size 128
 #pragma pop(1)
@@ -71,9 +33,8 @@ static float vColorBlack[4] = { 0,0,0,1 };
 static float vColorWhite[4] = { 1, 1, 1, 1 };
 static float vColorSelected[4] = { 1, 1, 0, 1 };
 
-extern int *whiteShader;
-
-static int CG_DrawStrlen(const char *str) {
+static int CG_DrawStrlen(const char *str)
+{
 	const char *s = str;
 	int count = 0;
 
@@ -130,5 +91,3 @@ void PrintFont(unsigned int fontID, const char *fmt, ...);
 extern unsigned int fontMainMenuHeader;
 extern unsigned int fontIngameChatMessage;
 extern unsigned int font14px;
-
-#include "xui.h"
