@@ -1,5 +1,3 @@
-.vs/
-Debug/
-Release/
-Dev/
-EXE/
+src/.vs/
+Build/Debug/
+Build/Release/
