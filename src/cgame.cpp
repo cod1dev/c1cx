@@ -4,58 +4,45 @@
 #include <mmsystem.h>
 #pragma comment(lib, "winmm.lib")
 
+DWORD cgame_mp;
+
 typedef void(*CG_ServerCommand_t)();
 CG_ServerCommand_t CG_ServerCommand;
 
-const char* disliked_vars[] =
+const char* refusedCvars[] =
 {
 	"r_showimages",
 	"name",
 	"cl_allowdownload",
-	"version",
 	"cg_norender",
 	"cl_avidemo",
 	NULL
 };
 
-DWORD cgame_mp;
-
 char *(*CG_Argv)(int) = nullptr;
 void myCG_ServerCommand(void)
 {
 	int argc = Cmd_Argc();
-	#if 0
-		Com_Printf("^2CG_ServerCommand: ");
-		for (int i = 0; i < argc; i++)
-			Com_Printf("%s ", Cmd_Argv(i));
-		Com_Printf("\n");
-	#endif
+#ifdef DEBUG
+	Com_Printf("^2CG_ServerCommand: ");
+	for (int i = 0; i < argc; i++)
+		Com_Printf("%s ", Cmd_Argv(i));
+	Com_Printf("\n");
+#endif
 
 	if (argc > 0)
 	{
 		char* cmd = Cmd_Argv(0);
 		if (strlen(cmd) > 0)
 		{
-			if ((*cmd == 'h' || *cmd == 'i'))
-			{
-
-			}
-			else if (*cmd == 'b')
-			{
-				Com_DPrintf("[CG_ParseScores] b ");
-				for (size_t i = 0; i < argc; i++) {
-					Com_DPrintf("%s ", Cmd_Argv(i));
-				}
-				Com_DPrintf("\n");
-			}
-			else if (*cmd == 'v')
+			if (*cmd == 'v')
 			{
 				if (argc > 1)
 				{
 					char* var = Cmd_Argv(1);
-					for (int i = 0; disliked_vars[i]; i++)
+					for (int i = 0; refusedCvars[i]; i++)
 					{
-						if (!strcmp(disliked_vars[i], var))
+						if (!strcmp(refusedCvars[i], var))
 							return;
 					}
 				}
@@ -65,7 +52,7 @@ void myCG_ServerCommand(void)
 	CG_ServerCommand();
 }
 
-void pm_aimflag() //Used to aim in the air
+void pm_aimflag() // To aim in the air
 {
 	int *pm = (int*)(cgame_mp + 0x19D570);
 	int *ps = (int*)*pm;
@@ -126,38 +113,6 @@ void sensitivityAimMultiply()
 	}
 }
 
-typedef enum
-{
-	TEAM_FREE,
-	TEAM_AXIS,
-	TEAM_ALLIES,
-	TEAM_SPECTATOR,
-	TEAM_NUM_TEAMS
-} team_t;
-typedef struct
-{
-	int snapsFlags;
-	int ping;
-	int serverTime;
-	//rest
-} snapshot_t;
-typedef struct
-{
-	int unk;
-	int infoValid;
-	int clientNum;
-	char name[32];
-	team_t team;
-	//down here model names and attachments and rest of client info
-} clientInfo_t;
-
-#define M_DrawShadowString(x,y,font,fontscale,color,text,a,b,c) \
-	RE_SetColor(vColorBlack); \
-	SCR_DrawString(x + 1,y + 1,font,fontscale,vColorBlack,text,a,b,c); \
-	RE_SetColor(color); \
-	SCR_DrawString(x,y,font,fontscale,color,text,a,b,c); \
-	RE_SetColor(NULL);
-
 void CG_DrawDisconnect()
 {
 	cvar_t* xui_interrupted = Cvar_Get("cg_xui_interrupted", "0", CVAR_ARCHIVE);
@@ -169,15 +124,22 @@ void CG_DrawDisconnect()
 	}
 }
 
+#define M_DrawShadowString(x,y,font,fontscale,color,text,a,b,c) \
+	RE_SetColor(vColorBlack); \
+	SCR_DrawString(x + 1,y + 1,font,fontscale,vColorBlack,text,a,b,c); \
+	RE_SetColor(color); \
+	SCR_DrawString(x,y,font,fontscale,color,text,a,b,c); \
+	RE_SetColor(NULL);
+#define	FPS_FRAMES 4
 void CG_DrawFPS(float y)
 {
 	cvar_t* xui_fps = Cvar_Get("cg_xui_fps", "1", CVAR_ARCHIVE);
 
-	if (xui_fps->integer) {
+	if (xui_fps->integer)
+	{
 		cvar_t* x = Cvar_Get("cg_xui_fps_x", "597", CVAR_ARCHIVE);
 		cvar_t* y = Cvar_Get("cg_xui_fps_y", "8", CVAR_ARCHIVE);
-
-		#define	FPS_FRAMES 4
+		
 		static int previousTimes[FPS_FRAMES];
 		static int index;
 		int	i, total;
@@ -191,19 +153,24 @@ void CG_DrawFPS(float y)
 		previousTimes[index % FPS_FRAMES] = frameTime;
 		index++;
 
-		if (index > FPS_FRAMES) {
+		if (index > FPS_FRAMES)
+		{
 			total = 0;
-			for (i = 0; i < FPS_FRAMES; i++) {
+			for (i = 0; i < FPS_FRAMES; i++)
+			{
 				total += previousTimes[i];
 			}
-			if (!total) {
+			if (!total)
+			{
 				total = 1;
 			}
 			fps = 1000 * FPS_FRAMES / total;
 
 			M_DrawShadowString(x->integer, y->integer, 1, .20, vColorWhite, va("FPS: %d", fps), NULL, NULL, NULL);
 		}
-	} else {
+	}
+	else
+	{
 		void(*call)(float);
 		*(int*)&call = CGAME_OFF(0x30014A00);
 		call(y);
@@ -284,14 +251,17 @@ void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out)
 
 	backoff = DotProduct(in, normal);
 
-	if (backoff < 0) {
+	if (backoff < 0)
+	{
 		backoff *= overbounce;
 	}
-	else {
+	else
+	{
 		backoff /= overbounce;
 	}
 
-	for (i = 0; i < 3; i++) {
+	for (i = 0; i < 3; i++)
+	{
 		change = normal[i] * backoff;
 		out[i] = in[i] - change;
 	}
@@ -368,7 +338,6 @@ void _PM_CheckForChangeWeapon()
 	}
 	PM_CheckForChangeWeapon();
 }
-
 void _PM_FinishWeaponChange()
 {
 	int* pm = (int*)(cgame_mp + 0x19D570);
@@ -389,10 +358,23 @@ void _PM_FinishWeaponChange()
 void CG_Init(DWORD base)
 {
 	cgame_mp = base;
+
+	CG_Argv = (char* (*)(int))CGAME_OFF(0x30020960);
+
 	CG_ServerCommand = (CG_ServerCommand_t)(cgame_mp + 0x2E0D0);
-	CG_Argv = (char*(*)(int))CGAME_OFF(0x30020960);
+
+	PM_CheckForChangeWeapon = (void(*)())CGAME_OFF(0x300112E0);
+	PM_BeginWeaponChange = (void(*)(int, int))CGAME_OFF(0x30010570);
+	PM_FinishWeaponChange = (void(*)())CGAME_OFF(0x300107c0);
 
 	__call(CGAME_OFF(0x3002E5A6), (int)myCG_ServerCommand);
+
+	__call(CGAME_OFF(0x3001509E), (int)CG_DrawFPS);
+	__call(CGAME_OFF(0x300159CC), (int)CG_DrawDisconnect);
+	__call(CGAME_OFF(0x300159D4), (int)CG_DrawDisconnect);
+
+	__call(CGAME_OFF(0x30011C25), (int)_PM_CheckForChangeWeapon);
+	__call(CGAME_OFF(0x30011CB4), (int)_PM_FinishWeaponChange);
 
 	__call(CGAME_OFF(0x3000C799), (int)pm_aimflag);
 	__call(CGAME_OFF(0x3000C7B8), (int)pm_aimflag);
@@ -401,19 +383,7 @@ void CG_Init(DWORD base)
 	__call(CGAME_OFF(0x3000C858), (int)pm_aimflag);
 	__call(CGAME_OFF(0x3000C893), (int)pm_aimflag);
 
-	__jmp(CGAME_OFF(0x30032fe8), (int)sensitivityAimMultiply);
-
-	__call(CGAME_OFF(0x300159CC), (int)CG_DrawDisconnect);
-	__call(CGAME_OFF(0x300159D4), (int)CG_DrawDisconnect);
-	__call(CGAME_OFF(0x3001509E), (int)CG_DrawFPS);
-
-	*(UINT32*)CGAME_OFF(0x300749EC) = 1; // Unlock cg_fov
-
 	__jmp(CGAME_OFF(0x3000D82B), (int)PM_Bounce_Stub);
 
-	__call(CGAME_OFF(0x30011C25), (int)_PM_CheckForChangeWeapon);
-	__call(CGAME_OFF(0x30011CB4), (int)_PM_FinishWeaponChange);
-	PM_CheckForChangeWeapon = (void(*)())CGAME_OFF(0x300112E0);
-	PM_BeginWeaponChange = (void(*)(int, int))CGAME_OFF(0x30010570);
-	PM_FinishWeaponChange = (void(*)())CGAME_OFF(0x300107c0);
+	__jmp(CGAME_OFF(0x30032fe8), (int)sensitivityAimMultiply);
 }

@@ -1,11 +1,9 @@
 #include "shared.h"
 #include <WinSock2.h>
 
-bool apply_hooks();
+bool applyHooks();
 bool determine_cod_version();
 bool find_cod_version();
-
-#define ENABLE_CODX
 
 void codextended()
 {
@@ -19,11 +17,10 @@ void codextended()
 			return;
 		}
 	}
-	if (!apply_hooks())
+	if (!applyHooks())
 	{
 		MsgBox("Failed to initialize CoDExtended");
 		Com_Quit_f();
 	}
 }
-
-void codextended_unload() {}
+void codextended_unload(){}

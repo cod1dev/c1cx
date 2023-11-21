@@ -366,26 +366,23 @@ FARPROC pRIB_set_provider_system_data;
 FARPROC pRIB_set_provider_user_data;
 FARPROC pstream_background;
 
-extern "C" {
-
+extern "C"
+{
 	static HMODULE hMSS = NULL;
 
 	typedef void(*Com_Printf_t)(const char*, ...);
 	Com_Printf_t Com_Printf_o = (Com_Printf_t)0x4357B0;
 
 	char printmsg[1024] = { 0 };
-	void Com_Printf(const char *s) {
-
+	void Com_Printf(const char *s)
+	{
 		extern int codversion;
-
 		if (codversion != COD_1)
 			return;
-
 		if (!strcmp(printmsg, s))
 			return;
 
 		strncpy(printmsg, s, sizeof(printmsg) - 1);
-
 		//Com_Printf_o(s);
 	}
 
@@ -1661,7 +1658,9 @@ extern "C" {
 		Com_Printf("^2Miles Debug: AIL_set_timer_user\n");
 		__asm jmp[pAIL_set_timer_user]
 	}
-	MSS_DLL_EXPORT void WINAPI AIL_shutdown() {
+
+	MSS_DLL_EXPORT void WINAPI AIL_shutdown()
+	{
 		//Com_Printf("^2Miles Debug: AIL_shutdown\n");
 		//__asm jmp[pAIL_shutdown]
 		void(WINAPI*o)() = (void(WINAPI*)())pAIL_shutdown;
@@ -1672,8 +1671,8 @@ extern "C" {
 
 		void MSS32_Unload();
 		MSS32_Unload();
-
 	}
+
 	__declspec(naked) MSS_DLL_EXPORT void WINAPI AIL_size_processed_digital_audio(DWORD a, DWORD e, DWORD i, DWORD m) {
 		Com_Printf("^2Miles Debug: AIL_size_processed_digital_audio\n");
 		__asm jmp[pAIL_size_processed_digital_audio]
@@ -1850,25 +1849,23 @@ extern "C" {
 		Com_Printf("^2Miles Debug: RIB_set_provider_user_data\n");
 		__asm jmp[pstream_background]
 	}
-
-
 }
 
-extern "C" void MSS32_Unload() {
+bool mss32_original_loaded = false;
+extern "C" void MSS32_Unload()
+{
 	if (hMSS != nullptr)
 		FreeLibrary(hMSS);
 	//MsgBox("mss32 unloaded");
 }
-
-bool miles32_loaded = false;
-
-void MSS32_Hook() {
+void MSS32_Hook()
+{
 	hMSS = nullptr;
+	hMSS = LoadLibraryA("mss32_original.dll");
 
-	hMSS = LoadLibraryA("miles32.dll");
-
-	if (!hMSS) {
-		MessageBoxA(NULL, "Failed to load miles32.dll", __TITLE, MB_OK | MB_ICONERROR);
+	if (!hMSS)
+	{
+		MessageBoxA(NULL, "Failed to load mss32_original.dll", __TITLE, MB_OK | MB_ICONERROR);
 		Com_Quit_f();
 		return;
 	}
@@ -2237,5 +2234,5 @@ void MSS32_Hook() {
 	pRIB_set_provider_user_data = GetProcAddress(hMSS, "_RIB_set_provider_user_data@12");
 	pstream_background = GetProcAddress(hMSS, "stream_background");
 
-	miles32_loaded = true;
+	mss32_original_loaded = true;
 }

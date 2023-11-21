@@ -17,9 +17,6 @@ __int64 FileSize(std::string name)
 HMODULE(WINAPI *orig_LoadLibraryA)(LPCSTR lpFileName);
 HMODULE WINAPI hLoadLibraryA(LPSTR lpFileName)
 {
-	if (strstr(lpFileName, "codextended"))
-		return NULL;
-
 	HMODULE hModule = orig_LoadLibraryA(lpFileName);
 	DWORD pBase = (DWORD)GetModuleHandle(lpFileName);
 
@@ -29,46 +26,37 @@ HMODULE WINAPI hLoadLibraryA(LPSTR lpFileName)
 	void Main_UnprotectModule(HMODULE hModule);
 		Main_UnprotectModule(hModule);
 
-	if (strstr(lpFileName, "ui_mp") || strstr(lpFileName, "userinterface")) { /* clients updated by server */
+	if (strstr(lpFileName, "ui_mp"))
+	{
 		if(codversion != COD_1)
 			return hModule;
-		if (strstr(lpFileName, "ui_mp") && FileSize(lpFileName) < 0x249F0) //150kb
+		if (FileSize(lpFileName) < 0x249F0) //150kb
 			return hModule;
-		
-		void APIENTRY qglBindTexture(GLenum target, GLuint texture);
-		*(int*)0x16C439C = (int)qglBindTexture;
 
 		void UI_Init(DWORD);
 		UI_Init(pBase);
 	}
-	else if (strstr(lpFileName, "cgame_mp") != NULL)
+	else if (strstr(lpFileName, "cgame_mp"))
 	{
 		if (codversion != COD_1)
 			return hModule;
+
 		void CG_Init(DWORD);
 		CG_Init(pBase);
 	}
-	else if (strstr(lpFileName, "game_mp") && !strstr(lpFileName, "cgame"))
+	else if (strstr(lpFileName, "game_mp"))
 	{
 		void G_Init(DWORD);
 		G_Init(pBase);
 	}
-	//Com_Printf("^2dll name = %s\n", lpFileName);
-
+#ifdef DEBUG
+	Com_Printf("^2dll name = %s\n", lpFileName);
+#endif
 	return hModule;
 }
 
-void patch_opcode_loadlibrary(void) {
-	/*
-	int from = 0x4634AC;
-	DWORD tmp;
-	VirtualProtect((void*)from, 6, PAGE_EXECUTE_READWRITE, &tmp);
-	*(BYTE*)(from) = 0xbf;
-	*(int*)(from + 1) = (int)hLoadLibraryA;
-	*(BYTE*)(from + 5) = 0x90;
-	VirtualProtect((void*)from, 6, tmp, &tmp);
-	*/
-
+void patch_opcode_loadlibrary(void)
+{
 	orig_LoadLibraryA = (struct HINSTANCE__ *(__stdcall*)(const char*)) \
 	DetourFunction((LPBYTE)LoadLibraryA, (LPBYTE)hLoadLibraryA);
 }

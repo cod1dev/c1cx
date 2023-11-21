@@ -59,8 +59,8 @@ BOOL APIENTRY DllMain(HMODULE hMod, DWORD ul_reason_for_call, LPVOID lpReserved)
 			void MSS32_Hook();
 			MSS32_Hook();
 
-			extern bool miles32_loaded;
-			if (!miles32_loaded)
+			extern bool mss32_original_loaded;
+			if (!mss32_original_loaded)
 				return FALSE;
 			Main_SetSafeInit();
 

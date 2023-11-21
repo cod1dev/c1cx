@@ -63,9 +63,7 @@ typedef int (*FS_ComparePaks_t)(char *neededpaks, int len, int dlstring);
 extern FS_ComparePaks_t FS_ComparePaks;
 typedef int(*FS_ReadFile_t)(const char *qpath, void **buffer);
 extern FS_ReadFile_t FS_ReadFile;
-typedef void(*FS_FreeFile_t)(void *);
-extern FS_FreeFile_t FS_FreeFile;
 
 char *FS_BuildOSPath(const char *base, const char *game, const char *qpath);
-char * va(char *format, ...);
+char *va(char *format, ...);
 int Q_vsnprintf(char *dest, int size, const char *fmt, va_list argptr);

@@ -4,22 +4,22 @@
 #include "Shlwapi.h"
 #include "Shellapi.h"
 
-static int(__stdcall *main)(HINSTANCE, HINSTANCE, LPSTR, int) = (int(__stdcall*)(HINSTANCE, HINSTANCE, LPSTR, int))0x4640B0;
+static int(__stdcall *entryPoint)(HINSTANCE, HINSTANCE, LPSTR, int) = (int(__stdcall*)(HINSTANCE, HINSTANCE, LPSTR, int))0x4640B0;
 
 char sys_cmdline[MAX_STRING_CHARS];
 char szAppData[MAX_PATH + 1];
 
-std::vector<threadInfo_t> threadsinfo;
 bool thrIsExit = false;
+extern "C" bool bClosing = false;
 
 extern HMODULE hModule;
 HINSTANCE hInst;
-
-extern "C" bool bClosing = false;
-
 #ifdef DEBUG
 HMODULE hLogFile;
 #endif
+
+std::vector<threadInfo_t> threadsinfo;
+
 void Sys_Unload()
 {
 	bClosing = true;
@@ -54,8 +54,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	void MSS32_Hook();
 	MSS32_Hook();
 
-	extern bool miles32_loaded;
-	if (!miles32_loaded)
+	extern bool mss32_original_loaded;
+	if (!mss32_original_loaded)
 		return 0;
 
 #ifndef DEBUG
@@ -63,5 +63,5 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	CL_DiscordInitialize();
 #endif
 
-	return main(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
+	return entryPoint(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
 }
