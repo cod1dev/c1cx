@@ -7,21 +7,18 @@ ___
 ### This adds improvements, such as:
 #### Security
 
-- Prevent servers from making you to download non authorized file extensions.
-- Prevent servers from making you to change sensitive cvars.
+- Protect against unauthorized downloads.
+- Protect against sensitive cvar changes.
 
 #### Bug fixes
 
-- Fix the CD-Key error issue occurring after joining a modded server.
+- Removal of the CD-Key error issue occurring after joining a modded server.
 
 #### New features
 
 - Sensitivity aim multiplier
-  - Multiply you mouse speed when aiming, e.g: `/sensitivityAimMultiply 0.5`
 - Fast downloading support
-  - If the server enabled HTTP downloading, you will not download using the default capped speed.
 - Minimizing and Alt-Tab support
-  - You can enter `/minimize` or press Alt-Tab to switch to a window.
 ___
 ### Installation instructions
 
