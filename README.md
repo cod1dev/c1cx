@@ -7,12 +7,12 @@ ___
 ### This adds improvements, such as:
 #### Security
 
-- Protect against unauthorized downloads.
-- Protect against sensitive cvar changes.
+- Protect against unauthorized downloads
+- Protect against sensitive cvar changes
 
 #### Bug fixes
 
-- Removal of the CD-Key error issue occurring after joining a modded server.
+- Removal of the CD-Key error issue occurring after joining a modded server
 
 #### New features
 
