@@ -1,7 +1,6 @@
 #include "stdafx.h"
 
 void codextended();
-void codextended_unload();
 
 HMODULE hModule;
 #ifdef DEBUG
@@ -64,7 +63,7 @@ BOOL APIENTRY DllMain(HMODULE hMod, DWORD ul_reason_for_call, LPVOID lpReserved)
 				return FALSE;
 			Main_SetSafeInit();
 
-#ifdef DEBUG
+#ifdef DEBUG //Prevents SP from running
 			if (hLogFile == INVALID_HANDLE_VALUE)
 			{
 				hLogFile = CreateFile("./memlog.txt",
@@ -78,7 +77,6 @@ BOOL APIENTRY DllMain(HMODULE hMod, DWORD ul_reason_for_call, LPVOID lpReserved)
 			codextended();
 		break;
 		case DLL_PROCESS_DETACH:
-			// codextended_unload();
 		break;
 	}
 	return TRUE;

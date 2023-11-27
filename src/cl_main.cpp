@@ -14,35 +14,19 @@ cvar_t* cl_sensitivityAimMultiply;
 #include <sstream>
 #include <cstdint>
 
-void CL_Connect_f()
+void Cmd_Minimize()
 {
-	void(*o)() = (void(*)())0x40F6A0;
-	o();
-	
-	/*
-    if (*cls_state == CA_CONNECTING || *cls_state == CA_CHALLENGING)
-	{
-        Cvar_Set("cl_allowDownload", "0");
-    }
-	*/
+	ShowWindow(*gameWindow, SW_MINIMIZE);
+}
 
-	/*
-    char* info = clc_stringData + clc_stringOffsets[1];
-    char *fs_game = Info_ValueForKey(info, "fs_game"); // Reset fs_game if loaded and server doesn't use it.
-	if (fs_game == "")
-	{
-		Cvar_Set("fs_game", "");
-	}
-	*/
+char* __cdecl CL_SetServerInfo_HostnameStrncpy(char* a1, char* a2, size_t a3)
+{
+	return strncpy(a1, Com_CleanHostname(a2, true), a3);
 }
 
 void Need_Paks()
 {
 	return;
-}
-char* MAX_PACKET_USERCMDS()
-{
-	return false;
 }
 
 void DL_Name(const char* localName, char* remoteName)
@@ -155,7 +139,6 @@ void CL_WWWDownload()
 		return;
 	}
 }
-
 //DL STUCK FIX
 int* cl_serverId = (int*)0x143a9ac;
 int last_cl_serverId = 0;
@@ -197,7 +180,6 @@ void _CL_InitDownloads()
 	*(int*)(&CL_InitDownloads) = 0x410240;
 	CL_InitDownloads();
 }
-
 void _CL_NextDownload()
 {
 	char* info = clc_stringData + clc_stringOffsets[1];
@@ -225,6 +207,27 @@ void _CL_NextDownload()
 	}
 }
 
+void CL_Connect_f()
+{
+	void(*o)() = (void(*)())0x40F6A0;
+	o();
+
+	/*
+	if (*cls_state == CA_CONNECTING || *cls_state == CA_CHALLENGING)
+	{
+		Cvar_Set("cl_allowDownload", "0");
+	}
+	*/
+
+	/*
+	char* info = clc_stringData + clc_stringOffsets[1];
+	char *fs_game = Info_ValueForKey(info, "fs_game"); // Reset fs_game if loaded and server doesn't use it.
+	if (fs_game == "")
+	{
+		Cvar_Set("fs_game", "");
+	}
+	*/
+}
 void Disconnect_IfEsc()
 {
 	if (*cls_state == CA_CONNECTING || *cls_state == CA_CHALLENGING || *cls_state == CA_CONNECTED)
@@ -234,6 +237,11 @@ void Disconnect_IfEsc()
 			((void(*)())0x40F5F0)(); //CL_Disconnnect 
 		}
 	}
+}
+
+char* MAX_PACKET_USERCMDS()
+{
+	return false;
 }
 
 void CL_Frame(int msec)
@@ -255,11 +263,6 @@ void CL_Frame(int msec)
 	Disconnect_IfEsc();
 
 	call(msec);
-}
-
-void Cmd_Minimize()
-{
-	ShowWindow(*gameWindow, SW_MINIMIZE);
 }
 
 void CL_Init(void)

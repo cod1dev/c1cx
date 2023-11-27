@@ -926,13 +926,17 @@ char* Com_CleanHostname(char* string, bool colors)
 {
 	char hostname[MAX_HOSTNAME_LENGTH];
 	Q_strncpyz(hostname, string, sizeof(hostname));
-	// Remove symbols (and colors for RPC).
+
+	// Remove symbols
 	Q_CleanStr(hostname, colors);
-	// Check if hostname is empty when symbols are removed.
-	if (hostname[0] == '\0') strncpy(hostname, "Unnamed Server", sizeof(hostname));
-	// Remove leading spaces.
+
+	// Check if hostname is empty when symbols are removed
+	if (hostname[0] == '\0')
+		strncpy(hostname, "Unnamed Server", sizeof(hostname));
+
+	// Remove leading spaces
 	int i = 0;
-	while (isspace(hostname[0]) || hostname[0] == '!' || hostname[0] == '\'')
+	while (isspace(hostname[0]) /* || hostname[0] == '!' || hostname[0] == '\''*/)
 	{
 		i = 0;
 		while (hostname[i])
@@ -941,15 +945,19 @@ char* Com_CleanHostname(char* string, bool colors)
 			i++;
 		}
 	}
-	// Check if hostname is empty when leading spaces are removed.
-	if (hostname[0] == '\0') strncpy(hostname, "Unnamed Server", sizeof(hostname));
-	// Check if hostname is empty when colors are removed.
+
+	// Check if hostname is empty when leading spaces are removed
+	if (hostname[0] == '\0')
+		strncpy(hostname, "Unnamed Server", sizeof(hostname));
+
+	// Check if hostname is empty when colors are removed
 	if (colors)
 	{
 		char tempHostname[MAX_HOSTNAME_LENGTH];
 		Q_strncpyz(tempHostname, hostname, sizeof(tempHostname));
 		Q_CleanStr(tempHostname, false);
-		if (tempHostname[0] == '\0') strncpy(hostname, "Unnamed Server", sizeof(hostname));
+		if (tempHostname[0] == '\0')
+			strncpy(hostname, "Unnamed Server", sizeof(hostname));
 	}
 
 	return hostname;

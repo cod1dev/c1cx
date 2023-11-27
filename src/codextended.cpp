@@ -23,4 +23,3 @@ void codextended()
 		Com_Quit_f();
 	}
 }
-void codextended_unload(){}

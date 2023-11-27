@@ -9,6 +9,8 @@
 #define cs1 (clc_stringData + clc_stringOffsets[1])
 
 #define gameWindow ((HWND*)0x16C35E8)
+//#define glc_vidWidth ((int*)0x16C3AE4)
+//#define glc_vidHeight ((int*)0x16C3AE8)
 
 static bool unlock_client_structure()
 {

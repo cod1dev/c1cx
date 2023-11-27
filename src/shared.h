@@ -426,7 +426,6 @@ extern MSG_initHuffman_t MSG_initHuffman;
 
 void MSG_Init(msg_t *buf, byte *data, int length);
 
-char* trimSpaces(char* str);
 char* Q_CleanStr(char* string, bool colors = false);
 
 char* Com_CleanHostname(char* hostname, bool colors);
