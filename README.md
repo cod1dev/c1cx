@@ -1,10 +1,4 @@
 ___
-### Warning
-One of the CoD license conditions is:
-> You agree not to:  
-> •	Reverse engineer, derive source code, modify, decompile, or disassemble the Program, in whole or in part.
-##### If you represent Activision and want this fork to be deleted, please contact me first.
-___
 # Client extension for Call of Duty (2003)
 It works for the multiplayer patch 1.1  
 You can get info for this game at [cod.pm](https://cod.pm/)
