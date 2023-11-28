@@ -1,6 +1,6 @@
 ##### If you represent Activision and want this fork to be deleted, please contact me first.
 ___
-# Client extension for Call of Duty ([CoD1](https://en.wikipedia.org/wiki/Call_of_Duty_(video_game)))
+# Client extension for Call of Duty (2003)
 It works for the multiplayer patch 1.1  
 You can get info for this game at [cod.pm](https://cod.pm/)
 ___
