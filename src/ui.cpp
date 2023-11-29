@@ -9,8 +9,6 @@ DWORD ui_mp;
 
 void UI_DisplayDownloadInfo(const char downloadName, float centerPoint, float yStart, float scale)
 {
-	OutputDebugString("####### UI_DisplayDownloadInfo");
-
 	void(*DisplayText)(const char, float, float, float);
 	*(int*)&DisplayText = UI_FILE_OFF(0x4000DEA0);
 	DisplayText(downloadName, centerPoint, yStart, 0.25);
@@ -19,5 +17,5 @@ void UI_DisplayDownloadInfo(const char downloadName, float centerPoint, float yS
 void UI_Init(DWORD base)
 {
 	ui_mp = base;
-	__call(UI_FILE_OFF(0x4000E895), (int)UI_DisplayDownloadInfo); // Smaller download text (UDP only).
+	__call(UI_FILE_OFF(0x4000E895), (int)UI_DisplayDownloadInfo); // Smaller download text (UDP only)
 }
