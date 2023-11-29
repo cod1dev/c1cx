@@ -1,8 +1,8 @@
 #include "shared.h"
 #include "dl_public.h"
 #include "client.h"
-#pragma comment(lib, "libs/libcurl/libcurl.lib")
-#include "libs/libcurl/curl.h"
+#pragma comment(lib, "libs/libcurl/lib/libcurl_a.lib")
+#include "libs/libcurl/include/curl/curl.h"
 #include <iostream>
 
 #define APP_NAME        "ID_DOWNLOAD"

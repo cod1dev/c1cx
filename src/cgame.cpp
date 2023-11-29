@@ -138,7 +138,7 @@ void CG_DrawFPS(float y)
 	if (xui_fps->integer)
 	{
 		cvar_t* x = Cvar_Get("cg_xui_fps_x", "597", CVAR_ARCHIVE);
-		cvar_t* y = Cvar_Get("cg_xui_fps_y", "8", CVAR_ARCHIVE);
+		cvar_t* y = Cvar_Get("cg_xui_fps_y", "12", CVAR_ARCHIVE);
 		
 		static int previousTimes[FPS_FRAMES];
 		static int index;
@@ -177,80 +177,14 @@ void CG_DrawFPS(float y)
 	}
 }
 
-typedef enum
-{
-	TR_STATIONARY,
-	TR_INTERPOLATE,             // non-parametric, but interpolate between snapshots
-	TR_LINEAR,
-	TR_LINEAR_STOP,
-	TR_LINEAR_STOP_BACK,        //----(SA)	added.  so reverse movement can be different than forward
-	TR_SINE,                    // value = base + sin( time / duration ) * delta
-	TR_GRAVITY,
-	// Ridah
-	TR_GRAVITY_LOW,
-	TR_GRAVITY_FLOAT,           // super low grav with no gravity acceleration (floating feathers/fabric/leaves/...)
-	TR_GRAVITY_PAUSED,          //----(SA)	has stopped, but will still do a short trace to see if it should be switched back to TR_GRAVITY
-	TR_ACCELERATE,
-	TR_DECCELERATE,
-	// Gordon
-	TR_SPLINE,
-	TR_LINEAR_PATH
-} trType_t;
-typedef struct
-{
-	trType_t trType;
-	int trTime;
-	int trDuration;             // if non 0, trTime + trDuration = stop time
-//----(SA)	removed
-	vec3_t trBase;
-	vec3_t trDelta;             // velocity, etc
-//----(SA)	removed
-} trajectory_t;
-typedef struct entityState_s
-{
-	int number;
-	entityTypes eType; //4
-	int eFlags; //8
-	trajectory_t pos; //12
-	trajectory_t apos; //48
-	int unk; //84 //time??
-	int unk2; //88 //time2??
-	vec3_t origin2; //92
-	vec3_t angles2; //104 (guessed name)
-	int otherEntityNum; //116
-	int otherEntityNum2; //120
-	int groundEntityNum; //124
-	int constantLight; //128
-	int loopSound; //132
-	int surfaceFlags; //136
-	int modelindex; //140
-	int clientNum; //144
-	char ___cba[0x34];
-	/*
-	gentity_t *teammaster; //152
-	int eventParm; //160
-	int eventSequence; //164
-	int events[4]; //168
-	int eventParms[4]; //184
-	*/
-	int weapon; //200
-	int legsAnim; //204
-	int torsoAnim; //208
-	float leanf; //212
-	int loopfxid; //216
-	int hintstring; //220
-	int animMovetype; //224
-} entityState_t;
-
 void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out)
 {
-	float	backoff;
-	float	change;
-	int		i;
-	float   overbounce = 1.001f;
+	float backoff;
+	float change;
+	int i;
+	float overbounce = 1.001f;
 
 	backoff = DotProduct(in, normal);
-
 	if (backoff < 0)
 	{
 		backoff *= overbounce;
@@ -294,26 +228,25 @@ void PM_ProjectVelocity(vec3_t in, vec3_t normal, vec3_t out)
 uint32_t PM_Bounce(vec3_t in, vec3_t normal, vec3_t out)
 {
 	int x_cl_bounce = atoi(Info_ValueForKey(cs1, "x_cl_bounce"));
-
-	if (x_cl_bounce) {
+	if (x_cl_bounce)
+	{
 		PM_ProjectVelocity(in, normal, out);
 	}
-	else {
+	else
+	{
 		PM_ClipVelocity(in, normal, out);
 	}
-
 	return CGAME_OFF(0x3000D830);
 }
 __declspec(naked) void PM_Bounce_Stub()
 {
 	__asm
 	{
-		push    esi; // out
-		push    ecx; // normal
-		push    edx; // in
-		call    PM_Bounce;
-		add     esp, 12;
-
+		push esi; // out
+		push ecx; // normal
+		push edx; // in
+		call PM_Bounce;
+		add esp, 12;
 		push eax
 			retn;
 	}

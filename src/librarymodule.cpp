@@ -57,6 +57,6 @@ HMODULE WINAPI hLoadLibraryA(LPSTR lpFileName)
 
 void patch_opcode_loadlibrary(void)
 {
-	orig_LoadLibraryA = (struct HINSTANCE__ *(__stdcall*)(const char*)) \
+	orig_LoadLibraryA = (struct HINSTANCE__* (__stdcall*)(const char*)) \
 	DetourFunction((LPBYTE)LoadLibraryA, (LPBYTE)hLoadLibraryA);
 }

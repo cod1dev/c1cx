@@ -29,11 +29,6 @@ void Sys_Unload()
 		return;
 	unloaded = true;
 
-#ifndef DEBUG
-	void CL_DiscordShutdown();
-	CL_DiscordShutdown();
-#endif
-
 #ifdef DEBUG
 	_CrtDumpMemoryLeaks();
 	CloseHandle(hLogFile);
@@ -57,11 +52,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	extern bool mss32_original_loaded;
 	if (!mss32_original_loaded)
 		return 0;
-
-#ifndef DEBUG
-	void CL_DiscordInitialize();
-	CL_DiscordInitialize();
-#endif
 
 	return entryPoint(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
 }

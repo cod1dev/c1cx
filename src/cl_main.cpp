@@ -255,11 +255,6 @@ void CL_Frame(int msec)
 	if (clc_bWWWDl)
 		CL_WWWDownload();
 
-#ifndef DEBUG
-	void CL_DiscordFrame();
-	CL_DiscordFrame();
-#endif
-
 	Disconnect_IfEsc();
 
 	call(msec);

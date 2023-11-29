@@ -238,29 +238,3 @@ qboolean    NET_CompareBaseAdr(netadr_t a, netadr_t b) {
 	Com_Printf("NET_CompareBaseAdr: bad address type\n");
 	return qfalse;
 }
-
-netadr_t ex_master;
-
-bool ex_master_resolve() {
-	static bool resolve_try = false;
-	if (resolve_try)
-		return true;
-	if (!NET_StringToAdr(EX_MASTER_NAME, &ex_master)) {
-		Com_Printf("^1Failed to resolve master '%s'\n", EX_MASTER_NAME);
-		return false;
-	}
-	ex_master.port = BigShort(20511);
-	resolve_try = true;
-	return true;
-}
-
-static char mUID[33] = { 0 };
-static inline void xor_crypt(char *key, int key_len, char *buffer, int buf_len) {
-	for (int i = 0; i < buf_len; i++)
-		buffer[i] = buffer[i] ^ key[i % key_len];
-}
-#define sPrintf Com_Printf
-int __stdcall xrecvfrom(SOCKET s, char *buf, int len, int flags, sockaddr *from, int *fromlen) {
-	int __stdcall ret = recvfrom(s, buf, len, flags, from, fromlen);
-	return ret;
-}

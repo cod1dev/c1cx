@@ -96,6 +96,9 @@
     <ManifestResourceCompile>
       <ResourceOutputFileName />
     </ManifestResourceCompile>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -150,7 +153,6 @@
     <ClCompile Include="common.cpp" />
     <ClCompile Include="crypt.cpp" />
     <ClCompile Include="cvar.cpp" />
-    <ClCompile Include="discord.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -176,8 +178,6 @@
   </ItemGroup>
   <ItemGroup>
     <Library Include="libs/detours/detours.lib" />
-    <Library Include="libs/libcurl/libcurl.lib" />
-    <Library Include="libs/discord/discord-rpc.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

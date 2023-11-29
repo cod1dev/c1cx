@@ -385,26 +385,14 @@ extern DWORD cgame_mp;
 
 /* net stuff */
 
-
-#define EX_MASTER_NAME "xtnded.org"
-extern netadr_t ex_master;
-bool ex_master_resolve();
-
 typedef void(*NET_OutOfBandPrint_t)(netsrc_t, netadr_t, const char*, ...);
 extern NET_OutOfBandPrint_t NET_OutOfBandPrint;
 
 typedef void(*NET_SendPacket_t)(netsrc_t,int,void*,netadr_t);
 extern NET_SendPacket_t NET_SendPacket;
 
-//typedef void(__fastcall *Sys_SendPacket_t)(void*, int, netadr_t);
-//typedef void (*Sys_SendPacket_t)( int length, const void *data, netadr_t to );
-//extern Sys_SendPacket_t Sys_SendPackett;
-
-//void Sys_SendPacket(int packet_size, void *packet, netadr_t to);
-
 qboolean    NET_StringToAdr(const char *s, netadr_t *a);
 const char  *NET_AdrToString(netadr_t a);
-
 
 typedef void(__fastcall *CL_Netchan_Encode_t)(msg_t*);
 extern CL_Netchan_Encode_t CL_Netchan_Encode;
