@@ -10,6 +10,7 @@ cvar_t * com_cl_running;
 cvar_t *cl_wwwDownload;
 cvar_t *cl_allowDownload;
 cvar_t* cl_sensitivityAimMultiply;
+cvar_t* g_bounce;
 
 #include <sstream>
 #include <cstdint>
@@ -277,6 +278,7 @@ void CL_Init(void)
 	cl_wwwDownload = Cvar_Get("cl_wwwDownload", "1", CVAR_ARCHIVE);
 	cl_allowDownload = Cvar_Get("cl_allowDownload", "0", CVAR_ARCHIVE);
 	cl_sensitivityAimMultiply = Cvar_Get("sensitivityAimMultiply", "1.0", CVAR_ARCHIVE);
+	g_bounce = Cvar_Get("g_bounce", "0", CVAR_ARCHIVE);
 
 	Cmd_AddCommand("minimize", Cmd_Minimize);
 }
