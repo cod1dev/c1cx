@@ -14,7 +14,3 @@ ___
 ### Installation and usage
 
 See the [Wiki](https://github.com/raphael12333/codextended-client/wiki)
-___
-#### Notes
-
-- 11/20/2023: Fork creation, more is planned
