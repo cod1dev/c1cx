@@ -6,13 +6,12 @@
 #include "Psapi.h"
 #include "Shlwapi.h"
 
-cvar_t * com_cl_running;
-cvar_t *cl_wwwDownload;
-cvar_t *cl_allowDownload;
+cvar_t* com_cl_running;
+cvar_t* cl_wwwDownload;
+cvar_t* cl_allowDownload;
 cvar_t* cl_sensitivityAimMultiply;
 cvar_t* g_bounce;
 
-#include <sstream>
 #include <cstdint>
 
 void Cmd_Minimize()
@@ -214,20 +213,18 @@ void CL_Connect_f()
 	o();
 
 	/*
-	if (*cls_state == CA_CONNECTING || *cls_state == CA_CHALLENGING)
+	if (*cls_state == CA_CONNECTING || *cls_state == CA_CHALLENGING) //TODO: check the purpose
 	{
 		Cvar_Set("cl_allowDownload", "0");
 	}
 	*/
 
-	/*
 	char* info = clc_stringData + clc_stringOffsets[1];
-	char *fs_game = Info_ValueForKey(info, "fs_game"); // Reset fs_game if loaded and server doesn't use it.
-	if (fs_game == "")
+	char *fs_game = Info_ValueForKey(info, "fs_game");
+	if (fs_game)
 	{
-		Cvar_Set("fs_game", "");
+		Cvar_Set("fs_game", ""); //Clear previous modded server modifications
 	}
-	*/
 }
 void Disconnect_IfEsc()
 {
