@@ -1,15 +1,10 @@
 ## Client extension for Call of Duty 1 (2003)
-Supported multiplayer patch: **1.1**
-### This adds improvements, such as:
-#### Security
-- Protect against unauthorized downloads
-- ...
-#### Bug fixes
-- Fixes the CD-Key error occurring after joining a modded server
-- ...
-#### New features
+Supported patch: **1.1**
+### It adds security, fixes, and features
+- Protects against a download exploit
+- Fixes the modded server CD-Key error
 - Sensitivity aim multiplier
-- ...
+- and more
 ___
 ### Installation and usage
 

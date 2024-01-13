@@ -9,7 +9,7 @@ DWORD cgame_mp;
 typedef void(*CG_ServerCommand_t)();
 CG_ServerCommand_t CG_ServerCommand;
 
-const char* refusedCvars[] =
+const char* writingPreventedCvars[] =
 {
 	"r_showimages",
 	"name",
@@ -19,6 +19,7 @@ const char* refusedCvars[] =
 	NULL
 };
 
+extern cvar_t* cg_drawMessagesMiddle;
 char *(*CG_Argv)(int) = nullptr;
 void myCG_ServerCommand(void)
 {
@@ -40,12 +41,17 @@ void myCG_ServerCommand(void)
 				if (argc > 1)
 				{
 					char* var = Cmd_Argv(1);
-					for (int i = 0; refusedCvars[i]; i++)
+					for (int i = 0; writingPreventedCvars[i]; i++)
 					{
-						if (!strcmp(refusedCvars[i], var))
+						if (!strcmp(writingPreventedCvars[i], var))
 							return;
 					}
 				}
+			}
+			else if (*cmd == 'g')
+			{
+				if (!cg_drawMessagesMiddle->integer)
+					return;
 			}
 		}
 	}
@@ -113,10 +119,10 @@ void sensitivityAimMultiply()
 	}
 }
 
+extern cvar_t* cg_drawConnectionInterrupted;
 void CG_DrawDisconnect()
 {
-	cvar_t* xui_interrupted = Cvar_Get("cg_xui_interrupted", "0", CVAR_ARCHIVE);
-	if (xui_interrupted->integer)
+	if (cg_drawConnectionInterrupted->integer)
 	{
 		void(*call)();
 		*(int*)&call = CGAME_OFF(0x30015450);

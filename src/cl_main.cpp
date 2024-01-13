@@ -7,10 +7,13 @@
 #include "Shlwapi.h"
 
 cvar_t* com_cl_running;
+cvar_t* g_bounce;
 cvar_t* cl_wwwDownload;
 cvar_t* cl_allowDownload;
 cvar_t* cl_sensitivityAimMultiply;
-cvar_t* g_bounce;
+cvar_t* cg_drawConnectionInterrupted;
+cvar_t* cg_drawMessagesMiddle;
+
 
 #include <cstdint>
 
@@ -190,7 +193,7 @@ void _CL_NextDownload()
 		const char* arg1 = Info_ValueForKey(info, "sv_referencedPakNames");
 		if (strstr(arg1, ".pk3") != NULL)
 		{
-			Com_Error(ERR_DROP, "Unauthorized download attempted");
+			Com_Error(ERR_DROP, "Potentially dangerous download blocked");
 			return;
 		}
 	}
@@ -209,6 +212,8 @@ void _CL_NextDownload()
 
 void CL_Connect_f()
 {
+	Cvar_Set("fs_game", "");
+
 	void(*o)() = (void(*)())0x40F6A0;
 	o();
 
@@ -218,13 +223,6 @@ void CL_Connect_f()
 		Cvar_Set("cl_allowDownload", "0");
 	}
 	*/
-
-	char* info = clc_stringData + clc_stringOffsets[1];
-	char *fs_game = Info_ValueForKey(info, "fs_game");
-	if (fs_game)
-	{
-		Cvar_Set("fs_game", ""); //Clear previous modded server modifications
-	}
 }
 void Disconnect_IfEsc()
 {
@@ -272,10 +270,12 @@ void CL_Init(void)
 	oCL_Init();
 
 	com_cl_running = Cvar_Get("cl_running", "0", CVAR_ROM);
+	g_bounce = Cvar_Get("g_bounce", "0", CVAR_ARCHIVE);
 	cl_wwwDownload = Cvar_Get("cl_wwwDownload", "1", CVAR_ARCHIVE);
 	cl_allowDownload = Cvar_Get("cl_allowDownload", "0", CVAR_ARCHIVE);
 	cl_sensitivityAimMultiply = Cvar_Get("sensitivityAimMultiply", "1.0", CVAR_ARCHIVE);
-	g_bounce = Cvar_Get("g_bounce", "0", CVAR_ARCHIVE);
+	cg_drawConnectionInterrupted = Cvar_Get("cg_drawConnectionInterrupted", "1", CVAR_ARCHIVE);
+	cg_drawMessagesMiddle = Cvar_Get("cg_drawMessagesMiddle", "1", CVAR_ARCHIVE);
 
 	Cmd_AddCommand("minimize", Cmd_Minimize);
 }

@@ -98,9 +98,6 @@ bool applyHooks()
 	void CL_Frame(int msec);
 	__call(0x43822C, (int)CL_Frame);
 
-	void Field_CharEvent_IgnoreTilde();
-	__jmp(0x40CB1E, (int)Field_CharEvent_IgnoreTilde);
-
 	char* __cdecl CL_SetServerInfo_HostnameStrncpy(char*, char*, size_t);
 	__call(0x412A2C, (int)CL_SetServerInfo_HostnameStrncpy);
 
@@ -114,6 +111,9 @@ bool applyHooks()
 	__call(0x410316, (int)_CL_NextDownload);
 	__call(0x410376, (int)_CL_NextDownload);
 	__call(0x41656C, (int)_CL_NextDownload);
+
+	void Field_CharEvent_IgnoreTilde();
+	__jmp(0x40CB1E, (int)Field_CharEvent_IgnoreTilde);
 
 	__call(0x46319B, (int)cleanupExit);
 
