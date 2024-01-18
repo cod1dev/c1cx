@@ -1,5 +1,4 @@
 #include "shared.h"
-#include "menudef.h"
 #include "render.h"
 #include "client.h"
 

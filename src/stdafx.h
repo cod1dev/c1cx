@@ -10,7 +10,6 @@
 
 #define CURL_STATICLIB
 
-#include "targetver.h"
 #define __TITLE "Call of Duty Extended"
 
 #define WIN32_LEAN_AND_MEAN // Exclude rarely-used stuff from Windows headers
@@ -121,7 +120,8 @@ static const char *get_codversion_string()
 
 static void(*Com_Quit_f)() = (void(*)())0x435D80;
 
-typedef struct {
+typedef struct
+{
 	std::string key;
 	DWORD id;
 	HANDLE handle;
@@ -129,17 +129,8 @@ typedef struct {
 
 extern std::vector<threadInfo_t> threadsinfo;
 
-extern bool thrIsExit;
-
 std::string GetLastErrorAsString();
 
-static bool FileExists(const char *fn) {
-	DWORD attr = GetFileAttributesA(fn);
-
-	return (attr != INVALID_FILE_ATTRIBUTES && !(attr & FILE_ATTRIBUTE_DIRECTORY));
-}
-
-const char *Sys_GetAppDataFolder(char *szPath, int dwLen, bool create);
 int Sys_GetModulePathInfo(HMODULE module, char **path, char **filename, char **extension);
 
 enum HashType
@@ -155,10 +146,13 @@ __call(x, (int)y); \
 *(BYTE*)(x + 5) = 0x90; \
 } while (0)
 
-static bool is_addr_safe(size_t addr) {
-	__try {
+static bool is_addr_safe(size_t addr)
+{
+	__try
+	{
 		*(unsigned char*)(addr);
-	} __except (1) {
+	} __except (1)
+	{
 		return false;
 	}
 	return true;

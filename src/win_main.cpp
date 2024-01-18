@@ -7,9 +7,7 @@
 static int(__stdcall *entryPoint)(HINSTANCE, HINSTANCE, LPSTR, int) = (int(__stdcall*)(HINSTANCE, HINSTANCE, LPSTR, int))0x4640B0;
 
 char sys_cmdline[MAX_STRING_CHARS];
-char szAppData[MAX_PATH + 1];
 
-bool thrIsExit = false;
 extern "C" bool bClosing = false;
 
 extern HMODULE hModule;
@@ -39,12 +37,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 {
 	hInst = hInstance;
 	strncpy(sys_cmdline, lpCmdLine, sizeof(sys_cmdline) - 1);
-
-	if (Sys_GetAppDataFolder(szAppData, MAX_PATH, true) == NULL)
-	{
-		MsgBox("Failed to create data folder.");
-		return 0;
-	}
 
 	void MSS32_Hook();
 	MSS32_Hook();

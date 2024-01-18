@@ -68,21 +68,3 @@ int Sys_GetModulePathInfo(HMODULE module, char **path, char **filename, char **e
 	}
 	return sep;
 }
-
-const char *Sys_GetAppDataFolder(char *szPath, int dwLen, bool create) {
-	if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA, NULL, SHGFP_TYPE_CURRENT, szPath))) {
-		Q_strncpyz(szPath, szPath, dwLen);
-		Q_strcat(szPath, dwLen, "\\CoDExtended");
-
-		if (!create)
-			return szPath;
-
-		if (!PathFileExists(szPath)) {
-			if (ERROR_SUCCESS != SHCreateDirectoryEx(NULL, szPath, NULL)) {
-				return NULL;
-			}
-
-		}
-	}
-	return szPath;
-}
