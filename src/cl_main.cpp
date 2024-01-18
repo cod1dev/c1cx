@@ -269,13 +269,15 @@ void CL_Init(void)
 	*(int*)(&oCL_Init) = 0x411E60;
 	oCL_Init();
 
+	Cmd_AddCommand("minimize", Cmd_Minimize);
+
+	Cvar_Get("cl_httpDownloadSupport", "1", CVAR_USERINFO | CVAR_ROM);
+
 	com_cl_running = Cvar_Get("cl_running", "0", CVAR_ROM);
-	g_bounce = Cvar_Get("g_bounce", "0", CVAR_ARCHIVE);
 	cl_wwwDownload = Cvar_Get("cl_wwwDownload", "1", CVAR_ARCHIVE);
 	cl_allowDownload = Cvar_Get("cl_allowDownload", "0", CVAR_ARCHIVE);
 	cl_sensitivityAimMultiply = Cvar_Get("sensitivityAimMultiply", "1.0", CVAR_ARCHIVE);
+	g_bounce = Cvar_Get("g_bounce", "0", CVAR_ARCHIVE);
 	cg_drawConnectionInterrupted = Cvar_Get("cg_drawConnectionInterrupted", "1", CVAR_ARCHIVE);
 	cg_drawMessagesMiddle = Cvar_Get("cg_drawMessagesMiddle", "1", CVAR_ARCHIVE);
-
-	Cmd_AddCommand("minimize", Cmd_Minimize);
 }
