@@ -86,7 +86,7 @@ qboolean Sys_StringToAdr(const char *s, netadr_t *a) {
 }
 
 //tmp relocation
-short   BigShort(short l) {
+short BigShort(short l) {
 	byte b1, b2;
 
 	b1 = l & 255;
@@ -95,7 +95,7 @@ short   BigShort(short l) {
 	return (b1 << 8) + b2;
 }
 
-qboolean    NET_StringToAdr(const char *s, netadr_t *a) {
+qboolean NET_StringToAdr(const char *s, netadr_t *a) {
 	qboolean r;
 	char base[MAX_STRING_CHARS];
 	char    *port;
@@ -137,7 +137,7 @@ qboolean    NET_StringToAdr(const char *s, netadr_t *a) {
 	return qtrue;
 }
 
-const char  *NET_AdrToString(netadr_t a) {
+const char *NET_AdrToString(netadr_t a) {
 	static  char    s[64];
 
 	if (a.type == NA_LOOPBACK) {
@@ -159,7 +159,7 @@ const char  *NET_AdrToString(netadr_t a) {
 	return s;
 }
 
-const char  *NET_BaseAdrToString(netadr_t a) {
+const char *NET_BaseAdrToString(netadr_t a) {
 	static  char    s[64];
 
 	if (a.type == NA_LOOPBACK) {
@@ -180,7 +180,7 @@ const char  *NET_BaseAdrToString(netadr_t a) {
 	return s;
 }
 
-qboolean    NET_CompareAdr(netadr_t a, netadr_t b) {
+qboolean NET_CompareAdr(netadr_t a, netadr_t b) {
 	if (a.type != b.type) {
 		return qfalse;
 	}
@@ -207,11 +207,11 @@ qboolean    NET_CompareAdr(netadr_t a, netadr_t b) {
 	return qfalse;
 }
 
-bool    NET_IsLocalAddress(netadr_t adr) {
+bool NET_IsLocalAddress(netadr_t adr) {
 	return adr.type == NA_LOOPBACK;
 }
 
-qboolean    NET_CompareBaseAdr(netadr_t a, netadr_t b) {
+qboolean NET_CompareBaseAdr(netadr_t a, netadr_t b) {
 	if (a.type != b.type) {
 		return qfalse;
 	}
@@ -233,7 +233,6 @@ qboolean    NET_CompareBaseAdr(netadr_t a, netadr_t b) {
 		}
 		return qfalse;
 	}
-
 
 	Com_Printf("NET_CompareBaseAdr: bad address type\n");
 	return qfalse;

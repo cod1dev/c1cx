@@ -5,11 +5,6 @@
 
 extern char sys_cmdline[MAX_STRING_CHARS];
 
-#define ERROR_MSG(x) do \
-	MessageBox(0, va("Call of Duty caught an error whilst trying to do something.\nFile: %s, Line: %d\nErrorcode: %d (0x%x)\nError: %s" \
-				"Please report this error at the forums.",__FILE__,__LINE__,x,x,GetLastErrorAsString().c_str()), __TITLE, MB_ICONERROR | MB_OK); \
-								while(0)
-
 typedef struct
 {
 	int ver;

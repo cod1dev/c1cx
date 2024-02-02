@@ -7,7 +7,7 @@ static void CLUI_GetCDKey(char* buf, int buflen)
 		__TITLE, 0);
 }
 
-bool fix_bugs()
+bool fixBugs()
 {
 	bool ret = true;
 	__call(0x41892B, (int)CLUI_GetCDKey);

@@ -49,8 +49,9 @@ HMODULE WINAPI hLoadLibraryA(LPSTR lpFileName)
 		void G_Init(DWORD);
 		G_Init(pBase);
 	}
+
 #ifdef DEBUG
-	Com_Printf("^2dll name = %s\n", lpFileName);
+	Com_Printf("^2lpFileName = %s\n", lpFileName);
 #endif
 	return hModule;
 }

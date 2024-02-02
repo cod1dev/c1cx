@@ -418,5 +418,3 @@ void MSG_Init(msg_t *buf, byte *data, int length);
 char* Q_CleanStr(char* string, bool colors = false);
 
 char* Com_CleanHostname(char* hostname, bool colors);
-char* Com_CleanMapname(char* mapname);
-const char* Com_GametypeName(char* gt, bool colors = false);

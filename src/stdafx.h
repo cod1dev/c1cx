@@ -32,9 +32,8 @@ typedef unsigned char byte;
 #define DLL_EXPORT __declspec(dllexport)
 #define DLL_IMPORT __declspec(dllimport)
 
-extern bool bDeveloper;
-static bool CopyToClipboard(const char *s) {
-
+static bool CopyToClipboard(const char *s)
+{
 	if (OpenClipboard(NULL))
 	{
 		HGLOBAL clipbuffer;
@@ -54,25 +53,9 @@ static bool CopyToClipboard(const char *s) {
 
 static void MsgBox(const char *msg)
 {
-#if 0
-	if (bDeveloper)
-	{
-		if (OpenClipboard(NULL))
-		{
-			HGLOBAL clipbuffer;
-			char * buffer;
-			EmptyClipboard();
-			clipbuffer = GlobalAlloc(GMEM_DDESHARE, strlen(msg) + 1);
-			buffer = (char*)GlobalLock(clipbuffer);
-			strcpy(buffer, msg);
-			GlobalUnlock(clipbuffer);
-			SetClipboardData(CF_TEXT, clipbuffer);
-			CloseClipboard();
-		}
-	}
-#endif
 	MessageBoxA(NULL, msg, __TITLE, MB_OK | MB_ICONINFORMATION);
 }
+
 #define XCRASH _memset((void*)0x400000, 0, 0xffff);
 
 typedef enum
@@ -92,7 +75,6 @@ typedef enum
 	COD4_7,
 	COD_END_OF_LIST
 } cod_v;
-
 static const char *codversion_strings[] =
 {
 	"UNKNOWN",
@@ -110,7 +92,6 @@ static const char *codversion_strings[] =
 	"4 1.7",
 	"end_of_list"
 };
-
 #define CODVERSION CODUO_51
 extern int codversion;
 static const char *get_codversion_string()
@@ -119,15 +100,6 @@ static const char *get_codversion_string()
 }
 
 static void(*Com_Quit_f)() = (void(*)())0x435D80;
-
-typedef struct
-{
-	std::string key;
-	DWORD id;
-	HANDLE handle;
-} threadInfo_t;
-
-extern std::vector<threadInfo_t> threadsinfo;
 
 std::string GetLastErrorAsString();
 

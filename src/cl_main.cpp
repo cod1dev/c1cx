@@ -5,6 +5,7 @@
 #pragma comment(lib, "psapi.lib")
 #include "Psapi.h"
 #include "Shlwapi.h"
+#include <cstdint>
 
 cvar_t* com_cl_running;
 cvar_t* g_bounce;
@@ -13,9 +14,6 @@ cvar_t* cl_allowDownload;
 cvar_t* cl_sensitivityAimMultiply;
 cvar_t* cg_drawConnectionInterrupted;
 cvar_t* cg_drawMessagesMiddle;
-
-
-#include <cstdint>
 
 void Cmd_Minimize()
 {
@@ -34,7 +32,7 @@ void Need_Paks()
 
 void DL_Name(const char* localName, char* remoteName)
 {
-	Cvar_Set("cl_downloadName", va("        %s", remoteName)); // Spaces to render name fully.
+	Cvar_Set("cl_downloadName", va("        %s", remoteName)); // Spaces to render name fully
 }
 void _CL_DownloadsComplete()
 {
@@ -136,13 +134,13 @@ void CL_WWWDownload()
 	}
 	else if (ret == DL_FAILED)
 	{
-		// Perhaps actually check the response? Invalid URL, forbidden, etc?
-		char* error = va("Download failure while getting %s.\nURL might be invalid.", Cvar_VariableString("dlname_error"));
+		char* error = va("Failed downloading %s.", Cvar_VariableString("dlname_error"));
 		Com_Error(ERR_DROP, error);
 		return;
 	}
 }
-//DL STUCK FIX
+
+//DL STUCK FIX/WORKAROUND (CLIENT SIDE)
 int* cl_serverId = (int*)0x143a9ac;
 int last_cl_serverId = 0;
 void _CL_InitDownloads()
@@ -166,6 +164,7 @@ void _CL_InitDownloads()
 		if ((*cl_serverId && last_cl_serverId)
 			&& (*cl_serverId > last_cl_serverId))
 		{
+			//TODO: try to fix this:
 			//Uncomment = prevents double map load but prevents future map changes (disconnect error: CL_SetCGameTime: !cl.snap.valid)
 			//preventCall = true;
 		}
@@ -193,7 +192,7 @@ void _CL_NextDownload()
 		const char* arg1 = Info_ValueForKey(info, "sv_referencedPakNames");
 		if (strstr(arg1, ".pk3") != NULL)
 		{
-			Com_Error(ERR_DROP, "Potentially dangerous download blocked");
+			Com_Error(ERR_DROP, "Potentially dangerous download prevented");
 			return;
 		}
 	}
@@ -258,8 +257,8 @@ void CL_Frame(int msec)
 
 void CL_Init(void)
 {
-	bool fix_bugs();
-	if (!fix_bugs())
+	bool fixBugs();
+	if (!fixBugs())
 	{
 		MsgBox("Failed to fix bugs");
 		Com_Quit_f();

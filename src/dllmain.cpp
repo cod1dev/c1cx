@@ -1,7 +1,5 @@
 #include "stdafx.h"
 
-void codextended();
-
 HMODULE hModule;
 #ifdef DEBUG
 extern HANDLE hLogFile = INVALID_HANDLE_VALUE;
@@ -11,7 +9,6 @@ extern HANDLE hLogFile = INVALID_HANDLE_VALUE;
 static BYTE originalCode[5];
 static PBYTE originalEP = 0;
 void Main_UnprotectModule(HMODULE hModule);
-
 void Main_DoInit()
 {
 	// unprotect our entire PE image
@@ -25,7 +22,6 @@ void Main_DoInit()
 	memcpy(originalEP, &originalCode, sizeof(originalCode));
 	__asm jmp originalEP
 }
-
 void Main_SetSafeInit()
 {
 	// find the entry point for the executable process, set page access, and replace the EP
@@ -47,23 +43,26 @@ void Main_SetSafeInit()
 	}
 }
 
-BOOL APIENTRY DllMain(HMODULE hMod, DWORD ul_reason_for_call, LPVOID lpReserved)
+void codextended();
+
+BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
 {
 	switch (ul_reason_for_call)
 	{
 		case DLL_PROCESS_ATTACH:
 			char szModuleName[MAX_PATH + 1];
-
 			GetModuleFileNameA(NULL, szModuleName, MAX_PATH);
+
 			void MSS32_Hook();
 			MSS32_Hook();
-
 			extern bool mss32_original_loaded;
 			if (!mss32_original_loaded)
 				return FALSE;
+
 			Main_SetSafeInit();
 
-#ifdef DEBUG //Prevents SP from running
+#ifdef DEBUG 
+			//Prevents SP from running
 			if (hLogFile == INVALID_HANDLE_VALUE)
 			{
 				hLogFile = CreateFile("./memlog.txt",
@@ -75,9 +74,9 @@ BOOL APIENTRY DllMain(HMODULE hMod, DWORD ul_reason_for_call, LPVOID lpReserved)
 			}
 #endif
 			codextended();
-		break;
+			break;
 		case DLL_PROCESS_DETACH:
-		break;
+			break;
 	}
 	return TRUE;
 }

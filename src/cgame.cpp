@@ -51,7 +51,10 @@ void myCG_ServerCommand(void)
 			else if (*cmd == 'g')
 			{
 				if (!cg_drawMessagesMiddle->integer)
+				{
+					Com_Printf("cg_drawMessagesMiddle hid: %s \n", Cmd_Argv(1));
 					return;
+				}
 			}
 		}
 	}
@@ -183,6 +186,7 @@ void CG_DrawFPS(float y)
 	}
 }
 
+/*by xoxor4d*/
 void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out)
 {
 	float backoff;
@@ -206,8 +210,6 @@ void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out)
 		out[i] = in[i] - change;
 	}
 }
-
-// by xoxor4d
 void PM_ProjectVelocity(vec3_t in, vec3_t normal, vec3_t out)
 {
 	float speedXY, DotNormalXY, normalisedNormalXY, projectionZ, projectionXYZ;
@@ -257,6 +259,7 @@ __declspec(naked) void PM_Bounce_Stub()
 			retn;
 	}
 }
+/**/
 
 static void (*PM_CheckForChangeWeapon)();
 static void (*PM_BeginWeaponChange)(int, int);

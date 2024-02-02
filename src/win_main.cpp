@@ -16,8 +16,6 @@ HINSTANCE hInst;
 HMODULE hLogFile;
 #endif
 
-std::vector<threadInfo_t> threadsinfo;
-
 void Sys_Unload()
 {
 	bClosing = true;
@@ -33,6 +31,22 @@ void Sys_Unload()
 #endif
 }
 
+LRESULT CALLBACK h_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	switch (uMsg)
+	{
+	case WM_CREATE:
+	{
+		SetWindowLong(hWnd, GWL_STYLE, GetWindowLong(hWnd, GWL_STYLE) | WS_MINIMIZEBOX);
+		break;
+	}
+	}
+
+	LRESULT(CALLBACK * o_WndProc)(HWND, UINT, WPARAM, LPARAM);
+	*(int*)&o_WndProc = 0x466BE0;
+	return o_WndProc(hWnd, uMsg, wParam, lParam);
+}
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	hInst = hInstance;
@@ -44,6 +58,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	extern bool mss32_original_loaded;
 	if (!mss32_original_loaded)
 		return 0;
-
+	
 	return entryPoint(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
 }

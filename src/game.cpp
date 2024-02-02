@@ -3,6 +3,7 @@
 DWORD game_mp;
 extern cvar_t* g_bounce;
 
+/*by xoxor4d*/
 void G_PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out)
 {
 	float backoff;
@@ -26,8 +27,6 @@ void G_PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out)
 		out[i] = in[i] - change;
 	}
 }
-
-// by xoxor4d
 void G_PM_ProjectVelocity(vec3_t in, vec3_t normal, vec3_t out)
 {
 	float speedXY, DotNormalXY, normalisedNormalXY, projectionZ, projectionXYZ;
@@ -50,7 +49,6 @@ void G_PM_ProjectVelocity(vec3_t in, vec3_t normal, vec3_t out)
 		}
 	}
 }
-
 uint32_t G_PM_Bounce(vec3_t in, vec3_t normal, vec3_t out)
 {
 	if (g_bounce->integer)
@@ -76,6 +74,7 @@ __declspec(naked) void G_PM_Bounce_Stub()
 			retn;
 	}
 }
+/**/
 
 void G_Init(DWORD base)
 {
