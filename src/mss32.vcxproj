@@ -174,7 +174,6 @@
     <ClCompile Include="libs\imgui\imgui_tables.cpp" />
     <ClCompile Include="libs\imgui\imgui_widgets.cpp" />
     <ClCompile Include="mss32.cpp" />
-    <ClCompile Include="net.cpp" />
     <ClCompile Include="render.cpp" />
     <ClCompile Include="shared.cpp" />
     <ClCompile Include="stdafx.cpp" />

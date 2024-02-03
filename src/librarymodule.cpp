@@ -1,18 +1,6 @@
 #include "shared.h"
-#include "gl/gl.h"
 #pragma comment(lib, "libs/detours/detours.lib")
 #include "libs/detours/detours.h"
-
-__int64 FileSize(std::string name)
-{
-	WIN32_FILE_ATTRIBUTE_DATA fad;
-	if (!GetFileAttributesEx(name.c_str(), GetFileExInfoStandard, &fad))
-		return -1; // error condition, could call GetLastError to find out more
-	LARGE_INTEGER size;
-	size.HighPart = fad.nFileSizeHigh;
-	size.LowPart = fad.nFileSizeLow;
-	return size.QuadPart;
-}
 
 HMODULE(WINAPI *orig_LoadLibraryA)(LPCSTR lpFileName);
 HMODULE WINAPI hLoadLibraryA(LPSTR lpFileName)
@@ -29,8 +17,6 @@ HMODULE WINAPI hLoadLibraryA(LPSTR lpFileName)
 	if (strstr(lpFileName, "ui_mp"))
 	{
 		if(codversion != COD1_1_1)
-			return hModule;
-		if (FileSize(lpFileName) < 0x249F0) //150kb
 			return hModule;
 
 		void UI_Init(DWORD);

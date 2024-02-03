@@ -2,7 +2,6 @@
 
 FS_CreatePath_t FS_CreatePath = (FS_CreatePath_t)0x429000;
 FS_ComparePaks_t FS_ComparePaks = (FS_ComparePaks_t)0x43B830;
-FS_ReadFile_t FS_ReadFile = (FS_ReadFile_t)0x42A8B0;
 
 #define PATH_SEP '/'
 static void FS_ReplaceSeparators(char *path)

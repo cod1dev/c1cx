@@ -54,17 +54,12 @@ extern Com_Error_t Com_Error;
 typedef void(*xfunc)(void);
 
 typedef void(*Cmd_AddCommand_t)(const char*, xfunc);
-typedef void(*Cmd_RemoveCommand_t)(const char*);
 extern Cmd_AddCommand_t Cmd_AddCommand;
-extern Cmd_RemoveCommand_t Cmd_RemoveCommand;
 
 typedef int(*FS_CreatePath_t)(const char *OSPath);
 extern FS_CreatePath_t FS_CreatePath;
 typedef int (*FS_ComparePaks_t)(char *neededpaks, int len, int dlstring);
 extern FS_ComparePaks_t FS_ComparePaks;
-typedef int(*FS_ReadFile_t)(const char *qpath, void **buffer);
-extern FS_ReadFile_t FS_ReadFile;
 
 char *FS_BuildOSPath(const char *base, const char *game, const char *qpath);
 char *va(char *format, ...);
-int Q_vsnprintf(char *dest, int size, const char *fmt, va_list argptr);

@@ -64,8 +64,8 @@ bool applyHooks()
 	XUNLOCK((void*)0x41269B, 5);
 	*(UINT32*)(0x41269B + 1) = (int)CL_Connect_f;
 
-	void _CL_InitDownloads();
-	__call(0x41627b, (int)_CL_InitDownloads);
+	//void _CL_InitDownloads();
+	//__call(0x41627b, (int)_CL_InitDownloads);
 	void _CL_NextDownload();
 	__call(0x410316, (int)_CL_NextDownload);
 	__call(0x410376, (int)_CL_NextDownload);

@@ -10,6 +10,13 @@ cvar_t* cl_allowDownload;
 cvar_t* cl_sensitivityAimMultiply;
 cvar_t* cg_drawConnectionInterrupted;
 cvar_t* cg_drawMessagesMiddle;
+cvar_t* xui_fps;
+cvar_t* xui_fps_x;
+cvar_t* xui_fps_y;
+
+
+
+
 
 void Cmd_Minimize()
 {
@@ -37,11 +44,6 @@ void Cmd_ImGui_f()
 char* __cdecl CL_SetServerInfo_HostnameStrncpy(char* a1, char* a2, size_t a3)
 {
 	return strncpy(a1, Com_CleanHostname(a2, true), a3);
-}
-
-void Need_Paks()
-{
-	return;
 }
 
 void DL_Name(const char* localName, char* remoteName)
@@ -154,7 +156,8 @@ void CL_WWWDownload()
 	}
 }
 
-//DL STUCK FIX/WORKAROUND (CLIENT SIDE)
+//DL STUCK FIX/WORKAROUND (CLIENT SIDE) //TODO: prevent multiple map (down)loading + check if can be server side only
+/*
 int* cl_serverId = (int*)0x143a9ac;
 int last_cl_serverId = 0;
 void _CL_InitDownloads()
@@ -196,6 +199,7 @@ void _CL_InitDownloads()
 	*(int*)(&CL_InitDownloads) = 0x410240;
 	CL_InitDownloads();
 }
+*/
 void _CL_NextDownload()
 {
 	char* info = clc_stringData + clc_stringOffsets[1];
@@ -243,21 +247,13 @@ void Disconnect_IfEsc()
 	{
 		if (GetFocus() && GetKeyState(VK_ESCAPE) & 0x8000)
 		{
-			((void(*)())0x40F5F0)(); //CL_Disconnnect 
+			((void(*)())0x40F5F0)(); //CL_Disconnnect
 		}
 	}
 }
 
-char* MAX_PACKET_USERCMDS()
-{
-	return false;
-}
-
 void CL_Frame(int msec)
 {
-	void(*call)(int);
-	*(DWORD*)&call = 0x411280;
-
 	if (!com_cl_running->integer)
 		return;
 
@@ -266,6 +262,8 @@ void CL_Frame(int msec)
 
 	Disconnect_IfEsc();
 
+	void(*call)(int);
+	*(DWORD*)&call = 0x411280;
 	call(msec);
 }
 
@@ -286,7 +284,10 @@ void CL_Init(void)
 
 
 
+
 	Cmd_AddCommand("imgui", Cmd_ImGui_f);
+
+
 
 
 
@@ -299,4 +300,7 @@ void CL_Init(void)
 	g_bounce = Cvar_Get("g_bounce", "0", CVAR_ARCHIVE);
 	cg_drawConnectionInterrupted = Cvar_Get("cg_drawConnectionInterrupted", "1", CVAR_ARCHIVE);
 	cg_drawMessagesMiddle = Cvar_Get("cg_drawMessagesMiddle", "1", CVAR_ARCHIVE);
+	xui_fps = Cvar_Get("cg_xui_fps", "1", CVAR_ARCHIVE);
+	xui_fps_x = Cvar_Get("cg_xui_fps_x", "597", CVAR_ARCHIVE);
+	xui_fps_y = Cvar_Get("cg_xui_fps_y", "12", CVAR_ARCHIVE);
 }
