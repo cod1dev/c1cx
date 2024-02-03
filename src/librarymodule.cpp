@@ -28,7 +28,7 @@ HMODULE WINAPI hLoadLibraryA(LPSTR lpFileName)
 
 	if (strstr(lpFileName, "ui_mp"))
 	{
-		if(codversion != COD_1)
+		if(codversion != COD1_1_1)
 			return hModule;
 		if (FileSize(lpFileName) < 0x249F0) //150kb
 			return hModule;
@@ -38,7 +38,7 @@ HMODULE WINAPI hLoadLibraryA(LPSTR lpFileName)
 	}
 	else if (strstr(lpFileName, "cgame_mp"))
 	{
-		if (codversion != COD_1)
+		if (codversion != COD1_1_1)
 			return hModule;
 
 		void CG_Init(DWORD);

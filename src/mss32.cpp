@@ -377,7 +377,7 @@ extern "C"
 	void Com_Printf(const char *s)
 	{
 		extern int codversion;
-		if (codversion != COD_1)
+		if (codversion != COD1_1_1)
 			return;
 		if (!strcmp(printmsg, s))
 			return;
@@ -1865,7 +1865,7 @@ void MSS32_Hook()
 
 	if (!hMSS)
 	{
-		MessageBoxA(NULL, "Failed to load mss32_original.dll", __TITLE, MB_OK | MB_ICONERROR);
+		MessageBoxA(NULL, "Failed to load mss32_original.dll", _MB_TITLE, MB_OK | MB_ICONERROR);
 		Com_Quit_f();
 		return;
 	}

@@ -2,6 +2,9 @@
 
 extern bool clc_bWWWDl;
 
+void DL_Shutdown();
+int DL_BeginDownload(const char* localName, const char* remoteName, int debug);
+
 typedef enum
 {
 	DL_CONTINUE,
@@ -16,6 +19,4 @@ typedef enum
 	DL_FLAG_URL
 } dlFlags_t;
 
-int DL_BeginDownload(const char *localName, const char *remoteName, int debug);
 dlStatus_t DL_DownloadLoop();
-void DL_Shutdown();

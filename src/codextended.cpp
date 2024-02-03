@@ -1,25 +1,22 @@
 #include "shared.h"
-#include <WinSock2.h>
+#include "stdafx.h"
 
 bool applyHooks();
-bool determine_cod_version();
-bool find_cod_version();
+bool verifyCodVersion();
 
+int codversion;
 void codextended()
 {
 	srand(time(NULL));
 
-	if (!determine_cod_version())
+	if (!verifyCodVersion())
 	{
-		if (!find_cod_version())
-		{
-			MsgBox("Failed to find Call of Duty version");
-			return;
-		}
+		MsgBox("CoD version verification failed");
+		return;
 	}
-	if (!applyHooks())
+	else if (codversion == COD1_1_1 && !applyHooks())
 	{
-		MsgBox("Failed to initialize CoDExtended");
+		MsgBox("Hooking failed");
 		Com_Quit_f();
 	}
 }

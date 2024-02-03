@@ -1,14 +1,17 @@
 #include "stdafx.h"
 
-HMODULE hModule;
 #ifdef DEBUG
 extern HANDLE hLogFile = INVALID_HANDLE_VALUE;
 #endif
 
-// PROCESS_DETACH is not called so don't make global declarations which have deconstructors which have to be called.
+HMODULE hModule;
+// PROCESS_DETACH is not called so don't make global declarations which have deconstructors which have to be called. //TODO: understand this comment
 static BYTE originalCode[5];
 static PBYTE originalEP = 0;
+
+void codextended();
 void Main_UnprotectModule(HMODULE hModule);
+
 void Main_DoInit()
 {
 	// unprotect our entire PE image
@@ -43,8 +46,6 @@ void Main_SetSafeInit()
 	}
 }
 
-void codextended();
-
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
 {
 	switch (ul_reason_for_call)
@@ -62,7 +63,6 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
 			Main_SetSafeInit();
 
 #ifdef DEBUG 
-			//Prevents SP from running
 			if (hLogFile == INVALID_HANDLE_VALUE)
 			{
 				hLogFile = CreateFile("./memlog.txt",

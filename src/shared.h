@@ -43,7 +43,11 @@
 #define MAX_QPATH 64
 #define MAX_OSPATH 256
 
-typedef enum { qfalse, qtrue }    qboolean;
+typedef enum
+{
+	qfalse,
+	qtrue
+} qboolean;
 
 typedef struct cvar_s
 {
@@ -60,7 +64,8 @@ typedef struct cvar_s
 	struct cvar_s *hashNext;
 } cvar_t;
 
-typedef enum {
+typedef enum
+{
 	ET_GENERAL,
 	ET_PLAYER,
 	ET_CORPSE,
@@ -73,7 +78,8 @@ typedef enum {
 	ET_TURRET //???
 } entityTypes;
 
-typedef struct {
+typedef struct
+{
 	int unknown; //0
 	byte* data; //4
 	int maxsize; //8 (most likely maxsize value 16384)
@@ -82,13 +88,15 @@ typedef struct {
 	int bit; //20 //value 0
 } msg_t; //size is 0x18 (24)
 
-typedef enum {
+typedef enum
+{
 	STEREO_CENTER,
 	STEREO_LEFT,
 	STEREO_RIGHT
 } stereoFrame_t;
 
-typedef enum {
+typedef enum
+{
 	CA_UNINITIALIZED,
 	CA_DISCONNECTED = 0,
 	CA_CONNECTING,
@@ -96,20 +104,6 @@ typedef enum {
 	CA_CONNECTED,
 } connstate_t;
 
-#if 0
-typedef enum {
-	CA_UNINITIALIZED,
-	CA_DISCONNECTED,    // not talking to a server
-	CA_AUTHORIZING,     // not used any more, was checking cd key
-	CA_CONNECTING,      // sending request packets to the server
-	CA_CHALLENGING,     // sending challenge packets to the server
-	CA_CONNECTED,       // netchan_t established, getting gamestate
-	CA_LOADING,         // only during cgame initialization, never during main loop
-	CA_PRIMED,          // got gamestate, waiting for first frame
-	CA_ACTIVE,          // game views should be displayed
-	CA_CINEMATIC        // playing a cinematic or a static pic, not connected to a server
-} connstate_t;
-#endif
 #define Q_COLOR_ESCAPE  '^'
 #define Q_IsColorString( p )  ( p && *( p ) == Q_COLOR_ESCAPE && *( ( p ) + 1 ) && *( ( p ) + 1 ) != Q_COLOR_ESCAPE )
 
@@ -133,7 +127,6 @@ typedef enum {
 #define COLOR_MDCYAN    'B'
 #define COLOR_MDPURPLE  'C'
 #define COLOR_NULL      '*'
-
 
 #define COLOR_BITS  31
 #define ColorIndex( c )   ( ( ( c ) - '0' ) & COLOR_BITS )
@@ -192,7 +185,8 @@ typedef vec_t vec5_t[5];
 
 #define SnapVector( v ) {v[0] = ( (int)( v[0] ) ); v[1] = ( (int)( v[1] ) ); v[2] = ( (int)( v[2] ) );}
 
-typedef struct {
+typedef struct
+{
 	netsrc_t	sock;
 
 	int			dropped;			// between last packet and previous
@@ -383,9 +377,7 @@ extern DWORD cgame_mp;
 #define GAME_OFF(x) (game_mp + (x - 0x20000000))
 #define CGAME_OFF(x) (cgame_mp + (x - 0x30000000))
 
-
 /* net stuff */
-
 typedef void(*NET_OutOfBandPrint_t)(netsrc_t, netadr_t, const char*, ...);
 extern NET_OutOfBandPrint_t NET_OutOfBandPrint;
 

@@ -5,14 +5,14 @@
 #include "libs/libcurl/include/curl/curl.h"
 #include <iostream>
 
-#define APP_NAME        "ID_DOWNLOAD"
-#define APP_VERSION     "2.0"
+#define APP_NAME "ID_DOWNLOAD"
+#define APP_VERSION "2.0"
 
 // initialize once
 static int dl_initialized = 0;
-static CURLM *dl_multi = NULL;
-static CURL *dl_request = NULL;
-FILE *dl_file = NULL;
+static CURLM* dl_multi = NULL;
+static CURL* dl_request = NULL;
+FILE* dl_file = NULL;
 bool clc_bWWWDl = false;
 
 //Write to file
@@ -53,7 +53,8 @@ void DL_Shutdown()
 
 #define LOCAL_DL_PATH "dl.tmp"
 char localDownloadName[MAX_PATH];
-int DL_BeginDownload(const char *localName, const char *remoteName, int debug) {
+int DL_BeginDownload(const char *localName, const char *remoteName, int debug)
+{
 	char referer[MAX_STRING_CHARS + 5 /*"ET://"*/];
 	if (dl_request) {
 		Com_Printf("ERROR: DL_BeginDownload called with a download request already active\n"); \
@@ -94,7 +95,7 @@ int DL_BeginDownload(const char *localName, const char *remoteName, int debug) {
 
 	curl_multi_add_handle(dl_multi, dl_request);
 
-	Cvar_Set("cl_downloadName", va("        %s", (char*)remoteName)); //spaces so whole link is visible
+	Cvar_Set("cl_downloadName", va("        %s", (char*)remoteName)); //spaces to make link fully displayed
 	Cvar_Set("dlname_error", (char*)remoteName);
 	return 1;
 }

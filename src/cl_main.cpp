@@ -2,10 +2,6 @@
 #include "client.h"
 #include "render.h"
 #include "dl_public.h"
-#pragma comment(lib, "psapi.lib")
-#include "Psapi.h"
-#include "Shlwapi.h"
-#include <cstdint>
 
 cvar_t* com_cl_running;
 cvar_t* g_bounce;
@@ -19,6 +15,24 @@ void Cmd_Minimize()
 {
 	ShowWindow(*gameWindow, SW_MINIMIZE);
 }
+
+
+
+
+void Cmd_ImGui_f()
+{
+	//escape
+	//SetWndCapture(imguiEnabled);
+	//client needs to do /vid_restart in order to make code go through the if once again
+}
+
+
+
+
+
+
+
+
 
 char* __cdecl CL_SetServerInfo_HostnameStrncpy(char* a1, char* a2, size_t a3)
 {
@@ -260,7 +274,7 @@ void CL_Init(void)
 	bool fixBugs();
 	if (!fixBugs())
 	{
-		MsgBox("Failed to fix bugs");
+		MsgBox("Bug fixes failed");
 		Com_Quit_f();
 	}
 
@@ -269,6 +283,12 @@ void CL_Init(void)
 	oCL_Init();
 
 	Cmd_AddCommand("minimize", Cmd_Minimize);
+
+
+
+	Cmd_AddCommand("imgui", Cmd_ImGui_f);
+
+
 
 	Cvar_Get("cl_httpDownloadSupport", "1", CVAR_USERINFO | CVAR_ROM);
 

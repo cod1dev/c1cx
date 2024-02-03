@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "shared.h"
 #include "client.h"
 
@@ -7,6 +6,7 @@ void cleanupExit()
 	void(*o)();
 	*(UINT32*)&o = 0x40E2B0;
 	o();
+
 	void Sys_Unload();
 	Sys_Unload();
 }
@@ -30,26 +30,20 @@ bool applyHooks()
 		Main_UnprotectModule(hModule);
 	}
 
+	unlock_client_structure(); // make some client cls structure members writeable
+
 	/*by lstolcman*/
 	// allow alt tab - set dwExStyle from WS_EX_TOPMOST to WS_EX_LEFT (default), which allows minimizing
 	XUNLOCK((void*)0x5083b1, 1);
 	memset((void*)0x5083b1, 0x00, 1);
-#if 0 //See https://github.com/xtnded/codextended-client/pull/1#issuecomment-913110883
-	// fix bad behavior on 4k monitors - avoid redundant ChangeDisplaySettingsA
-	XUNLOCK((void*)0x508821, 2);
-	memset((void*)0x508821, 0x90, 1);
-	memset((void*)0x508822, 0x90, 1);
-#endif
 	/**/
 
 	void patch_opcode_loadlibrary();
 	patch_opcode_loadlibrary();
-	
-	if (codversion != COD_1)
-		return true;
 
-	unlock_client_structure(); // make some client cls_ structure members writeable etc
-	
+	void patch_opcode_glbindtexture(void);
+	//patch_opcode_glbindtexture();
+
 	int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow);
 	__call(0x528948, (int)WinMain);
 

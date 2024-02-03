@@ -1,13 +1,13 @@
 #pragma once
 
 #include "stdafx.h"
-#include <WinSock2.h>
 
-#define MAX_MSGLEN              32768       // max length of a message, which may     
+#define MAX_MSGLEN 32768 // max length of a message, which may     
 
-typedef enum {
+typedef enum
+{
 	NA_BOT,
-	NA_BAD,                 // an address lookup failed
+	NA_BAD, // an address lookup failed
 	NA_LOOPBACK,
 	NA_BROADCAST,
 	NA_IP,
@@ -15,7 +15,8 @@ typedef enum {
 	NA_BROADCAST_IPX
 } netadrtype_t;
 
-typedef enum {
+typedef enum
+{
 	NS_CLIENT,
 	NS_SERVER
 } netsrc_t;

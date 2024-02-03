@@ -3,7 +3,6 @@
 #include "gl/glu.h"
 #pragma comment(lib, "opengl32")
 #pragma comment(lib, "glu32.lib")
-#include <memory>
 
 static float vColorBlack[4] = { 0,0,0,1 };
 static float vColorWhite[4] = { 1, 1, 1, 1 };
