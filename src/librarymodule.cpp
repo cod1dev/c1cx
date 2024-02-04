@@ -16,7 +16,7 @@ HMODULE WINAPI hLoadLibraryA(LPSTR lpFileName)
 
 	if (strstr(lpFileName, "ui_mp"))
 	{
-		if(codversion != COD1_1_1)
+		if (codversion != COD1_1_1)
 			return hModule;
 
 		void UI_Init(DWORD);
@@ -45,5 +45,5 @@ HMODULE WINAPI hLoadLibraryA(LPSTR lpFileName)
 void patch_opcode_loadlibrary(void)
 {
 	orig_LoadLibraryA = (struct HINSTANCE__* (__stdcall*)(const char*)) \
-	DetourFunction((LPBYTE)LoadLibraryA, (LPBYTE)hLoadLibraryA);
+		DetourFunction((LPBYTE)LoadLibraryA, (LPBYTE)hLoadLibraryA);
 }

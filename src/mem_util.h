@@ -97,3 +97,9 @@ static void __call(unsigned int off, unsigned int loc)
 	VirtualProtect((void*)off, 5, tmp, &tmp);
 #endif
 }
+
+#define __ffcall(addr, func) \
+XUNLOCK((void*)addr,6); \
+*(unsigned char*)(addr) = 0xe8; \
+__call(addr, func); \
+*(unsigned char*)(addr + 5) = 0x90;

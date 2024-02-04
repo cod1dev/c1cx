@@ -60,7 +60,7 @@ void _CG_ServerCommand(void)
 	CG_ServerCommand();
 }
 
-/* //TODO: make it work like CoD2 
+/* //TODO: improve so it works like CoD2
 void pm_aimflag() // To aim in the air
 {
 	int *pm = (int*)(cgame_mp + 0x19D570);
