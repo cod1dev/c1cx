@@ -3,8 +3,6 @@
 #include "ShlObj.h"
 #include "Shellapi.h"
 
-extern char sys_cmdline[MAX_STRING_CHARS];
-
 bool verifyCodVersion()
 {
 	if (is_addr_safe(0x566C18))

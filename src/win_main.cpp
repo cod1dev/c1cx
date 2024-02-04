@@ -3,84 +3,42 @@
 #include "ShlObj.h"
 #include "Shlwapi.h"
 #include "Shellapi.h"
-
-
 #include "libs/imgui/imgui.h"
 #include "libs/imgui/imgui_impl_opengl2.h"
 #include "libs/imgui/imgui_impl_win32.h"
-
-
 #include "client.h"
 
-
-
 static int(__stdcall *entryPoint)(HINSTANCE, HINSTANCE, LPSTR, int) = (int(__stdcall*)(HINSTANCE, HINSTANCE, LPSTR, int))0x4640B0;
-
-char sys_cmdline[MAX_STRING_CHARS];
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 extern "C" bool bClosing = false;
 
-extern HMODULE hModule;
 #ifdef DEBUG
 HMODULE hLogFile;
 #endif
+extern HMODULE hModule;
+
+bool waitForMenuKeyReleasing = false;
+bool menuIsDisplayed = false;
+bool displayMenu = false;
 
 void Sys_Unload()
 {
 	bClosing = true;
 	static bool unloaded = false;
-
 	if (unloaded)
 		return;
 	unloaded = true;
-
 #ifdef DEBUG
 	_CrtDumpMemoryLeaks();
 	CloseHandle(hLogFile);
 #endif
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-void SetWindowCapture(bool capture)
-{
-	if (!*gameWindow)
-		return;
-
-	if (capture)
-		SetCapture(*gameWindow);
-	else
-		ReleaseCapture();
-
-	ShowCursor(capture ? false : true);
-}
-
-
-
-
-bool waitForMenuKeyReleasing = false;
-bool menuIsDisplayed = false;
-bool displayMenu = false;
-
-
-
-// Forward declare message handler from imgui_impl_win32.cpp
-extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK h_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	if (ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam))
 		return true;
-
 
 	switch (uMsg)
 	{
@@ -96,18 +54,23 @@ LRESULT CALLBACK h_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				if (!menuIsDisplayed)
 				{
 					displayMenu = true;
-					SetWindowCapture(false);
+					Cvar_Set("in_mouse", "0");
+					((void(*)())0x461910)(); //IN_Shutdown //To give mouse to menu
+					*mouseInitialized = 0;
 				}
 				else
 				{
 					displayMenu = false;
-					SetWindowCapture(true);
+					Cvar_Set("in_mouse", "1");
+					*mouseInitialized = 1;
 				}
 			}
 			waitForMenuKeyReleasing = true;
 
 			break;
 		default:
+			if (menuIsDisplayed)
+				return 0; //To prevent moving
 			break;
 		}
 		break;
@@ -122,31 +85,26 @@ LRESULT CALLBACK h_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			break;
 		}
 		break;
+	case WM_LBUTTONDOWN:
+	case WM_MBUTTONDOWN:
+	case WM_RBUTTONDOWN:
+	case WM_LBUTTONUP:
+	case WM_MBUTTONUP:
+	case WM_RBUTTONUP:
+	case WM_MOUSEWHEEL:
+	case WM_MOUSEMOVE: //To prevent click+move = shoot
+		if (menuIsDisplayed)
+			return 0;
+		break;
 	}
-
+	
 	LRESULT(CALLBACK * o_WndProc)(HWND, UINT, WPARAM, LPARAM);
 	*(int*)&o_WndProc = 0x466BE0;
 	return o_WndProc(hWnd, uMsg, wParam, lParam);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	strncpy(sys_cmdline, lpCmdLine, sizeof(sys_cmdline) - 1);
-
 	void MSS32_Hook();
 	MSS32_Hook();
 

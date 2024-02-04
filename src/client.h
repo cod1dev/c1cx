@@ -11,6 +11,7 @@
 #define gameWindow ((HWND*)0x16C35E8)
 #define glc_vidWidth ((int*)0x16C3AE4)
 #define glc_vidHeight ((int*)0x16C3AE8)
+#define mouseInitialized ((int*)0x8e2524) //from WinMouseVars_t
 
 static bool unlock_client_structure()
 {

@@ -22,42 +22,6 @@ void Main_UnprotectModule(HMODULE hModule)
 	VirtualProtect((LPVOID)hModule, size, PAGE_EXECUTE_READWRITE, &oldProtect);
 }
 
-
-
-
-
-
-extern bool displayMenu;
-
-
-
-BOOL __stdcall hSetCursorPos(int x, int y)
-{
-	if (displayMenu)
-		return TRUE;
-	return SetCursorPos(x, y);
-}
-POINT cachedPt;
-BOOL __stdcall hGetCursorPos(LPPOINT pt)
-{
-	if (displayMenu)
-	{
-		pt->x = cachedPt.x;
-		pt->y = cachedPt.y;
-		return TRUE;
-	}
-	auto result = GetCursorPos(pt);
-	cachedPt.x = pt->x;
-	cachedPt.y = pt->y;
-	return result;
-}
-
-
-
-
-
-
-
 bool applyHooks()
 {
 	HMODULE hModule;
@@ -85,10 +49,6 @@ bool applyHooks()
 
 	LRESULT CALLBACK h_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	*(int*)(0x4639b9 + 1) = (int)h_WndProc;
-
-	__ffcall(0x461858, (int)hGetCursorPos);
-	__ffcall(0x461664, (int)hSetCursorPos);
-	__ffcall(0x46186c, (int)hSetCursorPos);
 
 	void CL_Init();
 	__call(0x437B4B, (int)CL_Init);

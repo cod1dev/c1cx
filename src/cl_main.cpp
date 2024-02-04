@@ -14,10 +14,6 @@ cvar_t* xui_fps;
 cvar_t* xui_fps_x;
 cvar_t* xui_fps_y;
 
-
-
-
-
 void Cmd_Minimize()
 {
 	ShowWindow(*gameWindow, SW_MINIMIZE);
@@ -26,13 +22,13 @@ void Cmd_Minimize()
 
 
 
+
+
 void Cmd_ImGui_f()
 {
-	//escape
-	//SetWndCapture(imguiEnabled);
-	//client needs to do /vid_restart in order to make code go through the if once again
-}
 
+
+}
 
 
 
