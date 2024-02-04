@@ -2,10 +2,10 @@
 Supported patch: **1.1**
 ### It adds security, fixes, and features
 - Protects against a download exploit
-- Fixes the modded server CD-Key error
+- Fixes the modded servers CD-Key error
 - Sensitivity aim multiplier
-- and more
+- ...and more
 ___
-### Installation and usage
+### Installation and Use
 
 See the [Wiki](https://github.com/raphael12333/codextended-client/wiki)
