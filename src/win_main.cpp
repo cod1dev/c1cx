@@ -66,11 +66,10 @@ LRESULT CALLBACK h_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				}
 			}
 			waitForMenuKeyReleasing = true;
-
 			break;
 		default:
 			if (menuIsDisplayed)
-				return 0; //To prevent moving
+				return 0; //To prevent player moving
 			break;
 		}
 		break;
@@ -96,6 +95,8 @@ LRESULT CALLBACK h_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		if (menuIsDisplayed)
 			return 0;
 		break;
+	case WM_MENUCHAR:
+		return MNC_CLOSE << 16; //To prevent Alt+Enter beep sound
 	}
 	
 	LRESULT(CALLBACK * o_WndProc)(HWND, UINT, WPARAM, LPARAM);

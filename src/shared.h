@@ -209,6 +209,7 @@ extern Cvar_Get_t Cvar_Get;
 extern Cvar_FindVar_t Cvar_FindVar;
 
 char* Cvar_VariableString(const char*);
+int Cvar_VariableIntegerValue(const char* var_name);
 
 void Q_strncpyz(char *dest, const char *src, int destsize);
 void Com_sprintf(char *dest, int size, const char *fmt, ...);

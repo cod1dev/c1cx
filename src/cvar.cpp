@@ -11,3 +11,10 @@ char *Cvar_VariableString(const char *var_name)
 		return "";
 	return var->string;
 }
+int Cvar_VariableIntegerValue(const char* var_name)
+{
+	cvar_t* var = Cvar_FindVar(var_name);
+	if (!var)
+		return 0;
+	return var->integer;
+}

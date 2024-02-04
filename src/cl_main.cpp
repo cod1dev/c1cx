@@ -271,12 +271,13 @@ void CL_Init(void)
 		MsgBox("Bug fixes failed");
 		Com_Quit_f();
 	}
-
+	
 	void(*oCL_Init)();
 	*(int*)(&oCL_Init) = 0x411E60;
 	oCL_Init();
 
 	Cmd_AddCommand("minimize", Cmd_Minimize);
+
 
 
 
@@ -287,7 +288,8 @@ void CL_Init(void)
 
 
 
-	Cvar_Get("cl_httpDownloadSupport", "1", CVAR_USERINFO | CVAR_ROM);
+
+	Cvar_Get("cl_supportHttpDownload", "1", CVAR_USERINFO | CVAR_ROM);
 
 	com_cl_running = Cvar_Get("cl_running", "0", CVAR_ROM);
 	cl_wwwDownload = Cvar_Get("cl_wwwDownload", "1", CVAR_ARCHIVE);
@@ -299,4 +301,10 @@ void CL_Init(void)
 	xui_fps = Cvar_Get("cg_xui_fps", "1", CVAR_ARCHIVE);
 	xui_fps_x = Cvar_Get("cg_xui_fps_x", "597", CVAR_ARCHIVE);
 	xui_fps_y = Cvar_Get("cg_xui_fps_y", "12", CVAR_ARCHIVE);
+
+	if (Cvar_VariableIntegerValue("in_mouse") == 0) //If closed game while imgui was open
+	{
+		Cvar_Set("in_mouse", "1");
+		*mouseInitialized = 1; //TODO: try to set cvar earlier instead
+	}
 }
