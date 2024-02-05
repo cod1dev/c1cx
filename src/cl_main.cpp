@@ -19,24 +19,6 @@ void Cmd_Minimize()
 	ShowWindow(*gameWindow, SW_MINIMIZE);
 }
 
-
-
-
-
-
-void Cmd_ImGui_f()
-{
-
-
-}
-
-
-
-
-
-
-
-
 char* __cdecl CL_SetServerInfo_HostnameStrncpy(char* a1, char* a2, size_t a3)
 {
 	return strncpy(a1, Com_CleanHostname(a2, true), a3);
@@ -278,17 +260,6 @@ void CL_Init(void)
 
 	Cmd_AddCommand("minimize", Cmd_Minimize);
 
-
-
-
-
-	Cmd_AddCommand("imgui", Cmd_ImGui_f);
-
-
-
-
-
-
 	Cvar_Get("cl_supportHttpDownload", "1", CVAR_USERINFO | CVAR_ROM);
 
 	com_cl_running = Cvar_Get("cl_running", "0", CVAR_ROM);
@@ -301,10 +272,4 @@ void CL_Init(void)
 	xui_fps = Cvar_Get("cg_xui_fps", "1", CVAR_ARCHIVE);
 	xui_fps_x = Cvar_Get("cg_xui_fps_x", "597", CVAR_ARCHIVE);
 	xui_fps_y = Cvar_Get("cg_xui_fps_y", "12", CVAR_ARCHIVE);
-
-	if (Cvar_VariableIntegerValue("in_mouse") == 0) //If closed game while imgui was open
-	{
-		Cvar_Set("in_mouse", "1");
-		*mouseInitialized = 1; //TODO: try to set cvar earlier instead
-	}
 }

@@ -37,9 +37,14 @@ void Sys_Unload()
 
 LRESULT CALLBACK h_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	if (ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam))
-		return true;
-
+	if (uMsg != WM_KEYDOWN || wParam != VK_HOME) //Not to send toggle key to imgui
+	{
+		if (menuIsDisplayed && ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam))
+		{
+			return true;
+		}
+	}
+	
 	switch (uMsg)
 	{
 	case WM_CREATE:
@@ -54,22 +59,23 @@ LRESULT CALLBACK h_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				if (!menuIsDisplayed)
 				{
 					displayMenu = true;
-					Cvar_Set("in_mouse", "0");
-					((void(*)())0x461910)(); //IN_Shutdown //To give mouse to menu
+					((void(*)())0x4616b0)(); //IN_DeactivateMouse //TODO: check can do similar for keyboard
+					*mouseActive = 0;
 					*mouseInitialized = 0;
 				}
 				else
 				{
+					ImGui::SaveIniSettingsToDisk(ImGui::GetIO().IniFilename); //Not to wait IniSavingRate
 					displayMenu = false;
-					Cvar_Set("in_mouse", "1");
 					*mouseInitialized = 1;
+					((void(*)())0x461730)(); //IN_ActivateMouse
 				}
 			}
 			waitForMenuKeyReleasing = true;
 			break;
 		default:
 			if (menuIsDisplayed)
-				return 0; //To prevent player moving
+				return 0; //To prevent player move
 			break;
 		}
 		break;
@@ -84,14 +90,7 @@ LRESULT CALLBACK h_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			break;
 		}
 		break;
-	case WM_LBUTTONDOWN:
-	case WM_MBUTTONDOWN:
-	case WM_RBUTTONDOWN:
-	case WM_LBUTTONUP:
-	case WM_MBUTTONUP:
-	case WM_RBUTTONUP:
 	case WM_MOUSEWHEEL:
-	case WM_MOUSEMOVE: //To prevent click+move = shoot
 		if (menuIsDisplayed)
 			return 0;
 		break;

@@ -11,12 +11,10 @@ extern bool displayMenu;
 extern bool menuIsDisplayed;
 bool imgui_init_called = false;
 bool imgui_needs_restore = false;
-bool imgui_size_position_set = false;
-bool imgui_focus_set = false;
 
 BOOL(WINAPI* oSwapBuffers)(HDC);
 HGLRC wglContext;
-HWND hWnd;
+HWND hWnd_during_imgui_init;
 
 SCR_DrawString_t SCR_DrawString = (SCR_DrawString_t)0x4DF570;
 RE_SetColor_t RE_SetColor = (RE_SetColor_t)0x4DDCF0;
@@ -25,38 +23,37 @@ void initImgui(HDC hdc)
 {
 	imgui_init_called = true;
 
-	hWnd = WindowFromDC(hdc);
+	hWnd_during_imgui_init = *gameWindow;
 	wglContext = wglCreateContext(hdc);
 	
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();	
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	ImGui::StyleColorsDark();
-	ImGui_ImplWin32_InitForOpenGL(hWnd);
+	ImGui_ImplWin32_InitForOpenGL(*gameWindow);
 	ImGui_ImplOpenGL2_Init();
 }
 
 BOOL __stdcall hSwapBuffers(HDC hdc)
 {
 	if (!imgui_init_called)
+	{
 		initImgui(hdc);
+	}
 	else
 	{
-		if (WindowFromDC(hdc) != hWnd) //Caused by Alt+Enter / vid_restart
+		if (WindowFromDC(hdc) != hWnd_during_imgui_init) //Caused by Alt+Enter / vid_restart
 		{
 			ImGui_ImplOpenGL2_Shutdown();
 			ImGui_ImplWin32_Shutdown();
 			ImGui::DestroyContext();
 
 			initImgui(hdc);
-			imgui_focus_set = false;
 			imgui_needs_restore = true;
 		}
 	}
 	if (!displayMenu)
 	{
-		if (menuIsDisplayed)
-			imgui_focus_set = false;
 		menuIsDisplayed = false;
 		return oSwapBuffers(hdc);
 	}
@@ -67,19 +64,31 @@ BOOL __stdcall hSwapBuffers(HDC hdc)
 	ImGui_ImplOpenGL2_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
-	if (!imgui_size_position_set)
-	{
-		ImGui::SetNextWindowSize(ImVec2(500, 300));
-		ImGui::SetNextWindowPos(ImVec2(50, 150));
-		//ImGui::SetNextWindowContentSize(ImVec2(100, 100));
-		imgui_size_position_set = true;
-	}
-	if (!imgui_focus_set)
-	{
-		ImGui::SetNextWindowFocus();
-		imgui_focus_set = true;
-	}
-	ImGui::Begin("menu");
+	ImGui::SetNextWindowSize(ImVec2(500, 300), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowPos(ImVec2(50, 150), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowContentSize(ImVec2(100, 100));
+	ImGui::SetNextWindowFocus();
+	ImGui::Begin("codextended-client rFork", NULL, ImGuiWindowFlags_NoCollapse);
+
+
+
+
+	ImGui::Text("test text");
+	static float f = 0.0f;
+	ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+
+	static int counter = 0;
+	if (ImGui::Button("Button"))
+		counter++;
+	ImGui::SameLine();
+	ImGui::Text("counter = %d", counter);
+
+	static char buffer[256];
+	ImGui::InputText("##InputText", buffer, sizeof(buffer));
+
+
+
+
 	ImGui::End();
 	ImGui::EndFrame();
 	ImGui::Render();
