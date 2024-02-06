@@ -35,6 +35,26 @@ void Sys_Unload()
 #endif
 }
 
+
+
+/*
+bool altEscapeDetected = false;
+void CALLBACK WinEventProc(HWINEVENTHOOK hWinEventHook, DWORD event, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime)
+{
+	OutputDebugString("###### WinEventProc \n");
+	if (GetAsyncKeyState(VK_MENU) & 0x8000)
+	{
+		if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)
+		{
+			OutputDebugString("###### MENU \n");
+			altEscapeDetected = true;
+			return;
+		}
+	}
+}*/
+
+
+
 LRESULT CALLBACK h_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	if (uMsg != WM_KEYDOWN || wParam != VK_HOME) //Not to send toggle key to imgui
@@ -107,6 +127,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 {
 	void MSS32_Hook();
 	MSS32_Hook();
+
+	//SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, nullptr, WinEventProc, 0, 0, WINEVENT_OUTOFCONTEXT);
 
 	extern bool mss32_original_loaded;
 	if (!mss32_original_loaded)

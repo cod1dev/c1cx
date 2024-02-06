@@ -12,6 +12,16 @@ extern bool menuIsDisplayed;
 bool imgui_init_called = false;
 bool imgui_needs_restore = false;
 
+bool sensitivityAimMultiply_enabled = false;
+float sensitivityAimMultiply_value = 0.0f;
+bool hideConnectionInterrupted = false;
+bool hideMiddleMessages = false;
+
+extern cvar_t* cl_sensitivityAimMultiply_enabled;
+extern cvar_t* cl_sensitivityAimMultiply;
+extern cvar_t* cg_drawConnectionInterrupted;
+extern cvar_t* cg_drawMessagesMiddle;
+
 BOOL(WINAPI* oSwapBuffers)(HDC);
 HGLRC wglContext;
 HWND hWnd_during_imgui_init;
@@ -29,6 +39,7 @@ void initImgui(HDC hdc)
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();	
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\Verdana.ttf", 18.0f);
 	ImGui::StyleColorsDark();
 	ImGui_ImplWin32_InitForOpenGL(*gameWindow);
 	ImGui_ImplOpenGL2_Init();
@@ -68,26 +79,38 @@ BOOL __stdcall hSwapBuffers(HDC hdc)
 	ImGui::SetNextWindowPos(ImVec2(50, 150), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowContentSize(ImVec2(100, 100));
 	ImGui::SetNextWindowFocus();
-	ImGui::Begin("codextended-client rFork", NULL, ImGuiWindowFlags_NoCollapse);
+	ImGui::Begin("CoD1i", NULL, ImGuiWindowFlags_NoCollapse);
 
+	/*Connection Interrupted */
+	hideConnectionInterrupted = cg_drawConnectionInterrupted->integer ? false : true;
+	ImGui::Checkbox("Hide \"Connection Interrupted\"", &hideConnectionInterrupted);
+	Cvar_Set(cg_drawConnectionInterrupted->name, hideConnectionInterrupted ? "0" : "1");
+	/**/
 
+	/*Middle messages*/
+	hideMiddleMessages = cg_drawMessagesMiddle->integer ? false : true;
+	ImGui::Checkbox("Hide middle messages", &hideMiddleMessages);
+	Cvar_Set(cg_drawMessagesMiddle->name, hideMiddleMessages ? "0" : "1");
+	/**/
 
+	ImGui::Separator(); //TODO: full window width
 
-	ImGui::Text("test text");
-	static float f = 0.0f;
-	ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+	/*Sensitivity aim multiplier*/
+	sensitivityAimMultiply_enabled = cl_sensitivityAimMultiply_enabled->integer;
+	sensitivityAimMultiply_value = cl_sensitivityAimMultiply->value;
 
-	static int counter = 0;
-	if (ImGui::Button("Button"))
-		counter++;
-	ImGui::SameLine();
-	ImGui::Text("counter = %d", counter);
+	ImGui::Checkbox("Sensitivity aim multiplier", &sensitivityAimMultiply_enabled);
+	Cvar_Set(cl_sensitivityAimMultiply_enabled->name, sensitivityAimMultiply_enabled ? "1" : "0");
 
-	static char buffer[256];
-	ImGui::InputText("##InputText", buffer, sizeof(buffer));
+	if (!sensitivityAimMultiply_enabled)
+		ImGui::BeginDisabled();
 
+	ImGui::SliderFloat("##", &sensitivityAimMultiply_value, 0.25f, 1.25f, "%.2f", ImGuiSliderFlags_NoInput);
+	Cvar_Set(cl_sensitivityAimMultiply->name, va("%f", (float)sensitivityAimMultiply_value));
 
-
+	if (!sensitivityAimMultiply_enabled)
+		ImGui::EndDisabled();
+	/**/
 
 	ImGui::End();
 	ImGui::EndFrame();

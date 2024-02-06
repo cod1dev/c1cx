@@ -7,6 +7,7 @@ cvar_t* com_cl_running;
 cvar_t* g_bounce;
 cvar_t* cl_wwwDownload;
 cvar_t* cl_allowDownload;
+cvar_t* cl_sensitivityAimMultiply_enabled;
 cvar_t* cl_sensitivityAimMultiply;
 cvar_t* cg_drawConnectionInterrupted;
 cvar_t* cg_drawMessagesMiddle;
@@ -265,7 +266,8 @@ void CL_Init(void)
 	com_cl_running = Cvar_Get("cl_running", "0", CVAR_ROM);
 	cl_wwwDownload = Cvar_Get("cl_wwwDownload", "1", CVAR_ARCHIVE);
 	cl_allowDownload = Cvar_Get("cl_allowDownload", "0", CVAR_ARCHIVE);
-	cl_sensitivityAimMultiply = Cvar_Get("sensitivityAimMultiply", "1.0", CVAR_ARCHIVE);
+	cl_sensitivityAimMultiply_enabled = Cvar_Get("sensitivityAimMultiply_enabled", "0", CVAR_ARCHIVE);
+	cl_sensitivityAimMultiply = Cvar_Get("sensitivityAimMultiply", "0.5", CVAR_ARCHIVE);
 	g_bounce = Cvar_Get("g_bounce", "0", CVAR_ARCHIVE);
 	cg_drawConnectionInterrupted = Cvar_Get("cg_drawConnectionInterrupted", "1", CVAR_ARCHIVE);
 	cg_drawMessagesMiddle = Cvar_Get("cg_drawMessagesMiddle", "1", CVAR_ARCHIVE);

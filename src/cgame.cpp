@@ -79,12 +79,22 @@ void pm_aimflag() // To aim in the air
 }
 */
 
+
+
+
+
+
+extern cvar_t* cl_sensitivityAimMultiply_enabled;
 extern cvar_t* cl_sensitivityAimMultiply;
 float stockCgZoomSensitivity()
 {
 	float* fov_visible_percentage = (float*)CGAME_OFF(0x3020958c); //Visible percentage of cg_fov value
 	float* cg_fov_value = (float*)CGAME_OFF(0x30298c68);
 	return (*fov_visible_percentage / *cg_fov_value); //See instruction 30032fe8
+}
+float multipliedCgZoomSensitivity()
+{
+	return stockCgZoomSensitivity() * cl_sensitivityAimMultiply->value;
 }
 void sensitivityAimMultiply()
 {
@@ -94,7 +104,10 @@ void sensitivityAimMultiply()
 	if (*ads_anim_progress == 1) //ADS animation completed
 	{
 		//ADS
-		*cg_zoomSensitivity = (stockCgZoomSensitivity() * cl_sensitivityAimMultiply->value);
+		if (cl_sensitivityAimMultiply_enabled->integer)
+			*cg_zoomSensitivity = multipliedCgZoomSensitivity();
+		else
+			*cg_zoomSensitivity = stockCgZoomSensitivity();
 	}
 	else if (*ads_anim_progress != 0) //ADS animation in progress
 	{
@@ -102,7 +115,10 @@ void sensitivityAimMultiply()
 		if (*ads)
 		{
 			//ADS
-			*cg_zoomSensitivity = (stockCgZoomSensitivity() * cl_sensitivityAimMultiply->value);
+			if (cl_sensitivityAimMultiply_enabled->integer)
+				*cg_zoomSensitivity = multipliedCgZoomSensitivity();
+			else
+				*cg_zoomSensitivity = stockCgZoomSensitivity();
 		}
 		else
 		{
@@ -122,6 +138,13 @@ void sensitivityAimMultiply()
 		retn
 	}
 }
+
+
+
+
+
+
+
 
 extern cvar_t* cg_drawConnectionInterrupted;
 void CG_DrawDisconnect()
