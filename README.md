@@ -9,3 +9,8 @@ Menu key: **Home**
 ___
 ### Installation
 See the [Wiki](https://github.com/raphael12333/codextended-client/wiki)
+___
+#### Credits
+- [CoDPlusPlus](https://github.com/kartjom/CoDPlusPlus)
+- [iw2clientdll](https://github.com/xtnded/iw2clientdll)
+- [iw3xo](https://github.com/xoxor4d/iw3xo-dev)
