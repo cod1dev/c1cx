@@ -11,6 +11,7 @@ ___
 See the [Wiki](https://github.com/raphael12333/codextended-client/wiki)
 ___
 #### Credits
-- [CoDPlusPlus](https://github.com/kartjom/CoDPlusPlus)
 - [iw2clientdll](https://github.com/xtnded/iw2clientdll)
-- [iw3xo](https://github.com/xoxor4d/iw3xo-dev)
+- [CoDPlusPlus](https://github.com/kartjom/CoDPlusPlus)
+- [iw3xo-dev](https://github.com/xoxor4d/iw3xo-dev)
+- [CoD4x_Client_pub](https://github.com/callofduty4x/CoD4x_Client_pub)
