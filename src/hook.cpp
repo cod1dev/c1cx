@@ -22,20 +22,6 @@ void Main_UnprotectModule(HMODULE hModule)
 	VirtualProtect((LPVOID)hModule, size, PAGE_EXECUTE_READWRITE, &oldProtect);
 }
 
-
-
-//TODO: handle Alt+Esc for menu toggle
-/*
-__declspec(naked) void Sys_GetEvent_TranslateMessage()
-{
-	__asm
-	{
-		call edi;
-	}
-}*/
-
-
-
 bool applyHooks()
 {
 	HMODULE hModule;
@@ -89,15 +75,6 @@ bool applyHooks()
 	__jmp(0x40CB1E, (int)Field_CharEvent_IgnoreTilde);
 
 	__call(0x46319B, (int)cleanupExit);
-
-	/*
-	unsigned int off = 0x463727;
-	DWORD tmp;
-	VirtualProtect((void*)off, 2, PAGE_EXECUTE_READWRITE, &tmp);
-	int foffset = (int)(Sys_GetEvent_TranslateMessage) - (off + 2);
-	memcpy((void*)(off + 1), &foffset, 1);
-	FlushInstructionCache(GetCurrentProcess(), (void*)off, 2);
-	VirtualProtect((void*)off, 2, tmp, &tmp);*/
 
 	return true;
 }

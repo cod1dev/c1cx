@@ -20,7 +20,7 @@ void Main_DoInit()
 	{
 		Main_UnprotectModule(hModule);
 	}
-	void patch_opcode_loadlibrary(void);
+
 	// return to the original EP
 	memcpy(originalEP, &originalCode, sizeof(originalCode));
 	__asm jmp originalEP
@@ -74,6 +74,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
 			}
 #endif
 			codextended();
+
 			break;
 		case DLL_PROCESS_DETACH:
 			break;

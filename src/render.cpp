@@ -79,7 +79,7 @@ BOOL __stdcall hSwapBuffers(HDC hdc)
 	ImGui::SetNextWindowPos(ImVec2(50, 150), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowContentSize(ImVec2(100, 100));
 	ImGui::SetNextWindowFocus();
-	ImGui::Begin("CoD1i", NULL, ImGuiWindowFlags_NoCollapse);
+	ImGui::Begin("codxt", NULL, ImGuiWindowFlags_NoCollapse);
 
 	/*Connection Interrupted */
 	hideConnectionInterrupted = cg_drawConnectionInterrupted->integer ? false : true;

@@ -135,50 +135,6 @@ void CL_WWWDownload()
 	}
 }
 
-//DL STUCK FIX/WORKAROUND (CLIENT SIDE) //TODO: prevent multiple map (down)loading + check if can be server side only
-/*
-int* cl_serverId = (int*)0x143a9ac;
-int last_cl_serverId = 0;
-void _CL_InitDownloads()
-{
-	bool preventCall = false;
-
-	if (cl_allowDownload->integer
-		&& FS_ComparePaks(clc_downloadList, 1024, qfalse)
-		&& *clc_downloadList)
-	{
-		//CLIENT WILL DOWNLOAD
-		if ((*cl_serverId && last_cl_serverId)
-			&& (*cl_serverId > last_cl_serverId))
-		{
-			preventCall = true;
-		}
-	}
-	else
-	{
-		//CLIENT WILL NOT DOWNLOAD
-		if ((*cl_serverId && last_cl_serverId)
-			&& (*cl_serverId > last_cl_serverId))
-		{
-			//TODO: try to fix this:
-			//Uncomment = prevents double map load but prevents future map changes (disconnect error: CL_SetCGameTime: !cl.snap.valid)
-			//preventCall = true;
-		}
-	}
-
-	if (*cl_serverId)
-	{
-		last_cl_serverId = *cl_serverId;
-	}
-	if (preventCall)
-	{
-		return;
-	}
-	void(*CL_InitDownloads)();
-	*(int*)(&CL_InitDownloads) = 0x410240;
-	CL_InitDownloads();
-}
-*/
 void _CL_NextDownload()
 {
 	char* info = clc_stringData + clc_stringOffsets[1];
@@ -189,7 +145,7 @@ void _CL_NextDownload()
 		const char* arg1 = Info_ValueForKey(info, "sv_referencedPakNames");
 		if (strstr(arg1, ".pk3") != NULL)
 		{
-			Com_Error(ERR_DROP, "Potentially dangerous download prevented");
+			Com_Error(ERR_DROP, "Potentially dangerous download blocked");
 			return;
 		}
 	}
