@@ -7,7 +7,7 @@ Menu key: **Home**
 - Sensitivity aim multiplier
 - ...and more
 ___
-### Installation
+### Build and Run
 See the [Wiki](https://github.com/raphael12333/codextended-client/wiki)
 ___
 #### Credits
