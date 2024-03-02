@@ -4,7 +4,11 @@
 void cleanupExit()
 {
 	void(*o)();
-	*(UINT32*)&o = 0x40E2B0;
+#ifdef PATCH_1_1
+	* (UINT32*)&o = 0x40E2B0;
+#elif PATCH_1_5
+	* (UINT32*)&o = 0x0040ef70;
+#endif
 	o();
 
 	void Sys_Unload();
@@ -30,13 +34,17 @@ bool applyHooks()
 		Main_UnprotectModule(hModule);
 	}
 
+#ifdef PATCH_1_1
 	unlock_client_structure(); // make some client cls structure members writeable
+#endif
 
+#ifdef PATCH_1_1
 	/*by lstolcman*/
 	// allow alt tab - set dwExStyle from WS_EX_TOPMOST to WS_EX_LEFT (default), which allows minimizing
 	XUNLOCK((void*)0x5083b1, 1);
 	memset((void*)0x5083b1, 0x00, 1);
 	/**/
+#endif
 
 	void patch_opcode_loadlibrary();
 	patch_opcode_loadlibrary();
@@ -45,15 +53,29 @@ bool applyHooks()
 	patch_opcode_glbindtexture();
 
 	int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow);
+#ifdef PATCH_1_1
 	__call(0x528948, (int)WinMain);
+#elif PATCH_1_5
+	__call(0x00560f99, (int)WinMain);
+#endif
 
 	LRESULT CALLBACK h_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-	*(int*)(0x4639b9 + 1) = (int)h_WndProc;
+#ifdef PATCH_1_1
+	* (int*)(0x4639b9 + 1) = (int)h_WndProc;
+#elif PATCH_1_5
+	* (int*)(0x00468db9 + 1) = (int)h_WndProc;
+#endif
 
 	void CL_Init();
+#ifdef PATCH_1_1
 	__call(0x437B4B, (int)CL_Init);
 	__call(0x438178, (int)CL_Init);
+#elif PATCH_1_5
+	__call(0x00439fca, (int)CL_Init);
+	__call(0x0043a617, (int)CL_Init);
+#endif
 
+#ifdef PATCH_1_1
 	void CL_Frame(int msec);
 	__call(0x43822C, (int)CL_Frame);
 
@@ -73,8 +95,12 @@ bool applyHooks()
 
 	void Field_CharEvent_IgnoreTilde();
 	__jmp(0x40CB1E, (int)Field_CharEvent_IgnoreTilde);
+#endif
 
+#ifdef PATCH_1_1
 	__call(0x46319B, (int)cleanupExit);
-
+#elif PATCH_1_5
+	__call(0x004684c5, (int)cleanupExit);
+#endif
 	return true;
 }

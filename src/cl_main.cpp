@@ -15,6 +15,7 @@ cvar_t* xui_fps;
 cvar_t* xui_fps_x;
 cvar_t* xui_fps_y;
 
+#ifdef PATCH_1_1
 void Cmd_Minimize()
 {
 	ShowWindow(*gameWindow, SW_MINIMIZE);
@@ -201,20 +202,30 @@ void CL_Frame(int msec)
 	*(DWORD*)&call = 0x411280;
 	call(msec);
 }
+#endif
+
+
 
 void CL_Init(void)
 {
+#ifdef PATCH_1_1
 	bool fixBugs();
 	if (!fixBugs())
 	{
 		MsgBox("Bug fixes failed");
 		Com_Quit_f();
 	}
-	
+#endif
+
 	void(*oCL_Init)();
+#ifdef PATCH_1_1
 	*(int*)(&oCL_Init) = 0x411E60;
+#elif PATCH_1_5
+	* (int*)(&oCL_Init) = 0x00413380;
+#endif
 	oCL_Init();
 
+#ifdef PATCH_1_1
 	Cmd_AddCommand("minimize", Cmd_Minimize);
 
 	Cvar_Get("cl_supportHttpDownload", "1", CVAR_USERINFO | CVAR_ROM);
@@ -222,12 +233,17 @@ void CL_Init(void)
 	com_cl_running = Cvar_Get("cl_running", "0", CVAR_ROM);
 	cl_wwwDownload = Cvar_Get("cl_wwwDownload", "1", CVAR_ARCHIVE);
 	cl_allowDownload = Cvar_Get("cl_allowDownload", "0", CVAR_ARCHIVE);
+#endif
+
 	cl_sensitivityAimMultiply_enabled = Cvar_Get("sensitivityAimMultiply_enabled", "0", CVAR_ARCHIVE);
 	cl_sensitivityAimMultiply = Cvar_Get("sensitivityAimMultiply", "0.5", CVAR_ARCHIVE);
+
+#ifdef PATCH_1_1
 	g_bounce = Cvar_Get("g_bounce", "0", CVAR_ARCHIVE);
 	cg_drawConnectionInterrupted = Cvar_Get("cg_drawConnectionInterrupted", "1", CVAR_ARCHIVE);
 	cg_drawMessagesMiddle = Cvar_Get("cg_drawMessagesMiddle", "1", CVAR_ARCHIVE);
 	xui_fps = Cvar_Get("cg_xui_fps", "1", CVAR_ARCHIVE);
 	xui_fps_x = Cvar_Get("cg_xui_fps_x", "597", CVAR_ARCHIVE);
 	xui_fps_y = Cvar_Get("cg_xui_fps_y", "12", CVAR_ARCHIVE);
+#endif
 }

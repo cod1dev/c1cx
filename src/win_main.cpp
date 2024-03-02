@@ -8,7 +8,11 @@
 #include "libs/imgui/imgui_impl_win32.h"
 #include "client.h"
 
+#ifdef PATCH_1_1
 static int(__stdcall *entryPoint)(HINSTANCE, HINSTANCE, LPSTR, int) = (int(__stdcall*)(HINSTANCE, HINSTANCE, LPSTR, int))0x4640B0;
+#elif PATCH_1_5
+static int(__stdcall* entryPoint)(HINSTANCE, HINSTANCE, LPSTR, int) = (int(__stdcall*)(HINSTANCE, HINSTANCE, LPSTR, int))0x004694b0;
+#endif
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 extern "C" bool bClosing = false;
@@ -59,7 +63,11 @@ LRESULT CALLBACK h_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				if (!menuIsDisplayed)
 				{
 					displayMenu = true;
+#ifdef PATCH_1_1
 					((void(*)())0x4616b0)(); //IN_DeactivateMouse //TODO: check can do similar for keyboard
+#elif PATCH_1_5
+					((void(*)())0x004669d0)(); //IN_DeactivateMouse //TODO: check can do similar for keyboard
+#endif
 					*mouseActive = 0;
 					*mouseInitialized = 0;
 				}
@@ -68,7 +76,11 @@ LRESULT CALLBACK h_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					ImGui::SaveIniSettingsToDisk(ImGui::GetIO().IniFilename); //Not to wait IniSavingRate
 					displayMenu = false;
 					*mouseInitialized = 1;
+#ifdef PATCH_1_1
 					((void(*)())0x461730)(); //IN_ActivateMouse
+#elif PATCH_1_5
+					((void(*)())0x00466a50)(); //IN_ActivateMouse
+#endif
 				}
 			}
 			waitForMenuKeyReleasing = true;
@@ -99,7 +111,14 @@ LRESULT CALLBACK h_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 	
 	LRESULT(CALLBACK * o_WndProc)(HWND, UINT, WPARAM, LPARAM);
-	*(int*)&o_WndProc = 0x466BE0;
+
+
+#ifdef PATCH_1_1
+	* (int*)&o_WndProc = 0x466BE0;
+#elif PATCH_1_5
+	* (int*)&o_WndProc = 0x0046c160;
+#endif
+
 	return o_WndProc(hWnd, uMsg, wParam, lParam);
 }
 

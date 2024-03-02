@@ -1,6 +1,8 @@
 #include "shared.h"
 
 DWORD game_mp;
+
+#ifdef PATCH_1_1
 extern cvar_t* g_bounce;
 
 /*by xoxor4d*/
@@ -75,9 +77,12 @@ __declspec(naked) void G_PM_Bounce_Stub()
 	}
 }
 /**/
+#endif
 
 void G_Init(DWORD base)
 {
 	game_mp = base;
+#ifdef PATCH_1_1
 	__jmp(GAME_OFF(0x2000D56B), (int)G_PM_Bounce_Stub);
+#endif
 }

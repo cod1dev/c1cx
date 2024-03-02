@@ -4,6 +4,7 @@
 #define CVAR_USERINFO       2   // sent to server on connect or change
 #define CVAR_ROM            64  // display only, cannot be set by user at all
 
+#ifdef PATCH_1_1
 #define MAX_STRING_CHARS    1024 // max length of a string passed to Cmd_TokenizeString
 #define MAX_STRING_TOKENS   256 // max tokens resulting from Cmd_TokenizeString
 #define MAX_RELIABLE_COMMANDS 64
@@ -15,6 +16,7 @@
 #define BIG_INFO_VALUE      8192
 #define MAX_QPATH 64
 #define MAX_OSPATH 256
+#endif
 
 typedef enum
 {
@@ -37,6 +39,7 @@ typedef struct cvar_s
 	struct cvar_s* hashNext;
 } cvar_t;
 
+#ifdef PATCH_1_1
 typedef enum
 {
 	CA_UNINITIALIZED,
@@ -55,7 +58,6 @@ typedef vec_t vec3_t[3];
 
 #define DotProduct( x,y )         ( ( x )[0] * ( y )[0] + ( x )[1] * ( y )[1] + ( x )[2] * ( y )[2] )
 #define VectorCopy( a,b )         ( ( b )[0] = ( a )[0],( b )[1] = ( a )[1],( b )[2] = ( a )[2] )
-
 
 typedef struct
 {
@@ -199,13 +201,19 @@ typedef struct //usercmd_s i defined in server.h?
 	usercmd_t cmd;
 	//some remaining
 } pmove_t;
+#endif
 
 typedef void(*Cvar_Set_t)(char*, char*);
 typedef cvar_t* (*Cvar_Get_t)(const char*, const char*, int);
+
+#ifdef PATCH_1_1
 typedef cvar_t* (*Cvar_FindVar_t)(const char*);
+#endif
 
 extern Cvar_Set_t Cvar_Set;
 extern Cvar_Get_t Cvar_Get;
+
+#ifdef PATCH_1_1
 extern Cvar_FindVar_t Cvar_FindVar;
 
 char* Cvar_VariableString(const char*);
@@ -218,13 +226,14 @@ int Cmd_Argc();
 
 void Info_SetValueForKey(char *s, const char *key, const char *value);
 char* Info_ValueForKey(const char *s, const char *key);
+#endif
 
 extern DWORD game_mp;
 extern DWORD cgame_mp;
-
 #define GAME_OFF(x) (game_mp + (x - 0x20000000))
 #define CGAME_OFF(x) (cgame_mp + (x - 0x30000000))
 
+#ifdef PATCH_1_1
 typedef void(*CL_BeginDownload_t)(const char*, const char*);
 static CL_BeginDownload_t CL_BeginDownload = (CL_BeginDownload_t)0x4100D0;
 typedef void(*CL_NextDownload_t)(void);
@@ -233,3 +242,4 @@ static CL_NextDownload_t CL_NextDownload = (CL_NextDownload_t)0x410190;
 char* Q_CleanStr(char* string, bool colors = false);
 
 char* Com_CleanHostname(char* hostname, bool colors);
+#endif

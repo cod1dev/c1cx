@@ -2,7 +2,10 @@
 
 #define WIN32_LEAN_AND_MEAN // Exclude rarely-used stuff from Windows headers
 #define _MB_TITLE "CoDExtended"
+
+#ifdef PATCH_1_1
 #define CURL_STATICLIB
+#endif
 
 #include <windows.h>
 #include <ctime>
@@ -17,17 +20,24 @@ typedef unsigned char byte;
 extern int codversion;
 typedef enum
 {
-	COD1_1_1,
-	COD1_SP
+	COD1_1_1_MP,
+	COD1_1_1_SP,
+	COD1_1_5_MP,
+	COD1_1_5_SP
 } cod_v;
 
+#ifdef PATCH_1_1
 static void(*Com_Quit_f)() = (void(*)())0x435D80;
+#elif PATCH_1_5
+static void(*Com_Quit_f)() = (void(*)())0x00438220;
+#endif
 
 static void MsgBox(const char* msg)
 {
 	MessageBoxA(NULL, msg, _MB_TITLE, MB_OK | MB_ICONINFORMATION);
 }
 
+/*
 static bool CopyToClipboard(const char *s)
 {
 	if (OpenClipboard(NULL))
@@ -45,7 +55,7 @@ static bool CopyToClipboard(const char *s)
 	else
 		return false;
 	return true;
-}
+}*/
 
 static bool is_addr_safe(size_t addr)
 {

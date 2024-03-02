@@ -1,3 +1,5 @@
+#ifdef PATCH_1_1
+
 #include "shared.h"
 
 void Q_strncpyz(char *dest, const char *src, int destsize)
@@ -372,3 +374,5 @@ char* Com_CleanHostname(char* string, bool colors)
 
 	return hostname;
 }
+
+#endif

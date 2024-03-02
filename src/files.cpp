@@ -1,3 +1,5 @@
+#ifdef PATCH_1_1
+
 #include "shared.h"
 
 FS_CreatePath_t FS_CreatePath = (FS_CreatePath_t)0x429000;
@@ -50,3 +52,5 @@ int FS_IsLegacyFile(const char* filename)
 	}
 	return 0;
 }
+
+#endif

@@ -6,6 +6,7 @@
 
 DWORD cgame_mp;
 
+#ifdef PATCH_1_1
 typedef void(*CG_ServerCommand_t)();
 CG_ServerCommand_t CG_ServerCommand;
 
@@ -59,6 +60,7 @@ void _CG_ServerCommand(void)
 	}
 	CG_ServerCommand();
 }
+#endif
 
 /* //TODO: improve so it works like CoD2
 void pm_aimflag() // To aim in the air
@@ -79,18 +81,18 @@ void pm_aimflag() // To aim in the air
 }
 */
 
-
-
-
-
-
 extern cvar_t* cl_sensitivityAimMultiply_enabled;
 extern cvar_t* cl_sensitivityAimMultiply;
 float stockCgZoomSensitivity()
 {
+#ifdef PATCH_1_1
 	float* fov_visible_percentage = (float*)CGAME_OFF(0x3020958c); //Visible percentage of cg_fov value
 	float* cg_fov_value = (float*)CGAME_OFF(0x30298c68);
-	return (*fov_visible_percentage / *cg_fov_value); //See instruction 30032fe8
+#elif PATCH_1_5
+	float* fov_visible_percentage = (float*)CGAME_OFF(0x3020d340); //Visible percentage of cg_fov value
+	float* cg_fov_value = (float*)CGAME_OFF(0x3029ca28);
+#endif
+	return (*fov_visible_percentage / *cg_fov_value); //See instruction 30032fe8 || 30034688
 }
 float multipliedCgZoomSensitivity()
 {
@@ -98,9 +100,15 @@ float multipliedCgZoomSensitivity()
 }
 void sensitivityAimMultiply()
 {
+#ifdef PATCH_1_1
 	float* cg_zoomSensitivity = (float*)CGAME_OFF(0x3020b5f4); //zoomSensitivity var of cg_t struct
 	float* ads_anim_progress = (float*)CGAME_OFF(0x30207214); //From 0 to 1
-	//See FUN_30032e20
+#elif PATCH_1_5
+	float* cg_zoomSensitivity = (float*)CGAME_OFF(0x3020f3a8); //zoomSensitivity var of cg_t struct
+	float* ads_anim_progress = (float*)CGAME_OFF(0x3020afcc); //From 0 to 1
+#endif
+
+	//See FUN_30032e20 || FUN_300344c0
 	if (*ads_anim_progress == 1) //ADS animation completed
 	{
 		//ADS
@@ -111,7 +119,11 @@ void sensitivityAimMultiply()
 	}
 	else if (*ads_anim_progress != 0) //ADS animation in progress
 	{
+#ifdef PATCH_1_1
 		bool* ads = (bool*)CGAME_OFF(0x30209458);
+#elif PATCH_1_5
+		bool* ads = (bool*)CGAME_OFF(0x3020d20c);
+#endif
 		if (*ads)
 		{
 			//ADS
@@ -139,13 +151,7 @@ void sensitivityAimMultiply()
 	}
 }
 
-
-
-
-
-
-
-
+#ifdef PATCH_1_1
 extern cvar_t* cg_drawConnectionInterrupted;
 void CG_DrawDisconnect()
 {
@@ -283,10 +289,14 @@ __declspec(naked) void PM_Bounce_Stub()
 }
 /**/
 
+
+#endif
+
 void CG_Init(DWORD base)
 {
 	cgame_mp = base;
 
+#ifdef PATCH_1_1
 	CG_Argv = (char* (*)(int))CGAME_OFF(0x30020960);
 	CG_ServerCommand = (CG_ServerCommand_t)(cgame_mp + 0x2E0D0);
 
@@ -306,6 +316,11 @@ void CG_Init(DWORD base)
 	*/
 
 	__jmp(CGAME_OFF(0x3000D82B), (int)PM_Bounce_Stub);
+#endif
 
+#ifdef PATCH_1_1
 	__jmp(CGAME_OFF(0x30032fe8), (int)sensitivityAimMultiply);
+#elif PATCH_1_5
+	__jmp(CGAME_OFF(0x30034688), (int)sensitivityAimMultiply);
+#endif
 }

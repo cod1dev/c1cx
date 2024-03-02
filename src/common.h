@@ -2,6 +2,7 @@
 
 #include "stdafx.h"
 
+#ifdef PATCH_1_1
 #define MAX_MSGLEN 32768 // max length of a message, which may     
 
 typedef enum
@@ -32,6 +33,8 @@ typedef struct
 	unsigned char ipx[10];
 	unsigned short port;
 } netadr_t;
+#endif
+
 
 typedef enum
 {
@@ -46,11 +49,15 @@ typedef enum
 
 typedef void(*Com_Printf_t)(const char*, ...);
 extern Com_Printf_t Com_Printf;
+#ifdef PATCH_1_1
 typedef void(*Com_DPrintf_t)(const char *, ...);
 extern Com_DPrintf_t Com_DPrintf;
+#endif
+
 typedef void(*Com_Error_t)(int, const char*, ...);
 extern Com_Error_t Com_Error;
 
+#ifdef PATCH_1_1
 typedef void(*xfunc)(void);
 
 typedef void(*Cmd_AddCommand_t)(const char*, xfunc);
@@ -62,4 +69,6 @@ typedef int (*FS_ComparePaks_t)(char *neededpaks, int len, int dlstring);
 extern FS_ComparePaks_t FS_ComparePaks;
 
 char *FS_BuildOSPath(const char *base, const char *game, const char *qpath);
+#endif
+
 char *va(char *format, ...);

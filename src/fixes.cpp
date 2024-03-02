@@ -1,3 +1,5 @@
+#ifdef PATCH_1_1
+
 #include "shared.h"
 
 static void CLUI_GetCDKey(char* buf, int buflen)
@@ -26,3 +28,5 @@ bool fixBugs()
 
 	return true;
 }
+
+#endif

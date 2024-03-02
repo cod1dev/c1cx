@@ -1,9 +1,17 @@
 #include "common.h"
 
+#ifdef PATCH_1_1
 Com_DPrintf_t Com_DPrintf = (Com_DPrintf_t)0x435820;
 Com_Printf_t Com_Printf = (Com_Printf_t)0x4357B0;
 Com_Error_t Com_Error = (Com_Error_t)0x435AD0;
+#elif PATCH_1_5
+Com_Printf_t Com_Printf = (Com_Printf_t)0x00437c00;
+Com_Error_t Com_Error = (Com_Error_t)0x00437f70;
+#endif
+
+#ifdef PATCH_1_1
 Cmd_AddCommand_t Cmd_AddCommand = (Cmd_AddCommand_t)0x428840;
+#endif
 
 char *va(char *format, ...)
 {

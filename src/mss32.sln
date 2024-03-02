@@ -7,16 +7,25 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mss32", "mss32.vcxproj", "{
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|x86 = Debug|x86
-		Release|x86 = Release|x86
+		Debug 1.1|x86 = Debug 1.1|x86
+		Debug 1.5|x86 = Debug 1.5|x86
+		Release 1.1|x86 = Release 1.1|x86
+		Release 1.5|x86 = Release 1.5|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E5E0EC0F-B28E-4899-A788-80430630F507}.Debug|x86.ActiveCfg = Debug|Win32
-		{E5E0EC0F-B28E-4899-A788-80430630F507}.Debug|x86.Build.0 = Debug|Win32
-		{E5E0EC0F-B28E-4899-A788-80430630F507}.Release|x86.ActiveCfg = Release|Win32
-		{E5E0EC0F-B28E-4899-A788-80430630F507}.Release|x86.Build.0 = Release|Win32
+		{E5E0EC0F-B28E-4899-A788-80430630F507}.Debug 1.1|x86.ActiveCfg = Debug 1.1|Win32
+		{E5E0EC0F-B28E-4899-A788-80430630F507}.Debug 1.1|x86.Build.0 = Debug 1.1|Win32
+		{E5E0EC0F-B28E-4899-A788-80430630F507}.Debug 1.5|x86.ActiveCfg = Debug 1.5|Win32
+		{E5E0EC0F-B28E-4899-A788-80430630F507}.Debug 1.5|x86.Build.0 = Debug 1.5|Win32
+		{E5E0EC0F-B28E-4899-A788-80430630F507}.Release 1.1|x86.ActiveCfg = Release 1.1|Win32
+		{E5E0EC0F-B28E-4899-A788-80430630F507}.Release 1.1|x86.Build.0 = Release 1.1|Win32
+		{E5E0EC0F-B28E-4899-A788-80430630F507}.Release 1.5|x86.ActiveCfg = Release 1.5|Win32
+		{E5E0EC0F-B28E-4899-A788-80430630F507}.Release 1.5|x86.Build.0 = Release 1.5|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {94520DC2-A143-4FDF-A85D-7269352B5103}
 	EndGlobalSection
 EndGlobal

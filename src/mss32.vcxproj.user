@@ -3,9 +3,14 @@
   <PropertyGroup>
     <ShowAllFiles>true</ShowAllFiles>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LocalDebuggerCommand>C:\Call of Duty\CoDMP.exe</LocalDebuggerCommand>
-    <LocalDebuggerWorkingDirectory>C:\Call of Duty</LocalDebuggerWorkingDirectory>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug 1.1|Win32'">
+    <LocalDebuggerCommand>C:\Call of Duty 1.1\CoDMP.exe</LocalDebuggerCommand>
+    <LocalDebuggerWorkingDirectory>C:\Call of Duty 1.1</LocalDebuggerWorkingDirectory>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug 1.5|Win32'">
+    <LocalDebuggerCommand>C:\Call of Duty 1.5\CoDMP.exe</LocalDebuggerCommand>
+    <LocalDebuggerWorkingDirectory>C:\Call of Duty 1.5</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
 </Project>

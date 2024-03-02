@@ -5,7 +5,7 @@ extern HANDLE hLogFile = INVALID_HANDLE_VALUE;
 #endif
 
 HMODULE hModule;
-// PROCESS_DETACH is not called so don't make global declarations which have deconstructors which have to be called. //TODO: understand this comment
+// PROCESS_DETACH is not called so don't make global declarations which have deconstructors which have to be called. //TODO: understand
 static BYTE originalCode[5];
 static PBYTE originalEP = 0;
 

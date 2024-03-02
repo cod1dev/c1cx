@@ -371,13 +371,17 @@ extern "C"
 	static HMODULE hMSS = NULL;
 
 	typedef void(*Com_Printf_t)(const char*, ...);
+#ifdef PATCH_1_1
 	Com_Printf_t Com_Printf_o = (Com_Printf_t)0x4357B0;
+#elif PATCH_1_5
+	Com_Printf_t Com_Printf_o = (Com_Printf_t)0x00437c00;
+#endif
 
 	char printmsg[1024] = { 0 };
 	void Com_Printf(const char *s)
 	{
 		extern int codversion;
-		if (codversion != COD1_1_1)
+		if (codversion != COD1_1_1_MP && codversion != COD1_1_5_MP)
 			return;
 		if (!strcmp(printmsg, s))
 			return;

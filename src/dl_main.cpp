@@ -1,3 +1,5 @@
+#ifdef PATCH_1_1
+
 #include "shared.h"
 #include "dl_public.h"
 #include "client.h"
@@ -173,3 +175,5 @@ dlStatus_t DL_DownloadLoop()
 
 	return DL_DONE;
 }
+
+#endif

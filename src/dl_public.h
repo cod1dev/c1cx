@@ -1,3 +1,5 @@
+#ifdef PATCH_1_1
+
 #pragma once
 
 extern bool clc_bWWWDl;
@@ -20,3 +22,5 @@ typedef enum
 } dlFlags_t;
 
 dlStatus_t DL_DownloadLoop();
+
+#endif

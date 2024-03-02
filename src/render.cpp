@@ -19,15 +19,19 @@ bool hideMiddleMessages = false;
 
 extern cvar_t* cl_sensitivityAimMultiply_enabled;
 extern cvar_t* cl_sensitivityAimMultiply;
+#ifdef PATCH_1_1
 extern cvar_t* cg_drawConnectionInterrupted;
 extern cvar_t* cg_drawMessagesMiddle;
+#endif
 
 BOOL(WINAPI* oSwapBuffers)(HDC);
 HGLRC wglContext;
 HWND hWnd_during_imgui_init;
 
+#ifdef PATCH_1_1
 SCR_DrawString_t SCR_DrawString = (SCR_DrawString_t)0x4DF570;
 RE_SetColor_t RE_SetColor = (RE_SetColor_t)0x4DDCF0;
+#endif
 
 void initImgui(HDC hdc)
 {
@@ -81,6 +85,7 @@ BOOL __stdcall hSwapBuffers(HDC hdc)
 	ImGui::SetNextWindowFocus();
 	ImGui::Begin("codxt", NULL, ImGuiWindowFlags_NoCollapse);
 
+#ifdef PATCH_1_1
 	/*Connection Interrupted */
 	hideConnectionInterrupted = cg_drawConnectionInterrupted->integer ? false : true;
 	ImGui::Checkbox("Hide \"Connection Interrupted\"", &hideConnectionInterrupted);
@@ -94,6 +99,7 @@ BOOL __stdcall hSwapBuffers(HDC hdc)
 	/**/
 
 	ImGui::Separator(); //TODO: full window width
+#endif
 
 	/*Sensitivity aim multiplier*/
 	sensitivityAimMultiply_enabled = cl_sensitivityAimMultiply_enabled->integer;

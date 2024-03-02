@@ -14,7 +14,7 @@ void codextended()
 		MsgBox("CoD version verification failed");
 		return;
 	}
-	else if (codversion == COD1_1_1 && !applyHooks())
+	else if ((codversion == COD1_1_1_MP || codversion == COD1_1_5_MP) && !applyHooks())
 	{
 		MsgBox("Hooking failed");
 		Com_Quit_f();

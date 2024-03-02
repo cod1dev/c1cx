@@ -1,6 +1,7 @@
 #include "shared.h"
 #include "client.h"
 
+#ifdef PATCH_1_1
 UINT_PTR pfield_charevent_return = (UINT_PTR)0x40CB77;
 UINT_PTR pfield_charevent_continue = (UINT_PTR)0x40CB23;
 __declspec(naked) void Field_CharEvent_IgnoreTilde()
@@ -24,3 +25,4 @@ __declspec(naked) void Field_CharEvent_IgnoreTilde()
 // jl ... is 2 bytes 7c54 (assuming when subtracing the addresses)
 // so it works out
 // - Richard
+#endif
