@@ -1,14 +1,14 @@
 ## Client extension for Call of Duty 1 (2003)
-Supported patch: **1.1**  
+Supported patches: **1.1**, **1.5**  
 Menu key: **Home**
-### It adds security, fixes, and features
-- Protects against a download exploit
-- Fixes the modded servers CD-Key error
-- Sensitivity aim multiplier
+### Adding security, fixes, and features
+- Protects against a download exploit **(/!\ currently for 1.1 only**)
+- Fixes the 1.1 modded servers CD-Key error
+- Aim Down Sight Sensitivity
 - ...and more
 ___
-### Build and Run
-See the [Wiki](https://github.com/raphael12333/codextended-client/wiki)
+### Installation and usage
+See the [Wiki](https://github.com/codxt/codextended-client/wiki)
 ___
 #### Credits
 - [iw2clientdll](https://github.com/xtnded/iw2clientdll)
