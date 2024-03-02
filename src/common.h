@@ -3,7 +3,7 @@
 #include "stdafx.h"
 
 #ifdef PATCH_1_1
-#define MAX_MSGLEN 32768 // max length of a message, which may     
+#define MAX_MSGLEN 16384
 
 typedef enum
 {
