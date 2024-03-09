@@ -293,8 +293,8 @@ __declspec(naked) void PM_Bounce_Stub()
 #ifdef PATCH_1_5
 void _PM_WalkMove()
 {
-	int jump_slowdownEnable = atoi(Info_ValueForKey(cs1, "jump_slowdownEnable"));
-	if (!jump_slowdownEnable)
+	char* jump_slowdownEnable = Info_ValueForKey(cs1, "jump_slowdownEnable");
+	if (*jump_slowdownEnable && atoi(jump_slowdownEnable) == 0)
 	{
 		int* pm = (int*)(cgame_mp + 0x1a0ed0);
 		playerState_t* ps = ((pmove_t*)*((int*)pm))->ps;
