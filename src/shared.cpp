@@ -1,7 +1,6 @@
-#ifdef PATCH_1_1
-
 #include "shared.h"
 
+#ifdef PATCH_1_1
 void Q_strncpyz(char *dest, const char *src, int destsize)
 {
 	if (!src)
@@ -16,6 +15,8 @@ void Q_strncpyz(char *dest, const char *src, int destsize)
 	strncpy(dest, src, destsize - 1);
 	dest[destsize - 1] = 0;
 }
+#endif
+
 int Q_stricmpn(const char *s1, const char *s2, int n)
 {
 	int c1, c2;
@@ -43,11 +44,13 @@ int Q_stricmpn(const char *s1, const char *s2, int n)
 
 	return 0;       // strings are equal
 }
+
 int Q_stricmp(const char *s1, const char *s2)
 {
 	return (s1 && s2) ? Q_stricmpn(s1, s2, 99999) : -1;
 }
 
+#ifdef PATCH_1_1
 void QDECL Com_sprintf(char *dest, int size, const char *fmt, ...)
 {
 	int ret;
@@ -73,6 +76,7 @@ char* Cmd_Argv(int index)
 		return "";
 	return cmd_argv[index];
 }
+#endif
 
 char* Info_ValueForKey(const char *s, const char *key) //FIXME: overflow check?
 {
@@ -127,6 +131,8 @@ char* Info_ValueForKey(const char *s, const char *key) //FIXME: overflow check?
 
 	return "";
 }
+
+#ifdef PATCH_1_1
 void Info_RemoveKey(char *s, const char *key)
 {
 	char    *start;

@@ -288,8 +288,24 @@ __declspec(naked) void PM_Bounce_Stub()
 	}
 }
 /**/
+#endif
 
+#ifdef PATCH_1_5
+void _PM_WalkMove()
+{
+	int jump_slowdownEnable = atoi(Info_ValueForKey(cs1, "jump_slowdownEnable"));
+	if (!jump_slowdownEnable)
+	{
+		int* pm = (int*)(cgame_mp + 0x1a0ed0);
+		playerState_t* ps = ((pmove_t*)*((int*)pm))->ps;
+		ps->pm_flags &= ~0x2000u;
+		ps->pm_time = 0;
+	}
 
+	void(*PM_WalkMove)();
+	*(int*)&PM_WalkMove = CGAME_OFF(0x30008810);
+	PM_WalkMove();
+}
 #endif
 
 void CG_Init(DWORD base)
@@ -322,5 +338,9 @@ void CG_Init(DWORD base)
 	__jmp(CGAME_OFF(0x30032fe8), (int)sensitivityAimMultiply);
 #elif PATCH_1_5
 	__jmp(CGAME_OFF(0x30034688), (int)sensitivityAimMultiply);
+#endif
+
+#ifdef PATCH_1_5
+	__call(CGAME_OFF(0x3000d68f), (int)_PM_WalkMove);
 #endif
 }

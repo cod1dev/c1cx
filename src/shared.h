@@ -1,8 +1,9 @@
 #include "common.h"
 
-#define CVAR_ARCHIVE        1   // set to cause it to be saved to vars.rc
-#define CVAR_USERINFO       2   // sent to server on connect or change
-#define CVAR_ROM            64  // display only, cannot be set by user at all
+#define CVAR_ARCHIVE        1
+#define CVAR_USERINFO       2
+#define CVAR_ROM            64
+#define CVAR_CHEAT          512
 
 #ifdef PATCH_1_1
 #define MAX_STRING_CHARS    1024 // max length of a string passed to Cmd_TokenizeString
@@ -11,9 +12,11 @@
 #define MAX_INFO_STRING     1024
 #define MAX_INFO_KEY        1024
 #define MAX_INFO_VALUE      1024
+#endif
 #define BIG_INFO_STRING     8192 // used for system info key only
 #define BIG_INFO_KEY        8192
 #define BIG_INFO_VALUE      8192
+#ifdef PATCH_1_1
 #define MAX_QPATH 64
 #define MAX_OSPATH 256
 #endif
@@ -50,9 +53,13 @@ typedef enum
 } connstate_t;
 
 typedef int fileHandle_t;
+#endif
+
 typedef float vec_t;
+typedef vec_t vec2_t[2];
 typedef vec_t vec3_t[3];
 
+#ifdef PATCH_1_1
 #define Q_COLOR_ESCAPE  '^'
 #define Q_IsColorString( p )  ( p && *( p ) == Q_COLOR_ESCAPE && *( ( p ) + 1 ) && *( ( p ) + 1 ) != Q_COLOR_ESCAPE )
 
@@ -125,83 +132,99 @@ typedef struct
 	int			timeDemoBaseTime;	// each frame will be at this time + frameNum * 50
 	netchan_t	netchan;
 } clientConnection_t;
+#endif
+
+typedef enum
+{
+	PM_NORMAL = 0x0,
+	PM_NORMAL_LINKED = 0x1,
+	PM_NOCLIP = 0x2,
+	PM_UFO = 0x3,
+	PM_SPECTATOR = 0x4,
+	PM_INTERMISSION = 0x5,
+	PM_DEAD = 0x6,
+	PM_DEAD_LINKED = 0x7,
+} pmtype_t;
+
+typedef enum
+{
+	WEAPON_READY = 0x0,
+	WEAPON_RAISING = 0x1,
+	WEAPON_DROPPING = 0x2,
+	WEAPON_FIRING = 0x3,
+	WEAPON_RECHAMBERING = 0x4,
+	WEAPON_RELOADING = 0x5,
+	WEAPON_RELOADING_INTERUPT = 0x6,
+	WEAPON_RELOAD_START = 0x7,
+	WEAPON_RELOAD_START_INTERUPT = 0x8,
+	WEAPON_RELOAD_END = 0x9,
+	WEAPON_MELEE_INIT = 0xA,
+	WEAPON_MELEE_FIRE = 0xB,
+	WEAPONSTATES_NUM = 0xC,
+} weaponstate_t;
 
 typedef struct playerState_s
 {
 	int commandTime;
-	int pm_type;
+	pmtype_t pm_type;
 	int bobCycle;
 	int pm_flags;
 	int pm_time;
 	vec3_t origin;
 	vec3_t velocity;
-	char gap_2C[20];
+	vec2_t oldVelocity;
+	int weaponTime;
+	int weaponDelay;
+	int gravity;
 	float leanf;
 	int speed;
-	char gap_48[12];
+	vec3_t delta_angles;
 	int groundEntityNum;
-	char gap_58[12];
+	vec3_t vLadderVec;
 	int jumpTime;
-	int field_68;
-	int legsTime;
+	float jumpOriginZ;
+	int legsTimer;
 	int legsAnim;
-	int torsoTime;
+	int torsoTimer;
 	int torsoAnim;
 	int movementDir;
 	int eFlags;
-	char gap_84[24];
-	int field_9C;
-	int field_A0;
-	int field_A4;
-	int field_A8;
+	int eventSequence;
+	int events[4];
+	unsigned int eventParms[4];
+	int oldEventSequence;
 	int clientNum;
-	int weapon;
-	int field_B4;
-	char gap_B8;
-	char gap_B9;
-	char gap_BA[2];
-	int field_BC;
+	unsigned int weapon;
+	weaponstate_t weaponstate;
+	float fWeaponPosFrac;
+	int adsDelayTime;
+	//TODO: check if one of two the above is "int viewmodelIndex" instead
 	vec3_t viewangles;
-	char gap_CC[40];
-	int health;
-	char gap_F8[556];
-	vec3_t mins;
-	vec3_t maxs;
-	float viewheight_prone;
-	int viewheight_crouched;
-	float viewheight_standing;
-	int field_348;
-	float runSpeedScale;
-	float sprintSpeedScale;
-	char gap_354[40];
-	float friction;
-	char gap_380[68];
-	float fTorsoHeight;
-	float fTorsoPitch;
-	float fWaistPitch;
-	char rest[7416];
-	int end;
+#ifdef PATCH_1_1
+	byte pad[8196];
+#elif PATCH_1_5
+	byte pad[8192];
+#endif
 } playerState_t;
 
 typedef struct usercmd_s
 {
 	int serverTime;
-	byte buttons; //console,chat talking, aim down the sight, attackbutton, usebutton
-	byte wbuttons; //lean right,left,reload
+	byte buttons; // console, chat, ads, attack, use
+	byte wbuttons; // lean left, lean right, reload
 	byte weapon;
 	byte flags;
 	int angles[3];
 	signed char forwardmove, rightmove, upmove;
-	byte unknown; //could be doubleTap or client
+	byte unknown;
 } usercmd_t;
 
-typedef struct //usercmd_s i defined in server.h?
-{ 
+struct pmove_t
+{
 	playerState_t* ps;
 	usercmd_t cmd;
-	//some remaining
-} pmove_t;
-#endif
+	// some remains
+};
 
 typedef void(*Cvar_Set_t)(char*, char*);
 typedef cvar_t* (*Cvar_Get_t)(const char*, const char*, int);
@@ -225,8 +248,9 @@ char* Cmd_Argv(int index);
 int Cmd_Argc();
 
 void Info_SetValueForKey(char *s, const char *key, const char *value);
-char* Info_ValueForKey(const char *s, const char *key);
 #endif
+
+char* Info_ValueForKey(const char *s, const char *key);
 
 extern DWORD game_mp;
 extern DWORD cgame_mp;
