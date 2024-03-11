@@ -291,20 +291,172 @@ __declspec(naked) void PM_Bounce_Stub()
 #endif
 
 #ifdef PATCH_1_5
-void _PM_WalkMove()
+
+#define PMF_JUMPING 0x2000
+#define JUMP_LAND_SLOWDOWN_TIME 1800
+#define VectorScale( v, s, o )      ( ( o )[0] = ( v )[0] * ( s ),( o )[1] = ( v )[1] * ( s ),( o )[2] = ( v )[2] * ( s ) )
+
+void Jump_ApplySlowdown()
 {
+	int* pm = (int*)(cgame_mp + 0x1a0ed0);
+	playerState_t* ps = ((pmove_t*)*((int*)pm))->ps;
+
+	if (ps->pm_flags & PMF_JUMPING)
+	{
+		float scale = 1.0;
+
+		if (ps->pm_time <= JUMP_LAND_SLOWDOWN_TIME)
+		{
+			if (!ps->pm_time)
+			{
+				if ((float)(ps->jumpOriginZ + 18.0) <= ps->origin[2])
+				{
+					ps->pm_time = 1200;
+					scale = 0.5;
+				}
+				else
+				{
+					ps->pm_time = JUMP_LAND_SLOWDOWN_TIME;
+					scale = 0.64999998;
+				}
+			}
+		}
+		else
+		{
+			// Clear jump state
+			ps->pm_flags &= ~PMF_JUMPING;
+			ps->jumpOriginZ = 0.0;
+			scale = 0.64999998;
+		}
+
+		char* jump_slowdownEnable = Info_ValueForKey(cs1, "jump_slowdownEnable");
+		if (*jump_slowdownEnable && atoi(jump_slowdownEnable) == 0)
+			return;
+		VectorScale(ps->velocity, scale, ps->velocity);
+	}
+}
+uintptr_t resume_addr_PM_WalkMove;
+__declspec(naked) void hook_PM_WalkMove_Naked()
+{
+	__asm
+	{
+		pushad;
+		call Jump_ApplySlowdown;
+		popad;
+		jmp resume_addr_PM_WalkMove;
+	}
+}
+
+//#include <sstream>
+void hook_PM_SlideMove(float primal_velocity_0, float primal_velocity_1, float primal_velocity_2)
+{
+	/*std::ostringstream oss;
+	oss << "primal_velocity_0 = " << primal_velocity_0 << ", primal_velocity_1 = " << primal_velocity_1 << ", primal_velocity_2 = " << primal_velocity_2 << "\n";
+	std::string str = oss.str();
+	OutputDebugString(str.c_str());*/
+
+	char* jump_slowdownEnable = Info_ValueForKey(cs1, "jump_slowdownEnable");
+	if (*jump_slowdownEnable && atoi(jump_slowdownEnable) == 0)
+		return;
+
+	//TODO: Fix receiving an origin instead of a velocity
+#if 0
+	int* pm = (int*)(cgame_mp + 0x1a0ed0);
+	playerState_t* ps = ((pmove_t*)*((int*)pm))->ps;
+	if (ps->pm_time)
+	{
+		ps->velocity[0] = primal_velocity_0;
+		ps->velocity[1] = primal_velocity_1;
+		ps->velocity[2] = primal_velocity_2;
+	}
+#endif
+}
+uintptr_t resume_addr_PM_SlideMove;
+__declspec(naked) void hook_PM_SlideMove_Naked()
+{
+	__asm
+	{
+		//84: esp + 0x78 | ebp - 0xB0
+		//85: esp + 0x7C | ebp - 0xAC
+		//86: esp + 0x80 | ebp - 0xA8
+
+		// Access the three variables from the stack
+		mov eax, dword ptr[esp + 0x78]  // Load v84 into eax
+		mov ecx, dword ptr[esp + 0x7C]  // Load v85 into ecx
+		mov edx, dword ptr[esp + 0x80]  // Load v86 into edx
+
+		// Call the function with these parameters
+		push edx  // Push v86
+		push ecx  // Push v85
+		push eax  // Push v84
+
+		call hook_PM_SlideMove
+		add esp, 12
+
+		jmp resume_addr_PM_SlideMove
+	}
+}
+
+void Jump_GetLandFactor()
+{
+	int* pm = (int*)(cgame_mp + 0x1a0ed0);
+	playerState_t* ps = ((pmove_t*)*((int*)pm))->ps;
+
+	double factor;
+
+	char* jump_slowdownEnable = Info_ValueForKey(cs1, "jump_slowdownEnable");
+	if (*jump_slowdownEnable && atoi(jump_slowdownEnable) == 0)
+		factor = 1.0;
+	else if (ps->pm_time < 1700)
+		factor = (double)ps->pm_time * 0.00088235294 + 1.0;
+	else
+		factor = 2.5;
+
+	__asm fld factor
+}
+uintptr_t resume_addr_Jump_Start;
+__declspec(naked) void hook_Jump_Start_Naked()
+{
+	__asm
+	{
+		pushad;
+		call Jump_GetLandFactor;
+		popad;
+		jmp resume_addr_Jump_Start;
+	}
+}
+
+void custom_PM_GetReducedFriction()
+{
+	double friction;
+	
 	char* jump_slowdownEnable = Info_ValueForKey(cs1, "jump_slowdownEnable");
 	if (*jump_slowdownEnable && atoi(jump_slowdownEnable) == 0)
 	{
+		friction = 1.0;
+	}
+	else
+	{
 		int* pm = (int*)(cgame_mp + 0x1a0ed0);
 		playerState_t* ps = ((pmove_t*)*((int*)pm))->ps;
-		ps->pm_flags &= ~0x2000u;
-		ps->pm_time = 0;
+
+		if (ps->pm_time < 1700)
+			friction = (double)ps->pm_time * 0.00088235294 + 1.0;
+		else
+			friction = 2.5;
 	}
 
-	void(*PM_WalkMove)();
-	*(int*)&PM_WalkMove = CGAME_OFF(0x30008810);
-	PM_WalkMove();
+	__asm fld friction
+}
+__declspec(naked) void custom_PM_GetReducedFriction_Naked()
+{
+	__asm
+	{
+		pushad
+		call custom_PM_GetReducedFriction
+		popad
+		ret
+	}
 }
 #endif
 
@@ -341,6 +493,15 @@ void CG_Init(DWORD base)
 #endif
 
 #ifdef PATCH_1_5
-	__call(CGAME_OFF(0x3000d68f), (int)_PM_WalkMove);
+	__jmp(CGAME_OFF(0x30008822), (int)hook_PM_WalkMove_Naked);
+	resume_addr_PM_WalkMove = CGAME_OFF(0x300088be);
+
+	__jmp(CGAME_OFF(0x3000e171), (int)hook_PM_SlideMove_Naked);
+	resume_addr_PM_SlideMove = CGAME_OFF(0x3000e18e);
+
+	__jmp(CGAME_OFF(0x30008320), (int)hook_Jump_Start_Naked);
+	resume_addr_Jump_Start = CGAME_OFF(0x3000833a);
+
+	__jmp(CGAME_OFF(0x30007ae0), (int)custom_PM_GetReducedFriction_Naked);
 #endif
 }
