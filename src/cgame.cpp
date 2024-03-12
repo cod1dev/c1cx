@@ -347,21 +347,12 @@ __declspec(naked) void hook_PM_WalkMove_Naked()
 	}
 }
 
-//#include <sstream>
 void hook_PM_SlideMove(float primal_velocity_0, float primal_velocity_1, float primal_velocity_2)
 {
-	/*
-	std::ostringstream oss;
-	oss << "primal_velocity_0 = " << primal_velocity_0 << ", primal_velocity_1 = " << primal_velocity_1 << ", primal_velocity_2 = " << primal_velocity_2 << "\n";
-	std::string str = oss.str();
-	OutputDebugString(str.c_str());*/
-
 	char* jump_slowdownEnable = Info_ValueForKey(cs1, "jump_slowdownEnable");
 	if (*jump_slowdownEnable && atoi(jump_slowdownEnable) == 0)
 		return;
 
-	//TODO: Fix receiving an origin instead of a velocity
-#if 0
 	int* pm = (int*)(cgame_mp + 0x1a0ed0);
 	playerState_t* ps = ((pmove_t*)*((int*)pm))->ps;
 	if (ps->pm_time)
@@ -370,25 +361,20 @@ void hook_PM_SlideMove(float primal_velocity_0, float primal_velocity_1, float p
 		ps->velocity[1] = primal_velocity_1;
 		ps->velocity[2] = primal_velocity_2;
 	}
-#endif
 }
 uintptr_t resume_addr_PM_SlideMove;
 __declspec(naked) void hook_PM_SlideMove_Naked()
 {
 	__asm
 	{
-		//84: esp + 0x78 | ebp - 0xB0
-		//85: esp + 0x7C | ebp - 0xAC
-		//86: esp + 0x80 | ebp - 0xA8
+		mov eax, dword ptr[esp + 0x110 - 0xA8]
+		mov ecx, dword ptr[esp + 0x110 - 0xAC]
+		mov edx, dword ptr[esp + 0x110 - 0xB0]
 
-		mov eax, dword ptr[esp + 0x78]
-		mov ecx, dword ptr[esp + 0x7C]
-		mov edx, dword ptr[esp + 0x80]
-		
-		push edx
-		push ecx
 		push eax
-
+		push ecx
+		push edx
+		
 		call hook_PM_SlideMove
 		add esp, 12
 
