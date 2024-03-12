@@ -350,7 +350,8 @@ __declspec(naked) void hook_PM_WalkMove_Naked()
 //#include <sstream>
 void hook_PM_SlideMove(float primal_velocity_0, float primal_velocity_1, float primal_velocity_2)
 {
-	/*std::ostringstream oss;
+	/*
+	std::ostringstream oss;
 	oss << "primal_velocity_0 = " << primal_velocity_0 << ", primal_velocity_1 = " << primal_velocity_1 << ", primal_velocity_2 = " << primal_velocity_2 << "\n";
 	std::string str = oss.str();
 	OutputDebugString(str.c_str());*/
@@ -380,15 +381,13 @@ __declspec(naked) void hook_PM_SlideMove_Naked()
 		//85: esp + 0x7C | ebp - 0xAC
 		//86: esp + 0x80 | ebp - 0xA8
 
-		// Access the three variables from the stack
-		mov eax, dword ptr[esp + 0x78]  // Load v84 into eax
-		mov ecx, dword ptr[esp + 0x7C]  // Load v85 into ecx
-		mov edx, dword ptr[esp + 0x80]  // Load v86 into edx
-
-		// Call the function with these parameters
-		push edx  // Push v86
-		push ecx  // Push v85
-		push eax  // Push v84
+		mov eax, dword ptr[esp + 0x78]
+		mov ecx, dword ptr[esp + 0x7C]
+		mov edx, dword ptr[esp + 0x80]
+		
+		push edx
+		push ecx
+		push eax
 
 		call hook_PM_SlideMove
 		add esp, 12
@@ -498,7 +497,7 @@ void CG_Init(DWORD base)
 
 	__jmp(CGAME_OFF(0x3000e171), (int)hook_PM_SlideMove_Naked);
 	resume_addr_PM_SlideMove = CGAME_OFF(0x3000e18e);
-
+	
 	__jmp(CGAME_OFF(0x30008320), (int)hook_Jump_Start_Naked);
 	resume_addr_Jump_Start = CGAME_OFF(0x3000833a);
 

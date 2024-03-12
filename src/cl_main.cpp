@@ -204,8 +204,6 @@ void CL_Frame(int msec)
 }
 #endif
 
-
-
 void CL_Init(void)
 {
 #ifdef PATCH_1_1
@@ -225,10 +223,10 @@ void CL_Init(void)
 #endif
 	oCL_Init();
 
+	Cvar_Get("codxt", "1", CVAR_USERINFO | CVAR_ROM);
+
 #ifdef PATCH_1_1
 	Cmd_AddCommand("minimize", Cmd_Minimize);
-
-	Cvar_Get("cl_supportHttpDownload", "1", CVAR_USERINFO | CVAR_ROM);
 
 	com_cl_running = Cvar_Get("cl_running", "0", CVAR_ROM);
 	cl_wwwDownload = Cvar_Get("cl_wwwDownload", "1", CVAR_ARCHIVE);
