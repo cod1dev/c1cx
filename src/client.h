@@ -11,6 +11,7 @@
 #ifdef PATCH_1_5
 #define clc_stringData ((PCHAR)0x0148fcbc)
 #define clc_stringOffsets ((PINT)0x0148dcbc)
+#define cs0 (clc_stringData + clc_stringOffsets[0])
 #define cs1 (clc_stringData + clc_stringOffsets[1])
 #endif
 

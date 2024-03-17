@@ -66,13 +66,25 @@ bool applyHooks()
 	* (int*)(0x00468db9 + 1) = (int)h_WndProc;
 #endif
 
-	void CL_Init();
+	void _CL_Init();
 #ifdef PATCH_1_1
-	__call(0x437B4B, (int)CL_Init);
-	__call(0x438178, (int)CL_Init);
+	__call(0x437B4B, (int)_CL_Init);
+	__call(0x438178, (int)_CL_Init);
 #elif PATCH_1_5
-	__call(0x00439fca, (int)CL_Init);
-	__call(0x0043a617, (int)CL_Init);
+	__call(0x00439fca, (int)_CL_Init);
+	__call(0x0043a617, (int)_CL_Init);
+#endif
+
+#ifdef PATCH_1_5
+	void _CL_InitCGame(void);
+	__call(0x004109c4, (int)_CL_InitCGame);
+	__call(0x00410d2b, (int)_CL_InitCGame);
+#endif
+
+#ifdef PATCH_1_5
+	void _CL_SystemInfoChanged(void);
+	__call(0x004015fc, (int)_CL_SystemInfoChanged);
+	__call(0x00417a78, (int)_CL_SystemInfoChanged);
 #endif
 
 #ifdef PATCH_1_1
@@ -82,12 +94,10 @@ bool applyHooks()
 	char* __cdecl CL_SetServerInfo_HostnameStrncpy(char*, char*, size_t);
 	__call(0x412A2C, (int)CL_SetServerInfo_HostnameStrncpy);
 
-	void CL_Connect_f();
+	void _CL_Connect_f();
 	XUNLOCK((void*)0x41269B, 5);
-	*(UINT32*)(0x41269B + 1) = (int)CL_Connect_f;
+	*(UINT32*)(0x41269B + 1) = (int)_CL_Connect_f;
 
-	//void _CL_InitDownloads();
-	//__call(0x41627b, (int)_CL_InitDownloads);
 	void _CL_NextDownload();
 	__call(0x410316, (int)_CL_NextDownload);
 	__call(0x410376, (int)_CL_NextDownload);

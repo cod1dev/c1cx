@@ -35,7 +35,6 @@ typedef struct
 } netadr_t;
 #endif
 
-
 typedef enum
 {
 	ERR_FATAL,				// exit the entire game with a popup window

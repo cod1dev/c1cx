@@ -62,24 +62,69 @@ void _CG_ServerCommand(void)
 }
 #endif
 
-/* //TODO: improve so it works like CoD2
-void pm_aimflag() // To aim in the air
+#ifdef PATCH_1_1
+extern cvar_t* cg_drawConnectionInterrupted;
+void CG_DrawDisconnect()
 {
-	int *pm = (int*)(cgame_mp + 0x19D570);
-	int *ps = (int*)*pm;
-	int *gclient = (int*)*ps;
-	int *v4 = (int *)(ps + 12);
-	int val = *(int*)(gclient + 21); //336? 84*4=336 /84/4=21??
-	if (val == 1023)
+	if (cg_drawConnectionInterrupted->integer)
 	{
-		*v4 |= 0x20;
-		return;
+		void(*call)();
+		*(int*)&call = CGAME_OFF(0x30015450);
+		call();
 	}
-	void(*call)();
-	*(int*)&call = CGAME_OFF(0x3000FB80);
-	call();
 }
-*/
+
+#define M_DrawShadowString(x,y,font,fontscale,color,text,a,b,c) \
+	RE_SetColor(vColorBlack); \
+	SCR_DrawString(x + 1,y + 1,font,fontscale,vColorBlack,text,a,b,c); \
+	RE_SetColor(color); \
+	SCR_DrawString(x,y,font,fontscale,color,text,a,b,c); \
+	RE_SetColor(NULL);
+#define	FPS_FRAMES 4
+extern cvar_t* xui_fps;
+extern cvar_t* xui_fps_x;
+extern cvar_t* xui_fps_y;
+void CG_DrawFPS(float y)
+{
+	if (xui_fps->integer)
+	{
+		static int previousTimes[FPS_FRAMES];
+		static int index;
+		int	i, total;
+		int	fps;
+		static int previous;
+		int	t, frameTime;
+
+		t = timeGetTime();
+		frameTime = t - previous;
+		previous = t;
+		previousTimes[index % FPS_FRAMES] = frameTime;
+		index++;
+
+		if (index > FPS_FRAMES)
+		{
+			total = 0;
+			for (i = 0; i < FPS_FRAMES; i++)
+			{
+				total += previousTimes[i];
+			}
+			if (!total)
+			{
+				total = 1;
+			}
+			fps = 1000 * FPS_FRAMES / total;
+
+			M_DrawShadowString(xui_fps_x->integer, xui_fps_y->integer, 1, .20, vColorWhite, va("FPS: %d", fps), NULL, NULL, NULL);
+		}
+	}
+	else
+	{
+		void(*call)(float);
+		*(int*)&call = CGAME_OFF(0x30014A00);
+		call(y);
+	}
+}
+#endif
 
 extern cvar_t* cl_sensitivityAimMultiply_enabled;
 extern cvar_t* cl_sensitivityAimMultiply;
@@ -151,147 +196,7 @@ void sensitivityAimMultiply()
 	}
 }
 
-#ifdef PATCH_1_1
-extern cvar_t* cg_drawConnectionInterrupted;
-void CG_DrawDisconnect()
-{
-	if (cg_drawConnectionInterrupted->integer)
-	{
-		void(*call)();
-		*(int*)&call = CGAME_OFF(0x30015450);
-		call();
-	}
-}
-
-#define M_DrawShadowString(x,y,font,fontscale,color,text,a,b,c) \
-	RE_SetColor(vColorBlack); \
-	SCR_DrawString(x + 1,y + 1,font,fontscale,vColorBlack,text,a,b,c); \
-	RE_SetColor(color); \
-	SCR_DrawString(x,y,font,fontscale,color,text,a,b,c); \
-	RE_SetColor(NULL);
-#define	FPS_FRAMES 4
-extern cvar_t* xui_fps;
-extern cvar_t* xui_fps_x;
-extern cvar_t* xui_fps_y;
-void CG_DrawFPS(float y)
-{
-	if (xui_fps->integer)
-	{
-		static int previousTimes[FPS_FRAMES];
-		static int index;
-		int	i, total;
-		int	fps;
-		static int previous;
-		int	t, frameTime;
-
-		t = timeGetTime();
-		frameTime = t - previous;
-		previous = t;
-		previousTimes[index % FPS_FRAMES] = frameTime;
-		index++;
-
-		if (index > FPS_FRAMES)
-		{
-			total = 0;
-			for (i = 0; i < FPS_FRAMES; i++)
-			{
-				total += previousTimes[i];
-			}
-			if (!total)
-			{
-				total = 1;
-			}
-			fps = 1000 * FPS_FRAMES / total;
-
-			M_DrawShadowString(xui_fps_x->integer, xui_fps_y->integer, 1, .20, vColorWhite, va("FPS: %d", fps), NULL, NULL, NULL);
-		}
-	}
-	else
-	{
-		void(*call)(float);
-		*(int*)&call = CGAME_OFF(0x30014A00);
-		call(y);
-	}
-}
-
-/*by xoxor4d*/
-void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out)
-{
-	float backoff;
-	float change;
-	int i;
-	float overbounce = 1.001f;
-
-	backoff = DotProduct(in, normal);
-	if (backoff < 0)
-	{
-		backoff *= overbounce;
-	}
-	else
-	{
-		backoff /= overbounce;
-	}
-
-	for (i = 0; i < 3; i++)
-	{
-		change = normal[i] * backoff;
-		out[i] = in[i] - change;
-	}
-}
-void PM_ProjectVelocity(vec3_t in, vec3_t normal, vec3_t out)
-{
-	float speedXY, DotNormalXY, normalisedNormalXY, projectionZ, projectionXYZ;
-	speedXY = in[1] * in[1] + in[0] * in[0];
-	if ((normal[2]) < 0.001f || (speedXY == 0.0f))
-	{
-		VectorCopy(in, out);
-	}
-	else
-	{
-		DotNormalXY = normal[1] * in[1] + in[0] * normal[0];
-		normalisedNormalXY = -DotNormalXY / normal[2];
-		projectionZ = in[2] * in[2] + speedXY;
-		projectionXYZ = sqrtf((projectionZ / (speedXY + normalisedNormalXY * normalisedNormalXY)));
-
-		if (projectionXYZ < 1.0f || normalisedNormalXY < 0.0f || in[2] > 0.0f)
-		{
-			out[0] = projectionXYZ * in[0];
-			out[1] = projectionXYZ * in[1];
-			out[2] = projectionXYZ * normalisedNormalXY;
-		}
-	}
-}
-uint32_t PM_Bounce(vec3_t in, vec3_t normal, vec3_t out)
-{
-	int x_cl_bounce = atoi(Info_ValueForKey(cs1, "x_cl_bounce"));
-	if (x_cl_bounce)
-	{
-		PM_ProjectVelocity(in, normal, out);
-	}
-	else
-	{
-		PM_ClipVelocity(in, normal, out);
-	}
-	return CGAME_OFF(0x3000D830);
-}
-__declspec(naked) void PM_Bounce_Stub()
-{
-	__asm
-	{
-		push esi; // out
-		push ecx; // normal
-		push edx; // in
-		call PM_Bounce;
-		add esp, 12;
-		push eax
-			retn;
-	}
-}
-/**/
-#endif
-
 #ifdef PATCH_1_5
-
 #define PMF_JUMPING 0x2000
 #define JUMP_LAND_SLOWDOWN_TIME 1800
 #define VectorScale( v, s, o )      ( ( o )[0] = ( v )[0] * ( s ),( o )[1] = ( v )[1] * ( s ),( o )[2] = ( v )[2] * ( s ) )
@@ -374,7 +279,7 @@ __declspec(naked) void hook_PM_SlideMove_Naked()
 		push eax
 		push ecx
 		push edx
-		
+
 		call hook_PM_SlideMove
 		add esp, 12
 
@@ -414,7 +319,7 @@ __declspec(naked) void hook_Jump_Start_Naked()
 void custom_PM_GetReducedFriction()
 {
 	double friction;
-	
+
 	char* jump_slowdownEnable = Info_ValueForKey(cs1, "jump_slowdownEnable");
 	if (*jump_slowdownEnable && atoi(jump_slowdownEnable) == 0)
 	{
@@ -444,6 +349,102 @@ __declspec(naked) void custom_PM_GetReducedFriction_Naked()
 	}
 }
 #endif
+
+#ifdef PATCH_1_1
+/*by xoxor4d*/
+void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out)
+{
+	float backoff;
+	float change;
+	int i;
+	float overbounce = 1.001f;
+
+	backoff = DotProduct(in, normal);
+	if (backoff < 0)
+	{
+		backoff *= overbounce;
+	}
+	else
+	{
+		backoff /= overbounce;
+	}
+
+	for (i = 0; i < 3; i++)
+	{
+		change = normal[i] * backoff;
+		out[i] = in[i] - change;
+	}
+}
+void PM_ProjectVelocity(vec3_t in, vec3_t normal, vec3_t out)
+{
+	float speedXY, DotNormalXY, normalisedNormalXY, projectionZ, projectionXYZ;
+	speedXY = in[1] * in[1] + in[0] * in[0];
+	if ((normal[2]) < 0.001f || (speedXY == 0.0f))
+	{
+		VectorCopy(in, out);
+	}
+	else
+	{
+		DotNormalXY = normal[1] * in[1] + in[0] * normal[0];
+		normalisedNormalXY = -DotNormalXY / normal[2];
+		projectionZ = in[2] * in[2] + speedXY;
+		projectionXYZ = sqrtf((projectionZ / (speedXY + normalisedNormalXY * normalisedNormalXY)));
+
+		if (projectionXYZ < 1.0f || normalisedNormalXY < 0.0f || in[2] > 0.0f)
+		{
+			out[0] = projectionXYZ * in[0];
+			out[1] = projectionXYZ * in[1];
+			out[2] = projectionXYZ * normalisedNormalXY;
+		}
+	}
+}
+uint32_t PM_Bounce(vec3_t in, vec3_t normal, vec3_t out)
+{
+	int x_cl_bounce = atoi(Info_ValueForKey(cs1, "x_cl_bounce"));
+	if (x_cl_bounce)
+	{
+		PM_ProjectVelocity(in, normal, out);
+	}
+	else
+	{
+		PM_ClipVelocity(in, normal, out);
+	}
+	return CGAME_OFF(0x3000D830);
+}
+__declspec(naked) void PM_Bounce_Stub()
+{
+	__asm
+	{
+		push esi; // out
+		push ecx; // normal
+		push edx; // in
+		call PM_Bounce;
+		add esp, 12;
+		push eax
+			retn;
+	}
+}
+/**/
+#endif
+
+/* //TODO: improve so it works like CoD2
+void pm_aimflag() // To aim in the air
+{
+	int *pm = (int*)(cgame_mp + 0x19D570);
+	int *ps = (int*)*pm;
+	int *gclient = (int*)*ps;
+	int *v4 = (int *)(ps + 12);
+	int val = *(int*)(gclient + 21); //336? 84*4=336 /84/4=21??
+	if (val == 1023)
+	{
+		*v4 |= 0x20;
+		return;
+	}
+	void(*call)();
+	*(int*)&call = CGAME_OFF(0x3000FB80);
+	call();
+}
+*/
 
 void CG_Init(DWORD base)
 {

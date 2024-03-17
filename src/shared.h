@@ -163,6 +163,45 @@ typedef enum
 	WEAPONSTATES_NUM = 0xC,
 } weaponstate_t;
 
+#ifdef PATCH_1_5
+typedef struct WeaponDef_t
+{
+	int number;
+	char* name;
+	char* displayName;
+	byte pad[0x1E4];
+	int reloadAddTime;
+	byte pad2[0x20];
+	float moveSpeedScale;
+	float adsZoomFov;
+	float adsZoomInFrac;
+	float adsZoomOutFrac;
+	byte pad3[0x44];
+	int adsTransInTime;
+	int adsTransOutTime;
+	byte pad4[0x8];
+	float idleCrouchFactor;
+	float idleProneFactor;
+	byte pad5[0x50];
+	int rechamberWhileAds;
+	float adsViewErrorMin;
+	float adsViewErrorMax;
+	//...
+} WeaponDef_t;
+
+struct WeaponProperties // Custom struct for g_legacyStyle
+{
+	int reloadAddTime;
+	int adsTransInTime;
+	float adsZoomInFrac;
+	float idleCrouchFactor;
+	float idleProneFactor;
+	int rechamberWhileAds;
+	float adsViewErrorMin;
+	float adsViewErrorMax;
+};
+#endif
+
 typedef struct playerState_s
 {
 	int commandTime;
