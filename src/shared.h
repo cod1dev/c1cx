@@ -186,6 +186,8 @@ typedef struct WeaponDef_t
 	int rechamberWhileAds;
 	float adsViewErrorMin;
 	float adsViewErrorMax;
+	byte pad6[0x14C];
+	float OOPosAnimLength[2];
 	//...
 } WeaponDef_t;
 
