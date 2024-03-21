@@ -49,6 +49,9 @@ bool applyHooks()
 	void patch_opcode_loadlibrary();
 	patch_opcode_loadlibrary();
 
+	void patch_opcode_freelibrary();
+	patch_opcode_freelibrary();
+
 	void patch_opcode_glbindtexture(void);
 	patch_opcode_glbindtexture();
 

@@ -37,13 +37,35 @@ HMODULE WINAPI hLoadLibraryA(LPSTR lpFileName)
 	}
 
 #ifdef DEBUG
-	Com_Printf("^2lpFileName = %s\n", lpFileName);
+	Com_Printf("hLoadLibraryA: ^2lpFileName = %s\n", lpFileName);
 #endif
 	return hModule;
+}
+
+extern DWORD cgame_mp;
+BOOL(WINAPI* orig_FreeLibrary)(HMODULE hModule);
+BOOL WINAPI hFreeLibrary(HMODULE hModule)
+{
+	CHAR szFileName[MAX_PATH];
+	if (GetModuleFileName(hModule, szFileName, sizeof(szFileName)))
+	{
+		if (strstr(szFileName, "cgame_mp"))
+			cgame_mp = 0;
+#ifdef DEBUG
+		Com_Printf("hFreeLibrary: ^szFileName = %s\n", szFileName);
+#endif
+	}
+	return orig_FreeLibrary(hModule);
 }
 
 void patch_opcode_loadlibrary(void)
 {
 	orig_LoadLibraryA = (struct HINSTANCE__* (__stdcall*)(const char*)) \
 		DetourFunction((LPBYTE)LoadLibraryA, (LPBYTE)hLoadLibraryA);
+}
+
+void patch_opcode_freelibrary(void)
+{
+	orig_FreeLibrary = (BOOL(WINAPI*)(HMODULE)) \
+		DetourFunction((LPBYTE)FreeLibrary, (LPBYTE)hFreeLibrary);
 }
