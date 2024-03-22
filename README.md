@@ -1,14 +1,10 @@
 ## Client extension for Call of Duty 1 (2003)
+### Adding security, fixes, and features
 Supported patches: **1.1**, **1.5**  
 Menu key: **Home**
-### Adding security, fixes, and features
-- Protects against a download exploit **(/!\ currently for 1.1 only**)
-- Fixes the 1.1 modded servers CD-Key error
-- Aim Down Sight Sensitivity
-- ...and more
 ___
 ### Installation and usage
-See the [Wiki](https://github.com/codxt/codextended-client/wiki)
+See the [Wiki](https://github.com/cod1dev/codextended-client/wiki)
 ___
 #### References
 - The [Killtube](https://www.killtube.org/) community
