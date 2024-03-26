@@ -255,7 +255,6 @@
     <ClInclude Include="libs/detours/detours.h" />
     <ClInclude Include="dl_public.h" />
     <ClInclude Include="mem_util.h" />
-    <ClInclude Include="render.h" />
     <ClInclude Include="shared.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>

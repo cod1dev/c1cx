@@ -1,6 +1,5 @@
 #include "shared.h"
 #include "client.h"
-#include "render.h"
 #include <mmsystem.h>
 #pragma comment(lib, "winmm.lib")
 
@@ -74,20 +73,16 @@ void CG_DrawDisconnect()
 	}
 }
 
-#define M_DrawShadowString(x,y,font,fontscale,color,text,a,b,c) \
-	RE_SetColor(vColorBlack); \
-	SCR_DrawString(x + 1,y + 1,font,fontscale,vColorBlack,text,a,b,c); \
-	RE_SetColor(color); \
-	SCR_DrawString(x,y,font,fontscale,color,text,a,b,c); \
-	RE_SetColor(NULL);
 #define	FPS_FRAMES 4
-extern cvar_t* xui_fps;
-extern cvar_t* xui_fps_x;
-extern cvar_t* xui_fps_y;
-void CG_DrawFPS(float y)
+extern cvar_t* cg_drawFPS;
+extern cvar_t* cg_drawFPS_x;
+extern cvar_t* cg_drawFPS_y;
+void _CG_DrawFPS(float y)
 {
-	if (xui_fps->integer)
+	if (cg_drawFPS->integer && cg_drawFPS->integer == 3)
 	{
+		//TODO: do like original code instead
+
 		static int previousTimes[FPS_FRAMES];
 		static int index;
 		int	i, total;
@@ -114,14 +109,18 @@ void CG_DrawFPS(float y)
 			}
 			fps = 1000 * FPS_FRAMES / total;
 
-			M_DrawShadowString(xui_fps_x->integer, xui_fps_y->integer, 1, .20, vColorWhite, va("FPS: %d", fps), NULL, NULL, NULL);
+			const char* s = va("%ifps", fps);
+
+			void(*CG_DrawBigString)(float x, float y, const char* s, float alpha);
+			*(int*)&CG_DrawBigString = CGAME_OFF(0x30019710);
+			CG_DrawBigString(cg_drawFPS_x->integer, cg_drawFPS_y->integer, s, 1.0F);
 		}
 	}
 	else
 	{
-		void(*call)(float);
-		*(int*)&call = CGAME_OFF(0x30014A00);
-		call(y);
+		void(*CG_DrawFPS)(float);
+		*(int*)&CG_DrawFPS = CGAME_OFF(0x30014A00);
+		CG_DrawFPS(y);
 	}
 }
 #endif
@@ -427,25 +426,6 @@ __declspec(naked) void PM_Bounce_Stub()
 /**/
 #endif
 
-/* //TODO: improve so it works like CoD2
-void pm_aimflag() // To aim in the air
-{
-	int *pm = (int*)(cgame_mp + 0x19D570);
-	int *ps = (int*)*pm;
-	int *gclient = (int*)*ps;
-	int *v4 = (int *)(ps + 12);
-	int val = *(int*)(gclient + 21); //336? 84*4=336 /84/4=21??
-	if (val == 1023)
-	{
-		*v4 |= 0x20;
-		return;
-	}
-	void(*call)();
-	*(int*)&call = CGAME_OFF(0x3000FB80);
-	call();
-}
-*/
-
 void CG_Init(DWORD base)
 {
 	cgame_mp = base;
@@ -455,19 +435,9 @@ void CG_Init(DWORD base)
 	CG_ServerCommand = (CG_ServerCommand_t)(cgame_mp + 0x2E0D0);
 
 	__call(CGAME_OFF(0x3002E5A6), (int)_CG_ServerCommand);
-
-	__call(CGAME_OFF(0x3001509E), (int)CG_DrawFPS);
+	__call(CGAME_OFF(0x3001509E), (int)_CG_DrawFPS);
 	__call(CGAME_OFF(0x300159CC), (int)CG_DrawDisconnect);
 	__call(CGAME_OFF(0x300159D4), (int)CG_DrawDisconnect);
-
-	/*
-	__call(CGAME_OFF(0x3000C799), (int)pm_aimflag);
-	__call(CGAME_OFF(0x3000C7B8), (int)pm_aimflag);
-	__call(CGAME_OFF(0x3000C7D2), (int)pm_aimflag);
-	__call(CGAME_OFF(0x3000C7FF), (int)pm_aimflag);
-	__call(CGAME_OFF(0x3000C858), (int)pm_aimflag);
-	__call(CGAME_OFF(0x3000C893), (int)pm_aimflag);
-	*/
 
 	__jmp(CGAME_OFF(0x3000D82B), (int)PM_Bounce_Stub);
 #endif

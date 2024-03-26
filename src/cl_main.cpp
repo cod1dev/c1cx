@@ -1,6 +1,5 @@
 #include "shared.h"
 #include "client.h"
-#include "render.h"
 #include "dl_public.h"
 
 cvar_t* com_cl_running;
@@ -11,9 +10,9 @@ cvar_t* cl_sensitivityAimMultiply_enabled;
 cvar_t* cl_sensitivityAimMultiply;
 cvar_t* cg_drawConnectionInterrupted;
 cvar_t* cg_drawMessagesMiddle;
-cvar_t* xui_fps;
-cvar_t* xui_fps_x;
-cvar_t* xui_fps_y;
+cvar_t* cg_drawFPS;
+cvar_t* cg_drawFPS_x;
+cvar_t* cg_drawFPS_y;
 
 #ifdef PATCH_1_1
 void Cmd_Minimize()
@@ -241,10 +240,10 @@ void _CL_Init(void)
 #ifdef PATCH_1_1
 	g_bounce = Cvar_Get("g_bounce", "0", CVAR_ARCHIVE);
 	cg_drawConnectionInterrupted = Cvar_Get("cg_drawConnectionInterrupted", "1", CVAR_ARCHIVE);
+	cg_drawFPS = Cvar_Get("cg_drawFPS", "0", CVAR_ARCHIVE);
+	cg_drawFPS_x = Cvar_Get("cg_drawFPS_x", "523", CVAR_ARCHIVE);
+	cg_drawFPS_y = Cvar_Get("cg_drawFPS_y", "2", CVAR_ARCHIVE);
 	cg_drawMessagesMiddle = Cvar_Get("cg_drawMessagesMiddle", "1", CVAR_ARCHIVE);
-	xui_fps = Cvar_Get("cg_xui_fps", "1", CVAR_ARCHIVE);
-	xui_fps_x = Cvar_Get("cg_xui_fps_x", "597", CVAR_ARCHIVE);
-	xui_fps_y = Cvar_Get("cg_xui_fps_y", "12", CVAR_ARCHIVE);
 #endif
 }
 

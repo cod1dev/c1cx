@@ -1,7 +1,7 @@
 #pragma once
 
 #define WIN32_LEAN_AND_MEAN // Exclude rarely-used stuff from Windows headers
-#define _MB_TITLE "CoDExtended"
+#define _MB_TITLE "codxt"
 
 #ifdef PATCH_1_1
 #define CURL_STATICLIB
@@ -36,26 +36,6 @@ static void MsgBox(const char* msg)
 {
 	MessageBoxA(NULL, msg, _MB_TITLE, MB_OK | MB_ICONINFORMATION);
 }
-
-/*
-static bool CopyToClipboard(const char *s)
-{
-	if (OpenClipboard(NULL))
-	{
-		HGLOBAL clipbuffer;
-		char* buffer;
-		EmptyClipboard();
-		clipbuffer = GlobalAlloc(GMEM_DDESHARE, strlen(s) + 1);
-		buffer = (char*)GlobalLock(clipbuffer);
-		strcpy(buffer, s);
-		GlobalUnlock(clipbuffer);
-		SetClipboardData(CF_TEXT, clipbuffer);
-		CloseClipboard();
-	}
-	else
-		return false;
-	return true;
-}*/
 
 static bool is_addr_safe(size_t addr)
 {

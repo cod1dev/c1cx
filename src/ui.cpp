@@ -1,5 +1,4 @@
 #include "shared.h"
-#include "render.h"
 #include "client.h"
 
 DWORD ui_mp;

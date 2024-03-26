@@ -1,9 +1,13 @@
 #include "shared.h"
-#include "render.h"
+#include "stdafx.h"
+#include "gl/gl.h"
+#include "gl/glu.h"
 #include "client.h"
 #include "libs/imgui/imgui.h"
 #include "libs/imgui/imgui_impl_opengl2.h"
 #include "libs/imgui/imgui_impl_win32.h"
+#pragma comment(lib, "opengl32")
+#pragma comment(lib, "glu32.lib")
 #pragma comment(lib, "libs/detours/detours.lib")
 #include "libs/detours/detours.h"
 
@@ -27,11 +31,6 @@ extern cvar_t* cg_drawMessagesMiddle;
 BOOL(WINAPI* oSwapBuffers)(HDC);
 HGLRC wglContext;
 HWND hWnd_during_imgui_init;
-
-#ifdef PATCH_1_1
-SCR_DrawString_t SCR_DrawString = (SCR_DrawString_t)0x4DF570;
-RE_SetColor_t RE_SetColor = (RE_SetColor_t)0x4DDCF0;
-#endif
 
 void initImgui(HDC hdc)
 {
