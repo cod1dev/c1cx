@@ -1,3 +1,5 @@
+Development paused, ETA: 2 years
+___
 # Client extension for Call of Duty 1 (2003)
 ### Adding security, fixes, and features
 Supported patches: **1.1**, **1.5**
