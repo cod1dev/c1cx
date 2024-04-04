@@ -1,4 +1,4 @@
-Development paused, ETA: 2 years
+4/4/2024: Development paused, ETA: 2 years
 ___
 # Client extension for Call of Duty 1 (2003)
 ### Adding security, fixes, and features
