@@ -86,13 +86,14 @@ BOOL __stdcall hSwapBuffers(HDC hdc)
 	ImGui_ImplOpenGL2_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
-	ImGui::SetNextWindowSize(ImVec2(500, 300), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(0, 0));
 	ImGui::SetNextWindowPos(ImVec2(50, 150), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowContentSize(ImVec2(100, 100));
 	ImGui::SetNextWindowFocus();
-	ImGui::Begin("codxt", NULL, ImGuiWindowFlags_NoCollapse);
+	ImGui::Begin("codxt", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
 
 #ifdef PATCH_1_1
+	ImGui::SeparatorText("Display");
+
 	/*Connection Interrupted */
 	hideConnectionInterrupted = cg_drawConnectionInterrupted->integer ? false : true;
 	ImGui::Checkbox("Hide \"Connection Interrupted\"", &hideConnectionInterrupted);
@@ -115,15 +116,16 @@ BOOL __stdcall hSwapBuffers(HDC hdc)
 	if (!zoomFovMultiply_enabled)
 		ImGui::BeginDisabled();
 
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() - (ImGui::GetStyle().WindowPadding.x * 2));
 	ImGui::SliderFloat("##zoomfov", &zoomFovMultiply_value, 0.80f, 1.20f, "%.2f", ImGuiSliderFlags_NoInput);
 	Cvar_Set(cg_zoomFovMultiply->name, va("%f", (float)zoomFovMultiply_value));
 
 	if (!zoomFovMultiply_enabled)
 		ImGui::EndDisabled();
 	/**/
-
-	ImGui::Separator(); //TODO: full window width
 #endif
+
+	ImGui::SeparatorText("Move");
 
 	/*Sensitivity aim multiplier*/
 	sensitivityAimMultiply_enabled = cl_sensitivityAimMultiply_enabled->integer;
@@ -135,6 +137,7 @@ BOOL __stdcall hSwapBuffers(HDC hdc)
 	if (!sensitivityAimMultiply_enabled)
 		ImGui::BeginDisabled();
 
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() - (ImGui::GetStyle().WindowPadding.x * 2));
 	ImGui::SliderFloat("##sensiads", &sensitivityAimMultiply_value, 0.25f, 1.25f, "%.2f", ImGuiSliderFlags_NoInput);
 	Cvar_Set(cl_sensitivityAimMultiply->name, va("%f", (float)sensitivityAimMultiply_value));
 
