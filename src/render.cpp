@@ -21,11 +21,19 @@ float sensitivityAimMultiply_value = 0.0f;
 bool hideConnectionInterrupted = false;
 bool hideMiddleMessages = false;
 
+#ifdef PATCH_1_1
+bool zoomFovMultiply_enabled = false;
+float zoomFovMultiply_value = 0.0f;
+#endif
+
 extern cvar_t* cl_sensitivityAimMultiply_enabled;
 extern cvar_t* cl_sensitivityAimMultiply;
 #ifdef PATCH_1_1
 extern cvar_t* cg_drawConnectionInterrupted;
 extern cvar_t* cg_drawMessagesMiddle;
+
+extern cvar_t* cg_zoomFovMultiply_enabled;
+extern cvar_t* cg_zoomFovMultiply;
 #endif
 
 BOOL(WINAPI* oSwapBuffers)(HDC);
@@ -97,6 +105,23 @@ BOOL __stdcall hSwapBuffers(HDC hdc)
 	Cvar_Set(cg_drawMessagesMiddle->name, hideMiddleMessages ? "0" : "1");
 	/**/
 
+	/*Zoom fov multiplier*/
+	zoomFovMultiply_enabled = cg_zoomFovMultiply_enabled->integer;
+	zoomFovMultiply_value = cg_zoomFovMultiply->value;
+
+	ImGui::Checkbox("FOV aim multiplier", &zoomFovMultiply_enabled);
+	Cvar_Set(cg_zoomFovMultiply_enabled->name, zoomFovMultiply_enabled ? "1" : "0");
+
+	if (!zoomFovMultiply_enabled)
+		ImGui::BeginDisabled();
+
+	ImGui::SliderFloat("##zoomfov", &zoomFovMultiply_value, 0.80f, 1.20f, "%.2f", ImGuiSliderFlags_NoInput);
+	Cvar_Set(cg_zoomFovMultiply->name, va("%f", (float)zoomFovMultiply_value));
+
+	if (!zoomFovMultiply_enabled)
+		ImGui::EndDisabled();
+	/**/
+
 	ImGui::Separator(); //TODO: full window width
 #endif
 
@@ -110,7 +135,7 @@ BOOL __stdcall hSwapBuffers(HDC hdc)
 	if (!sensitivityAimMultiply_enabled)
 		ImGui::BeginDisabled();
 
-	ImGui::SliderFloat("##", &sensitivityAimMultiply_value, 0.25f, 1.25f, "%.2f", ImGuiSliderFlags_NoInput);
+	ImGui::SliderFloat("##sensiads", &sensitivityAimMultiply_value, 0.25f, 1.25f, "%.2f", ImGuiSliderFlags_NoInput);
 	Cvar_Set(cl_sensitivityAimMultiply->name, va("%f", (float)sensitivityAimMultiply_value));
 
 	if (!sensitivityAimMultiply_enabled)

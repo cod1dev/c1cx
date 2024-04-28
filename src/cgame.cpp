@@ -195,6 +195,60 @@ void sensitivityAimMultiply()
 	}
 }
 
+#ifdef PATCH_1_1
+extern cvar_t* cg_zoomFovMultiply_enabled;
+extern cvar_t* cg_zoomFovMultiply;
+
+float multipliedzoomFov(float adsZoomFov)
+{
+	if(cg_zoomFovMultiply->value >= 0.80f && cg_zoomFovMultiply->value <= 1.20f)
+		return adsZoomFov *= cg_zoomFovMultiply->value;
+	return adsZoomFov * 1;
+}
+
+void zoomFovMultiply_zooming(float adsZoomFov)
+{
+	if (cg_zoomFovMultiply_enabled->integer)
+		adsZoomFov = multipliedzoomFov(adsZoomFov);
+	__asm
+	{
+		fsub dword ptr[adsZoomFov]
+	}
+}
+uintptr_t resume_addr_zoomFovMultiply_zooming;
+__declspec(naked) void zoomFovMultiply_zooming_Naked()
+{
+	__asm
+	{
+		push[ecx + 0x218];
+		call zoomFovMultiply_zooming;
+		pop ecx
+			jmp resume_addr_zoomFovMultiply_zooming;
+	}
+}
+
+void zoomFovMultiply_zoomed(float adsZoomFov)
+{
+	if (cg_zoomFovMultiply_enabled->integer)
+		adsZoomFov = multipliedzoomFov(adsZoomFov);
+	__asm
+	{
+		fld dword ptr [adsZoomFov]
+	}
+}
+uintptr_t resume_addr_zoomFovMultiply_zoomed;
+__declspec(naked) void zoomFovMultiply_zoomed_Naked()
+{
+	__asm
+	{
+		push[ecx + 0x218];
+		call zoomFovMultiply_zoomed;
+		pop ecx
+			jmp resume_addr_zoomFovMultiply_zoomed;
+	}
+}
+#endif
+
 #ifdef PATCH_1_5
 #define PMF_JUMPING 0x2000
 #define JUMP_LAND_SLOWDOWN_TIME 1800
@@ -459,5 +513,13 @@ void CG_Init(DWORD base)
 	resume_addr_Jump_Start = CGAME_OFF(0x3000833a);
 
 	__jmp(CGAME_OFF(0x30007ae0), (int)custom_PM_GetReducedFriction_Naked);
+#endif
+
+#ifdef PATCH_1_1
+	__jmp(CGAME_OFF(0x30032f1e), (int)zoomFovMultiply_zooming_Naked);
+	resume_addr_zoomFovMultiply_zooming = CGAME_OFF(0x30032f24);
+
+	__jmp(CGAME_OFF(0x30032ea5), (int)zoomFovMultiply_zoomed_Naked);
+	resume_addr_zoomFovMultiply_zoomed = CGAME_OFF(0x30032eab);
 #endif
 }

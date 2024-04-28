@@ -13,6 +13,8 @@ cvar_t* cg_drawMessagesMiddle;
 cvar_t* cg_drawFPS;
 cvar_t* cg_drawFPS_x;
 cvar_t* cg_drawFPS_y;
+cvar_t* cg_zoomFovMultiply_enabled;
+cvar_t* cg_zoomFovMultiply;
 
 #ifdef PATCH_1_1
 void Cmd_Minimize()
@@ -244,6 +246,8 @@ void _CL_Init(void)
 	cg_drawFPS_x = Cvar_Get("cg_drawFPS_x", "523", CVAR_ARCHIVE);
 	cg_drawFPS_y = Cvar_Get("cg_drawFPS_y", "2", CVAR_ARCHIVE);
 	cg_drawMessagesMiddle = Cvar_Get("cg_drawMessagesMiddle", "1", CVAR_ARCHIVE);
+	cg_zoomFovMultiply_enabled = Cvar_Get("cg_zoomFovMultiply_enabled", "0", CVAR_ARCHIVE);
+	cg_zoomFovMultiply = Cvar_Get("cg_zoomFovMultiply", "1", CVAR_ARCHIVE);
 #endif
 }
 
