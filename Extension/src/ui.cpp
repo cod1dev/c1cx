@@ -120,7 +120,7 @@ BOOL __stdcall hSwapBuffers(HDC hdc)
 	ImGui::SetNextWindowSize(ImVec2(0, 0));
 	ImGui::SetNextWindowPos(ImVec2(50, 150), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowFocus();
-	ImGui::Begin("codxt", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
+	ImGui::Begin("c1cx", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
 
 #ifdef PATCH_1_1
 	ImGui::SeparatorText("Display");
