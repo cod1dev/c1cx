@@ -4,8 +4,10 @@
     <ShowAllFiles>true</ShowAllFiles>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LocalDebuggerCommand>$(OutDir)\c1cx.exe</LocalDebuggerCommand>
-    <LocalDebuggerWorkingDirectory>$(ProjectDir)</LocalDebuggerWorkingDirectory>
+    <LocalDebuggerCommand>
+    </LocalDebuggerCommand>
+    <LocalDebuggerWorkingDirectory>
+    </LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
 </Project>

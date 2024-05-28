@@ -129,6 +129,19 @@ void _CG_DrawFPS(float y)
 }
 #endif
 
+#ifdef PATCH_1_1
+extern cvar_t* cg_drawWeaponSelection;
+void _CG_DrawWeaponSelect()
+{
+	if (cg_drawWeaponSelection->integer)
+	{
+		void(*CG_DrawWeaponSelect)(void);
+		*(int*)&CG_DrawWeaponSelect = CGAME_OFF(0x30037790);
+		CG_DrawWeaponSelect();
+	}
+}
+#endif
+
 extern cvar_t* cl_sensitivityAimMultiply_enabled;
 extern cvar_t* cl_sensitivityAimMultiply;
 float stockCgZoomSensitivity()
@@ -527,5 +540,9 @@ void CG_Init(DWORD base)
 
 	__jmp(CGAME_OFF(0x30032ea5), (int)zoomFovMultiply_zoomed_Naked);
 	resume_addr_zoomFovMultiply_zoomed = CGAME_OFF(0x30032eab);
+#endif
+
+#ifdef PATCH_1_1
+	__call(CGAME_OFF(0x30018896), (int)_CG_DrawWeaponSelect);
 #endif
 }

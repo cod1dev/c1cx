@@ -50,6 +50,7 @@ bool imgui_needs_restore = false;
 bool sensitivityAimMultiply_enabled = false;
 float sensitivityAimMultiply_value = 0.0f;
 bool hideConnectionInterrupted = false;
+bool hideWeaponSelection = false;
 bool hideMiddleMessages = false;
 
 #ifdef PATCH_1_1
@@ -61,6 +62,7 @@ extern cvar_t* cl_sensitivityAimMultiply_enabled;
 extern cvar_t* cl_sensitivityAimMultiply;
 #ifdef PATCH_1_1
 extern cvar_t* cg_drawConnectionInterrupted;
+extern cvar_t* cg_drawWeaponSelection;
 extern cvar_t* cg_drawMessagesMiddle;
 
 extern cvar_t* cg_zoomFovMultiply_enabled;
@@ -129,6 +131,12 @@ BOOL __stdcall hSwapBuffers(HDC hdc)
 	hideConnectionInterrupted = cg_drawConnectionInterrupted->integer ? false : true;
 	ImGui::Checkbox("Hide \"Connection Interrupted\"", &hideConnectionInterrupted);
 	Cvar_Set(cg_drawConnectionInterrupted->name, hideConnectionInterrupted ? "0" : "1");
+	/**/
+
+	/*Weapon selection */
+	hideWeaponSelection = cg_drawWeaponSelection->integer ? false : true;
+	ImGui::Checkbox("Hide weapon selection", &hideWeaponSelection);
+	Cvar_Set(cg_drawWeaponSelection->name, hideWeaponSelection ? "0" : "1");
 	/**/
 
 	/*Middle messages*/
