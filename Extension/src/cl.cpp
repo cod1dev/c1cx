@@ -116,12 +116,7 @@ int DL_BeginDownload(const char* localName, const char* remoteName, int debug)
 	_snprintf_s(localDownloadName, MAX_PATH - 1, "%s", localName);
 
 	FS_CreatePath(LOCAL_DL_PATH);
-	/*dl_file = fopen(LOCAL_DL_PATH, "wb+");
-	if (!dl_file) {
-		Com_Printf("ERROR: DL_BeginDownload unable to open '%s' for writing\n", LOCAL_DL_PATH);
-		return 0;
-	}*/
-	FILE* dl_file;
+
 	errno_t err = fopen_s(&dl_file, LOCAL_DL_PATH, "wb+");
 	if (err != 0) {
 		Com_Printf("ERROR: DL_BeginDownload unable to open '%s' for writing\n", LOCAL_DL_PATH);
@@ -129,12 +124,6 @@ int DL_BeginDownload(const char* localName, const char* remoteName, int debug)
 	}
 
 	DL_InitDownload();
-
-	/* ET://ip:port */
-	/*
-	strcpy( referer, "ET://" );
-	Q_strncpyz( referer + 5, Cvar_VariableString( "cl_currentServerIP" ), MAX_STRING_CHARS );
-	*/
 
 	dl_request = curl_easy_init();
 	curl_easy_setopt(dl_request, CURLOPT_USERAGENT, va("%s %s", APP_NAME "/" APP_VERSION, curl_version()));
