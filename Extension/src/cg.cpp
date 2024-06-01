@@ -215,14 +215,12 @@ void sensitivityAimMultiply()
 #ifdef PATCH_1_1
 extern cvar_t* cg_zoomFovMultiply_enabled;
 extern cvar_t* cg_zoomFovMultiply;
-
 float multipliedzoomFov(float adsZoomFov)
 {
 	if (cg_zoomFovMultiply->value >= 0.80f && cg_zoomFovMultiply->value <= 1.20f)
-		return adsZoomFov *= cg_zoomFovMultiply->value;
+		return adsZoomFov * cg_zoomFovMultiply->value;
 	return adsZoomFov * 1;
 }
-
 void zoomFovMultiply_zooming(float adsZoomFov)
 {
 	if (cg_zoomFovMultiply_enabled->integer)

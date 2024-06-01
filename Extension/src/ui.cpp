@@ -125,18 +125,12 @@ BOOL __stdcall hSwapBuffers(HDC hdc)
 	ImGui::Begin("c1cx", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
 
 #ifdef PATCH_1_1
-	ImGui::SeparatorText("Display");
+	ImGui::SeparatorText("User Interface");
 
 	/*Connection Interrupted */
 	hideConnectionInterrupted = cg_drawConnectionInterrupted->integer ? false : true;
 	ImGui::Checkbox("Hide \"Connection Interrupted\"", &hideConnectionInterrupted);
 	Cvar_Set(cg_drawConnectionInterrupted->name, hideConnectionInterrupted ? "0" : "1");
-	/**/
-
-	/*Weapon selection */
-	hideWeaponSelection = cg_drawWeaponSelection->integer ? false : true;
-	ImGui::Checkbox("Hide weapon selection", &hideWeaponSelection);
-	Cvar_Set(cg_drawWeaponSelection->name, hideWeaponSelection ? "0" : "1");
 	/**/
 
 	/*Middle messages*/
@@ -145,11 +139,39 @@ BOOL __stdcall hSwapBuffers(HDC hdc)
 	Cvar_Set(cg_drawMessagesMiddle->name, hideMiddleMessages ? "0" : "1");
 	/**/
 
+	/*Weapon selection */
+	hideWeaponSelection = cg_drawWeaponSelection->integer ? false : true;
+	ImGui::Checkbox("Hide weapon selection", &hideWeaponSelection);
+	Cvar_Set(cg_drawWeaponSelection->name, hideWeaponSelection ? "0" : "1");
+	/**/
+#endif
+
+	ImGui::SeparatorText("Aim Down Sight");
+
+	/*Sensitivity aim multiplier*/
+	sensitivityAimMultiply_enabled = cl_sensitivityAimMultiply_enabled->integer;
+	sensitivityAimMultiply_value = cl_sensitivityAimMultiply->value;
+
+	ImGui::Checkbox("Sensitivity scale", &sensitivityAimMultiply_enabled);
+	Cvar_Set(cl_sensitivityAimMultiply_enabled->name, sensitivityAimMultiply_enabled ? "1" : "0");
+
+	if (!sensitivityAimMultiply_enabled)
+		ImGui::BeginDisabled();
+
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() - (ImGui::GetStyle().WindowPadding.x * 2));
+	ImGui::SliderFloat("##sensiads", &sensitivityAimMultiply_value, 0.25f, 1.25f, "%.2f", ImGuiSliderFlags_NoInput);
+	Cvar_Set(cl_sensitivityAimMultiply->name, va("%f", (float)sensitivityAimMultiply_value));
+
+	if (!sensitivityAimMultiply_enabled)
+		ImGui::EndDisabled();
+	/**/
+#ifdef PATCH_1_1
+
 	/*Zoom fov multiplier*/
 	zoomFovMultiply_enabled = cg_zoomFovMultiply_enabled->integer;
 	zoomFovMultiply_value = cg_zoomFovMultiply->value;
 
-	ImGui::Checkbox("FOV aim multiplier", &zoomFovMultiply_enabled);
+	ImGui::Checkbox("FOV scale", &zoomFovMultiply_enabled);
 	Cvar_Set(cg_zoomFovMultiply_enabled->name, zoomFovMultiply_enabled ? "1" : "0");
 
 	if (!zoomFovMultiply_enabled)
@@ -163,26 +185,6 @@ BOOL __stdcall hSwapBuffers(HDC hdc)
 		ImGui::EndDisabled();
 	/**/
 #endif
-
-	ImGui::SeparatorText("Move");
-
-	/*Sensitivity aim multiplier*/
-	sensitivityAimMultiply_enabled = cl_sensitivityAimMultiply_enabled->integer;
-	sensitivityAimMultiply_value = cl_sensitivityAimMultiply->value;
-
-	ImGui::Checkbox("Sensitivity aim multiplier", &sensitivityAimMultiply_enabled);
-	Cvar_Set(cl_sensitivityAimMultiply_enabled->name, sensitivityAimMultiply_enabled ? "1" : "0");
-
-	if (!sensitivityAimMultiply_enabled)
-		ImGui::BeginDisabled();
-
-	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() - (ImGui::GetStyle().WindowPadding.x * 2));
-	ImGui::SliderFloat("##sensiads", &sensitivityAimMultiply_value, 0.25f, 1.25f, "%.2f", ImGuiSliderFlags_NoInput);
-	Cvar_Set(cl_sensitivityAimMultiply->name, va("%f", (float)sensitivityAimMultiply_value));
-
-	if (!sensitivityAimMultiply_enabled)
-		ImGui::EndDisabled();
-	/**/
 
 	ImGui::End();
 	ImGui::EndFrame();
