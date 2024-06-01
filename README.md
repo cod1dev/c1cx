@@ -2,7 +2,7 @@
 ### Adding security, fixes, and features
 Supported patches: **1.1**, **1.5**
 ___
-![preview](https://github.com/cod1dev/c1cx/assets/143759274/943a71b1-7400-4a0e-8f2f-11272504a100)
+![Screenshot 2024-06-01 232219](https://github.com/cod1dev/c1cx/assets/143759274/ff310946-3a16-4305-ada3-b061d684100d)
 ___
 ### Installation and usage
 See the [Wiki](https://github.com/cod1dev/codextended-client/wiki)
