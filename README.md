@@ -1,6 +1,6 @@
 # Client extension for Call of Duty 1 (2003)
 ### Adding security, fixes, and features
-Supported patches: **1.1**, **1.5**
+Supported versions: **1.1**, **1.5**
 ___
 ![Screenshot 2024-06-01 232219](https://github.com/cod1dev/c1cx/assets/143759274/ff310946-3a16-4305-ada3-b061d684100d)
 ___
