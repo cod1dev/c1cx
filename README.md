@@ -14,5 +14,6 @@ ___
 - [CoDPlusPlus](https://github.com/kartjom/CoDPlusPlus)
 - [iw3xo-dev](https://github.com/xoxor4d/iw3xo-dev)
 - [CoD4x_Client_pub](https://github.com/callofduty4x/CoD4x_Client_pub)
+- [Quake-III-Arena](https://github.com/id-Software/Quake-III-Arena)
 - [Ghidra](https://en.wikipedia.org/wiki/Ghidra) and [IDA Free](https://hex-rays.com/ida-free/)
 - [ChatGPT](https://chat.openai.com/)
