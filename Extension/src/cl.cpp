@@ -26,6 +26,16 @@ cvar_t* cg_zoomFovMultiply_enabled;
 cvar_t* cg_zoomFovMultiply;
 
 #ifdef PATCH_1_1
+#define PITCH 0
+#define YAW 1
+void Cmd_LookBack()
+{
+	float* cl_viewangles = (float*)0x0143a9a0;
+	cl_viewangles[YAW]+= 180;
+}
+#endif
+
+#ifdef PATCH_1_1
 
 void Cmd_Minimize()
 {
@@ -482,6 +492,10 @@ void _CL_Init(void)
 	cg_drawMessagesMiddle = Cvar_Get("cg_drawMessagesMiddle", "1", CVAR_ARCHIVE);
 	cg_zoomFovMultiply_enabled = Cvar_Get("cg_zoomFovMultiply_enabled", "0", CVAR_ARCHIVE);
 	cg_zoomFovMultiply = Cvar_Get("cg_zoomFovMultiply", "1", CVAR_ARCHIVE);
+#endif
+
+#ifdef PATCH_1_1
+	Cmd_AddCommand("lookback", Cmd_LookBack);
 #endif
 }
 
