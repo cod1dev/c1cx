@@ -23,6 +23,13 @@
 
 typedef enum
 {
+	EXEC_NOW,
+	EXEC_INSERT,
+	EXEC_APPEND
+} cbufExec_t;
+
+typedef enum
+{
 	qfalse,
 	qtrue
 } qboolean;

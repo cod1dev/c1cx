@@ -44,9 +44,10 @@ void Sys_Unload()
 #endif
 }
 
+bool movedWindow = false;
 LRESULT CALLBACK h_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	if (uMsg != WM_KEYDOWN || wParam != VK_HOME) //Not to send toggle key to imgui
+	if (uMsg != WM_KEYDOWN || wParam != VK_HOME) // Not to send toggle key to imgui
 	{
 		if (menuIsDisplayed && ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam))
 		{
@@ -56,8 +57,36 @@ LRESULT CALLBACK h_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	switch (uMsg)
 	{
+	// Prevent mouse capture after moving window
+	case WM_EXITSIZEMOVE:
+		movedWindow = true;
+		break;
+	case WM_LBUTTONDOWN:
+		if (movedWindow)
+			movedWindow = false;
+		break;
+	// end
+
+	// Maximize button support
+	case WM_SYSCOMMAND:
+		if (wParam == SC_MAXIMIZE)
+		{
+			movedWindow = false;
+
+			Cvar_Set("r_fullscreen", "1");
+			void(*Cbuf_ExecuteText)(int exec_when, const char* text);
+			*(int*)&Cbuf_ExecuteText = 0x00428290;
+			Cbuf_ExecuteText(EXEC_APPEND, "vid_restart\n");
+			return 0;
+		}
+		break;
+	case WM_NCLBUTTONDBLCLK:
+		return 0;
+		break;
+	// end
+
 	case WM_CREATE:
-		SetWindowLong(hWnd, GWL_STYLE, GetWindowLong(hWnd, GWL_STYLE) | WS_MINIMIZEBOX);
+		SetWindowLong(hWnd, GWL_STYLE, GetWindowLong(hWnd, GWL_STYLE) | WS_MINIMIZEBOX | WS_MAXIMIZEBOX);
 		break;
 	case WM_KEYDOWN:
 		switch (wParam)
@@ -69,11 +98,11 @@ LRESULT CALLBACK h_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				{
 					displayMenu = true;
 #ifdef PATCH_1_1
-					((void(*)())0x4616b0)(); //IN_DeactivateMouse //TODO: check can do similar for keyboard
+					((void(*)())0x4616b0)(); //IN_DeactivateMouse //TODO: check if can do similar for keyboard
 #elif PATCH_1_5
-					((void(*)())0x004669d0)(); //IN_DeactivateMouse //TODO: check can do similar for keyboard
+					((void(*)())0x004669d0)(); //IN_DeactivateMouse //TODO: check if can do similar for keyboard
 #endif
-					* mouseActive = 0;
+					*mouseActive = 0;
 					*mouseInitialized = 0;
 				}
 				else
@@ -125,9 +154,4 @@ LRESULT CALLBACK h_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 #endif
 
 	return o_WndProc(hWnd, uMsg, wParam, lParam);
-}
-
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
-{
-	return entryPoint(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
 }

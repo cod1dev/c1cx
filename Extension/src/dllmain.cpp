@@ -169,6 +169,50 @@ static void(*Com_Quit_f)() = (void(*)())0x435D80;
 static void(*Com_Quit_f)() = (void(*)())0x00438220;
 #endif
 
+cHook* hook_sv_shutdown;
+void custom_SV_Shutdown(char* finalmsg)
+{
+	hook_sv_shutdown->unhook();
+	void (*SV_Shutdown)(char* finalmsg);
+	*(int*)&SV_Shutdown = hook_sv_shutdown->from;
+	SV_Shutdown(finalmsg);
+	hook_sv_shutdown->hook();
+
+	LONG style = GetWindowLong(*gameWindow, GWL_STYLE);
+	style |= WS_MAXIMIZEBOX;
+	SetWindowLong(*gameWindow, GWL_STYLE, style);
+	SetWindowPos(*gameWindow, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED);
+}
+
+cHook* hook_sv_startup;
+void custom_SV_Startup(void)
+{
+	LONG style = GetWindowLong(*gameWindow, GWL_STYLE);
+	style &= ~WS_MAXIMIZEBOX;
+	SetWindowLong(*gameWindow, GWL_STYLE, style);
+	SetWindowPos(*gameWindow, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED);
+
+	hook_sv_startup->unhook();
+	void (*SV_Startup)(void);
+	*(int*)&SV_Startup = hook_sv_startup->from;
+	SV_Startup();
+	hook_sv_startup->hook();
+}
+
+extern bool movedWindow;
+cHook* hook_in_frame;
+void custom_IN_Frame(void)
+{
+	if (movedWindow)
+		return;
+
+	hook_in_frame->unhook();
+	void (*IN_Frame)(void);
+	*(int*)&IN_Frame = hook_in_frame->from;
+	IN_Frame();
+	hook_in_frame->hook();
+}
+
 bool applyHooks()
 {
 #ifdef PATCH_1_1
@@ -176,24 +220,16 @@ bool applyHooks()
 #endif
 
 #ifdef PATCH_1_1
-	/*by lstolcman*/
+	// by lstolcman
 	// allow alt tab - set dwExStyle from WS_EX_TOPMOST to WS_EX_LEFT (default), which allows minimizing
-	XUNLOCK((void*)0x5083b1, 1);
 	memset((void*)0x5083b1, 0x00, 1);
-	/**/
+	//
 #endif
 
 	patch_opcode_loadlibrary();
 	patch_opcode_freelibrary();
 	void patch_opcode_glbindtexture(void);
 	patch_opcode_glbindtexture();
-
-	int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow);
-#ifdef PATCH_1_1
-	__call(0x528948, (int)WinMain);
-#elif PATCH_1_5
-	__call(0x00560f99, (int)WinMain);
-#endif
 
 	LRESULT CALLBACK h_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 #ifdef PATCH_1_1
@@ -248,6 +284,18 @@ bool applyHooks()
 #elif PATCH_1_5
 	__call(0x004684c5, (int)cleanupExit);
 #endif
+
+#ifdef PATCH_1_1
+	hook_in_frame = new cHook(0x00461a80, (int)custom_IN_Frame);
+	hook_in_frame->hook();
+
+	hook_sv_startup = new cHook(0x00458160, (int)custom_SV_Startup);
+	hook_sv_startup->hook();
+
+	hook_sv_shutdown = new cHook(0x00459600, (int)custom_SV_Shutdown);
+	hook_sv_shutdown->hook();
+#endif
+
 	return true;
 }
 

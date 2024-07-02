@@ -36,3 +36,16 @@ static void XUNLOCK(void* addr, size_t len)
 	DWORD tmp;
 	VirtualProtect(addr, len, PAGE_EXECUTE_READWRITE, &tmp);
 }
+
+void hook_jmp(int from, int to);
+
+class cHook
+{
+public:
+	int from;
+	int to;
+	unsigned char oldCode[5];
+	cHook(int from, int to);
+	void hook();
+	void unhook();
+};

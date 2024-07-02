@@ -24,5 +24,6 @@
     <ClCompile Include="vendor\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\shared.cpp" />
     <ClCompile Include="src\ui.cpp" />
+    <ClCompile Include="src\hooking.cpp" />
   </ItemGroup>
 </Project>

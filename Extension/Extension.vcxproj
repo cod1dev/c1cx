@@ -131,6 +131,7 @@
     <ClCompile Include="src\dllmain.cpp" />
     <ClCompile Include="src\files.cpp" />
     <ClCompile Include="src\g.cpp" />
+    <ClCompile Include="src\hooking.cpp" />
     <ClCompile Include="src\shared.cpp" />
     <ClCompile Include="src\ui.cpp" />
     <ClCompile Include="src\win.cpp" />
