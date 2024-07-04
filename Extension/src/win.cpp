@@ -44,6 +44,7 @@ void Sys_Unload()
 #endif
 }
 
+const char* imguiConfigPath = nullptr;
 bool movedWindow = false;
 LRESULT CALLBACK h_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -57,6 +58,18 @@ LRESULT CALLBACK h_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	switch (uMsg)
 	{
+	
+	// To use Injector directoy for imgui.ini
+	case WM_COPYDATA:
+	{
+		PCOPYDATASTRUCT pcds = (PCOPYDATASTRUCT)lParam;
+		char* pData = (char*)pcds->lpData;
+		if (strstr(pData, "imgui.ini"))
+			imguiConfigPath = _strdup(pData);
+	}
+	break;
+	// end
+
 	// Prevent mouse capture after moving window
 	case WM_EXITSIZEMOVE:
 		movedWindow = true;

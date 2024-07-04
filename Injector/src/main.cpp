@@ -5,6 +5,19 @@ typedef struct IUnknown IUnknown; // For XP Platform Toolset support
 #include <fstream>
 #include <TlHelp32.h>
 
+HWND WaitForWindow(const char* className, const char* windowTitle)
+{
+    // TODO: Try to replace by a HCBT_CREATEWND check, see https://stackoverflow.com/a/5188109
+    HWND hWnd = nullptr;
+    do
+    {
+        hWnd = FindWindowA(className, windowTitle);
+        if (hWnd)
+            return hWnd;
+        Sleep(100);
+    } while (true);
+}
+
 DWORD GetProcessIdByName(const wchar_t* processName)
 {
     HANDLE hProcList = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
@@ -159,6 +172,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
                                 VirtualFreeEx(hProcess, pDllPath, 0, MEM_RELEASE);
                                 CloseHandle(hThread);
                                 CloseHandle(hProcess);
+
+                                HWND hWnd = WaitForWindow(NULL, "Call of Duty Multiplayer");
+                                std::string imguiIniPath(injectorPath);
+                                pos = imguiIniPath.find_last_of('\\');
+                                if (pos != std::string::npos)
+                                    imguiIniPath.replace(pos + 1, std::string::npos, "imgui.ini");
+
+                                COPYDATASTRUCT cds;
+                                cds.dwData = 1; // Custom identifier for the data
+                                cds.cbData = (DWORD)imguiIniPath.size() + 1;
+                                cds.lpData = (PVOID)imguiIniPath.c_str();
+                                SendMessageA(hWnd, WM_COPYDATA, (WPARAM)hWnd, (LPARAM)(LPVOID)&cds);
+
                                 return 0;
                             }
                             else

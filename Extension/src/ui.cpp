@@ -73,6 +73,7 @@ BOOL(WINAPI* oSwapBuffers)(HDC);
 HGLRC wglContext;
 HWND hWnd_during_imgui_init;
 
+extern const char* imguiConfigPath;
 void initImgui(HDC hdc)
 {
 	imgui_init_called = true;
@@ -84,6 +85,10 @@ void initImgui(HDC hdc)
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\Verdana.ttf", 18.0f);
+
+	if (imguiConfigPath != nullptr)
+		io.IniFilename = imguiConfigPath;
+
 	ImGui::StyleColorsDark();
 	ImGui_ImplWin32_InitForOpenGL(*gameWindow);
 	ImGui_ImplOpenGL2_Init();
