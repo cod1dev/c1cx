@@ -1,4 +1,4 @@
-# Client extension for Call of Duty 1 (2003)
+# Client extension for [CoD1](https://en.wikipedia.org/wiki/Call_of_Duty_(video_game))
 ### Adding security, fixes, and features
 Supported versions: **1.1**, **1.5**
 ___
