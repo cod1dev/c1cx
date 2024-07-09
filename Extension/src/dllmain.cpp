@@ -13,9 +13,7 @@ int codversion;
 typedef enum
 {
 	COD1_1_1_MP,
-	COD1_1_1_SP,
-	COD1_1_5_MP,
-	COD1_1_5_SP
+	COD1_1_1_SP
 } cod_v;
 
 void Main_UnprotectModule(HMODULE hModule)
@@ -39,7 +37,7 @@ HMODULE WINAPI hLoadLibraryA(LPSTR lpFileName)
 	
 	if (strstr(lpFileName, "ui_mp"))
 	{
-		if (codversion != COD1_1_1_MP && codversion != COD1_1_5_MP)
+		if (codversion != COD1_1_1_MP)
 			return hModule;
 
 		void UI_Init(DWORD);
@@ -47,7 +45,7 @@ HMODULE WINAPI hLoadLibraryA(LPSTR lpFileName)
 	}
 	else if (strstr(lpFileName, "cgame_mp"))
 	{
-		if (codversion != COD1_1_1_MP && codversion != COD1_1_5_MP)
+		if (codversion != COD1_1_1_MP)
 			return hModule;
 
 		void CG_Init(DWORD);
@@ -65,31 +63,10 @@ HMODULE WINAPI hLoadLibraryA(LPSTR lpFileName)
 	return hModule;
 }
 
-extern DWORD cgame_mp;
-BOOL(WINAPI* orig_FreeLibrary)(HMODULE hModule);
-BOOL WINAPI hFreeLibrary(HMODULE hModule)
-{
-	CHAR szFileName[MAX_PATH];
-	if (GetModuleFileNameA(hModule, szFileName, sizeof(szFileName)))
-	{
-		if (strstr(szFileName, "cgame_mp"))
-			cgame_mp = 0; //TODO: search for some "cgameInitialized"/"cgameStarted" variable to use instead of hooking FreeLibrary just for this.
-#ifdef DEBUG
-		Com_Printf("hFreeLibrary: ^szFileName = %s\n", szFileName);
-#endif
-	}
-	return orig_FreeLibrary(hModule);
-}
-
 void patch_opcode_loadlibrary(void)
 {
 	orig_LoadLibraryA = (struct HINSTANCE__* (__stdcall*)(const char*)) \
 		DetourFunction((LPBYTE)LoadLibraryA, (LPBYTE)hLoadLibraryA);
-}
-void patch_opcode_freelibrary(void)
-{
-	orig_FreeLibrary = (BOOL(WINAPI*)(HMODULE)) \
-		DetourFunction((LPBYTE)FreeLibrary, (LPBYTE)hFreeLibrary);
 }
 
 static bool is_addr_safe(size_t addr)
@@ -106,28 +83,17 @@ static bool is_addr_safe(size_t addr)
 }
 bool verifyCodVersion()
 {
-#ifdef PATCH_1_1
 	int addressMP = 0x566C18;
 	int addressSP = 0x555494;
 	const char* versionMP = "1.1";
 	const char* versionSP = "1.0";
-#elif PATCH_1_5
-	int addressMP = 0x005a60d0;
-	int addressSP = 0x005565ac;
-	char* versionMP = "1.5";
-	char* versionSP = "1.3";
-#endif
 
 	if (is_addr_safe(addressMP))
 	{
 		char* patchVersion = (char*)addressMP;
 		if (patchVersion && !strcmp(patchVersion, versionMP))
 		{
-#ifdef PATCH_1_1
 			codversion = COD1_1_1_MP;
-#elif PATCH_1_5
-			codversion = COD1_1_5_MP;
-#endif
 			return true;
 		}
 	}
@@ -137,11 +103,7 @@ bool verifyCodVersion()
 		char* patchVersion = (char*)addressSP;
 		if (patchVersion && !strcmp(patchVersion, versionSP))
 		{
-#ifdef PATCH_1_1
 			codversion = COD1_1_1_SP;
-#elif PATCH_1_5
-			codversion = COD1_1_5_SP;
-#endif
 			return true;
 		}
 	}
@@ -152,22 +114,14 @@ bool verifyCodVersion()
 void cleanupExit()
 {
 	void(*o)();
-#ifdef PATCH_1_1
 	* (UINT32*)&o = 0x40E2B0;
-#elif PATCH_1_5
-	* (UINT32*)&o = 0x0040ef70;
-#endif
 	o();
 
 	void Sys_Unload();
 	Sys_Unload();
 }
 
-#ifdef PATCH_1_1
 static void(*Com_Quit_f)() = (void(*)())0x435D80;
-#elif PATCH_1_5
-static void(*Com_Quit_f)() = (void(*)())0x00438220;
-#endif
 
 cHook* hook_sv_shutdown;
 void custom_SV_Shutdown(char* finalmsg)
@@ -215,51 +169,24 @@ void custom_IN_Frame(void)
 
 bool applyHooks()
 {
-#ifdef PATCH_1_1
 	unlock_client_structure(); // make some client cls structure members writeable
-#endif
 
-#ifdef PATCH_1_1
 	// by lstolcman
 	// allow alt tab - set dwExStyle from WS_EX_TOPMOST to WS_EX_LEFT (default), which allows minimizing
 	memset((void*)0x5083b1, 0x00, 1);
 	//
-#endif
 
 	patch_opcode_loadlibrary();
-	patch_opcode_freelibrary();
 	void patch_opcode_glbindtexture(void);
 	patch_opcode_glbindtexture();
 
 	LRESULT CALLBACK h_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-#ifdef PATCH_1_1
 	* (int*)(0x4639b9 + 1) = (int)h_WndProc;
-#elif PATCH_1_5
-	* (int*)(0x00468db9 + 1) = (int)h_WndProc;
-#endif
 
 	void _CL_Init();
-#ifdef PATCH_1_1
 	__call(0x437B4B, (int)_CL_Init);
 	__call(0x438178, (int)_CL_Init);
-#elif PATCH_1_5
-	__call(0x00439fca, (int)_CL_Init);
-	__call(0x0043a617, (int)_CL_Init);
-#endif
 
-#ifdef PATCH_1_5
-	void _CL_InitCGame(void);
-	__call(0x004109c4, (int)_CL_InitCGame);
-	__call(0x00410d2b, (int)_CL_InitCGame);
-#endif
-
-#ifdef PATCH_1_5
-	void _CL_SystemInfoChanged(void);
-	__call(0x004015fc, (int)_CL_SystemInfoChanged);
-	__call(0x00417a78, (int)_CL_SystemInfoChanged);
-#endif
-
-#ifdef PATCH_1_1
 	void CL_Frame(int msec);
 	__call(0x43822C, (int)CL_Frame);
 
@@ -277,15 +204,9 @@ bool applyHooks()
 
 	void Field_CharEvent_IgnoreTilde();
 	__jmp(0x40CB1E, (int)Field_CharEvent_IgnoreTilde);
-#endif
 
-#ifdef PATCH_1_1
 	__call(0x46319B, (int)cleanupExit);
-#elif PATCH_1_5
-	__call(0x004684c5, (int)cleanupExit);
-#endif
 
-#ifdef PATCH_1_1
 	hook_in_frame = new cHook(0x00461a80, (int)custom_IN_Frame);
 	hook_in_frame->hook();
 
@@ -294,7 +215,6 @@ bool applyHooks()
 
 	hook_sv_shutdown = new cHook(0x00459600, (int)custom_SV_Shutdown);
 	hook_sv_shutdown->hook();
-#endif
 
 	return true;
 }
@@ -328,7 +248,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
 			MessageBoxA(NULL, "CoD version verification failed", "c1cx", MB_OK | MB_ICONERROR);
 			return FALSE;
 		}
-		else if ((codversion == COD1_1_1_MP || codversion == COD1_1_5_MP) && !applyHooks())
+		else if ((codversion == COD1_1_1_MP) && !applyHooks())
 		{
 			MessageBoxA(NULL, "Hooking failed", "c1cx", MB_OK | MB_ICONERROR);
 			Com_Quit_f();

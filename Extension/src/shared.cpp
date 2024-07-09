@@ -1,7 +1,6 @@
 #include <windows.h>
 #include "shared.h"
 
-#ifdef PATCH_1_1
 void Q_strncpyz(char* dest, const char* src, int destsize)
 {
 	if (!src)
@@ -16,7 +15,6 @@ void Q_strncpyz(char* dest, const char* src, int destsize)
 	strncpy_s(dest, destsize, src, destsize - 1);
 	dest[destsize - 1] = 0;
 }
-#endif
 
 int Q_stricmpn(const char* s1, const char* s2, int n)
 {
@@ -51,7 +49,6 @@ int Q_stricmp(const char* s1, const char* s2)
 	return (s1 && s2) ? Q_stricmpn(s1, s2, 99999) : -1;
 }
 
-#ifdef PATCH_1_1
 #include <stdio.h>
 void __cdecl Com_sprintf(char* dest, int size, const char* fmt, ...)
 {
@@ -78,7 +75,6 @@ const char* Cmd_Argv(int index)
 		"";
 	return cmd_argv[index];
 }
-#endif
 
 const char* Info_ValueForKey(const char* s, const char* key) //FIXME: overflow check?
 {
@@ -134,7 +130,6 @@ const char* Info_ValueForKey(const char* s, const char* key) //FIXME: overflow c
 	return "";
 }
 
-#ifdef PATCH_1_1
 void Info_RemoveKey(char* s, const char* key)
 {
 	char* start;
@@ -382,5 +377,3 @@ char* Com_CleanHostname(char* string, bool colors)
 
 	return hostname;
 }
-
-#endif

@@ -1,14 +1,9 @@
-
-
-
-
 #include <windows.h>
 #include "hooking.h"
 #include "shared.h"
 
 DWORD game_mp;
 
-#ifdef PATCH_1_1
 #include <stdint.h>
 #include <math.h>
 
@@ -86,12 +81,9 @@ __declspec(naked) void G_PM_Bounce_Stub()
 	}
 }
 /**/
-#endif
 
 void G_Init(DWORD base)
 {
 	game_mp = base;
-#ifdef PATCH_1_1
 	__jmp(GAME_OFF(0x2000D56B), (int)G_PM_Bounce_Stub);
-#endif
 }

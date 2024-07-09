@@ -59,7 +59,7 @@
       <ConformanceMode>false</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalOptions>/D "PATCH_1_1" /D "DEBUG"</AdditionalOptions>
+      <AdditionalOptions>/D "DEBUG"</AdditionalOptions>
       <LanguageStandard>
       </LanguageStandard>
       <SupportJustMyCode>false</SupportJustMyCode>
@@ -100,7 +100,8 @@
       <ConformanceMode>false</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalOptions>/D "PATCH_1_1"</AdditionalOptions>
+      <AdditionalOptions>
+      </AdditionalOptions>
       <LanguageStandard>
       </LanguageStandard>
     </ClCompile>

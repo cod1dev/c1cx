@@ -9,7 +9,6 @@
 
 DWORD cgame_mp;
 
-#ifdef PATCH_1_1
 typedef void(*CG_ServerCommand_t)();
 CG_ServerCommand_t CG_ServerCommand;
 
@@ -63,9 +62,7 @@ void _CG_ServerCommand(void)
 	}
 	CG_ServerCommand();
 }
-#endif
 
-#ifdef PATCH_1_1
 extern cvar_t* cg_drawConnectionInterrupted;
 void CG_DrawDisconnect()
 {
@@ -127,9 +124,7 @@ void _CG_DrawFPS(float y)
 		CG_DrawFPS(y);
 	}
 }
-#endif
 
-#ifdef PATCH_1_1
 extern cvar_t* cg_drawWeaponSelection;
 void _CG_DrawWeaponSelect()
 {
@@ -140,20 +135,15 @@ void _CG_DrawWeaponSelect()
 		CG_DrawWeaponSelect();
 	}
 }
-#endif
 
 extern cvar_t* cl_sensitivityAimMultiply_enabled;
 extern cvar_t* cl_sensitivityAimMultiply;
 float stockCgZoomSensitivity()
 {
-#ifdef PATCH_1_1
 	float* fov_visible_percentage = (float*)CGAME_OFF(0x3020958c); //Visible percentage of cg_fov value
 	float* cg_fov_value = (float*)CGAME_OFF(0x30298c68);
-#elif PATCH_1_5
-	float* fov_visible_percentage = (float*)CGAME_OFF(0x3020d340); //Visible percentage of cg_fov value
-	float* cg_fov_value = (float*)CGAME_OFF(0x3029ca28);
-#endif
-	return (*fov_visible_percentage / *cg_fov_value); //See instruction 30032fe8 || 30034688
+
+	return (*fov_visible_percentage / *cg_fov_value); //See instruction 30032fe8
 }
 float multipliedCgZoomSensitivity()
 {
@@ -161,15 +151,10 @@ float multipliedCgZoomSensitivity()
 }
 void sensitivityAimMultiply()
 {
-#ifdef PATCH_1_1
 	float* cg_zoomSensitivity = (float*)CGAME_OFF(0x3020b5f4); //zoomSensitivity var of cg_t struct
 	float* ads_anim_progress = (float*)CGAME_OFF(0x30207214); //From 0 to 1
-#elif PATCH_1_5
-	float* cg_zoomSensitivity = (float*)CGAME_OFF(0x3020f3a8); //zoomSensitivity var of cg_t struct
-	float* ads_anim_progress = (float*)CGAME_OFF(0x3020afcc); //From 0 to 1
-#endif
 
-	//See FUN_30032e20 || FUN_300344c0
+	//See FUN_30032e20
 	if (*ads_anim_progress == 1) //ADS animation completed
 	{
 		//ADS
@@ -180,11 +165,7 @@ void sensitivityAimMultiply()
 	}
 	else if (*ads_anim_progress != 0) //ADS animation in progress
 	{
-#ifdef PATCH_1_1
 		bool* ads = (bool*)CGAME_OFF(0x30209458);
-#elif PATCH_1_5
-		bool* ads = (bool*)CGAME_OFF(0x3020d20c);
-#endif
 		if (*ads)
 		{
 			//ADS
@@ -212,7 +193,6 @@ void sensitivityAimMultiply()
 	}
 }
 
-#ifdef PATCH_1_1
 extern cvar_t* cg_zoomFovMultiply_enabled;
 extern cvar_t* cg_zoomFovMultiply;
 float multipliedzoomFov(float adsZoomFov)
@@ -262,163 +242,7 @@ __declspec(naked) void zoomFovMultiply_zoomed_Naked()
 			jmp resume_addr_zoomFovMultiply_zoomed;
 	}
 }
-#endif
 
-#ifdef PATCH_1_5
-#define PMF_JUMPING 0x2000
-#define JUMP_LAND_SLOWDOWN_TIME 1800
-#define VectorScale( v, s, o )      ( ( o )[0] = ( v )[0] * ( s ),( o )[1] = ( v )[1] * ( s ),( o )[2] = ( v )[2] * ( s ) )
-
-void Jump_ApplySlowdown()
-{
-	int* pm = (int*)(cgame_mp + 0x1a0ed0);
-	playerState_t* ps = ((pmove_t*)*((int*)pm))->ps;
-
-	if (ps->pm_flags & PMF_JUMPING)
-	{
-		float scale = 1.0;
-
-		if (ps->pm_time <= JUMP_LAND_SLOWDOWN_TIME)
-		{
-			if (!ps->pm_time)
-			{
-				if ((float)(ps->jumpOriginZ + 18.0) <= ps->origin[2])
-				{
-					ps->pm_time = 1200;
-					scale = 0.5;
-				}
-				else
-				{
-					ps->pm_time = JUMP_LAND_SLOWDOWN_TIME;
-					scale = 0.64999998;
-				}
-			}
-		}
-		else
-		{
-			// Clear jump state
-			ps->pm_flags &= ~PMF_JUMPING;
-			ps->jumpOriginZ = 0.0;
-			scale = 0.64999998;
-		}
-
-		char* jump_slowdownEnable = Info_ValueForKey(cs1, "jump_slowdownEnable");
-		if (*jump_slowdownEnable && atoi(jump_slowdownEnable) == 0)
-			return;
-		VectorScale(ps->velocity, scale, ps->velocity);
-	}
-}
-uintptr_t resume_addr_PM_WalkMove;
-__declspec(naked) void hook_PM_WalkMove_Naked()
-{
-	__asm
-	{
-		pushad;
-		call Jump_ApplySlowdown;
-		popad;
-		jmp resume_addr_PM_WalkMove;
-	}
-}
-
-void hook_PM_SlideMove(float primal_velocity_0, float primal_velocity_1, float primal_velocity_2)
-{
-	char* jump_slowdownEnable = Info_ValueForKey(cs1, "jump_slowdownEnable");
-	if (*jump_slowdownEnable && atoi(jump_slowdownEnable) == 0)
-		return;
-
-	int* pm = (int*)(cgame_mp + 0x1a0ed0);
-	playerState_t* ps = ((pmove_t*)*((int*)pm))->ps;
-	if (ps->pm_time)
-	{
-		ps->velocity[0] = primal_velocity_0;
-		ps->velocity[1] = primal_velocity_1;
-		ps->velocity[2] = primal_velocity_2;
-	}
-}
-uintptr_t resume_addr_PM_SlideMove;
-__declspec(naked) void hook_PM_SlideMove_Naked()
-{
-	__asm
-	{
-		mov eax, dword ptr[esp + 0x110 - 0xA8]
-		mov ecx, dword ptr[esp + 0x110 - 0xAC]
-		mov edx, dword ptr[esp + 0x110 - 0xB0]
-
-		push eax
-		push ecx
-		push edx
-
-		call hook_PM_SlideMove
-		add esp, 12
-
-		jmp resume_addr_PM_SlideMove
-	}
-}
-
-void Jump_GetLandFactor()
-{
-	int* pm = (int*)(cgame_mp + 0x1a0ed0);
-	playerState_t* ps = ((pmove_t*)*((int*)pm))->ps;
-
-	double factor;
-
-	char* jump_slowdownEnable = Info_ValueForKey(cs1, "jump_slowdownEnable");
-	if (*jump_slowdownEnable && atoi(jump_slowdownEnable) == 0)
-		factor = 1.0;
-	else if (ps->pm_time < 1700)
-		factor = (double)ps->pm_time * 0.00088235294 + 1.0;
-	else
-		factor = 2.5;
-
-	__asm fld factor
-}
-uintptr_t resume_addr_Jump_Start;
-__declspec(naked) void hook_Jump_Start_Naked()
-{
-	__asm
-	{
-		pushad;
-		call Jump_GetLandFactor;
-		popad;
-		jmp resume_addr_Jump_Start;
-	}
-}
-
-void custom_PM_GetReducedFriction()
-{
-	double friction;
-
-	char* jump_slowdownEnable = Info_ValueForKey(cs1, "jump_slowdownEnable");
-	if (*jump_slowdownEnable && atoi(jump_slowdownEnable) == 0)
-	{
-		friction = 1.0;
-	}
-	else
-	{
-		int* pm = (int*)(cgame_mp + 0x1a0ed0);
-		playerState_t* ps = ((pmove_t*)*((int*)pm))->ps;
-
-		if (ps->pm_time < 1700)
-			friction = (double)ps->pm_time * 0.00088235294 + 1.0;
-		else
-			friction = 2.5;
-	}
-
-	__asm fld friction
-}
-__declspec(naked) void custom_PM_GetReducedFriction_Naked()
-{
-	__asm
-	{
-		pushad
-		call custom_PM_GetReducedFriction
-		popad
-		ret
-	}
-}
-#endif
-
-#ifdef PATCH_1_1
 #include <stdint.h>
 #include <math.h>
 /*by xoxor4d*/
@@ -495,13 +319,11 @@ __declspec(naked) void PM_Bounce_Stub()
 	}
 }
 /**/
-#endif
 
 void CG_Init(DWORD base)
 {
 	cgame_mp = base;
 
-#ifdef PATCH_1_1
 	CG_Argv = (char* (*)(int))CGAME_OFF(0x30020960);
 	CG_ServerCommand = (CG_ServerCommand_t)(cgame_mp + 0x2E0D0);
 
@@ -511,36 +333,14 @@ void CG_Init(DWORD base)
 	__call(CGAME_OFF(0x300159D4), (int)CG_DrawDisconnect);
 
 	__jmp(CGAME_OFF(0x3000D82B), (int)PM_Bounce_Stub);
-#endif
 
-#ifdef PATCH_1_1
 	__jmp(CGAME_OFF(0x30032fe8), (int)sensitivityAimMultiply);
-#elif PATCH_1_5
-	__jmp(CGAME_OFF(0x30034688), (int)sensitivityAimMultiply);
-#endif
 
-#ifdef PATCH_1_5
-	__jmp(CGAME_OFF(0x30008822), (int)hook_PM_WalkMove_Naked);
-	resume_addr_PM_WalkMove = CGAME_OFF(0x300088be);
-
-	__jmp(CGAME_OFF(0x3000e171), (int)hook_PM_SlideMove_Naked);
-	resume_addr_PM_SlideMove = CGAME_OFF(0x3000e18e);
-
-	__jmp(CGAME_OFF(0x30008320), (int)hook_Jump_Start_Naked);
-	resume_addr_Jump_Start = CGAME_OFF(0x3000833a);
-
-	__jmp(CGAME_OFF(0x30007ae0), (int)custom_PM_GetReducedFriction_Naked);
-#endif
-
-#ifdef PATCH_1_1
 	__jmp(CGAME_OFF(0x30032f1e), (int)zoomFovMultiply_zooming_Naked);
 	resume_addr_zoomFovMultiply_zooming = CGAME_OFF(0x30032f24);
 
 	__jmp(CGAME_OFF(0x30032ea5), (int)zoomFovMultiply_zoomed_Naked);
 	resume_addr_zoomFovMultiply_zoomed = CGAME_OFF(0x30032eab);
-#endif
 
-#ifdef PATCH_1_1
 	__call(CGAME_OFF(0x30018896), (int)_CG_DrawWeaponSelect);
-#endif
 }

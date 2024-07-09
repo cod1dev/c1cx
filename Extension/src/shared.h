@@ -5,21 +5,19 @@
 #define CVAR_ROM            64
 #define CVAR_CHEAT          512
 
-#ifdef PATCH_1_1
 #define MAX_STRING_CHARS    1024 // max length of a string passed to Cmd_TokenizeString
 #define MAX_STRING_TOKENS   256 // max tokens resulting from Cmd_TokenizeString
 #define MAX_RELIABLE_COMMANDS 64
 #define MAX_INFO_STRING     1024
 #define MAX_INFO_KEY        1024
 #define MAX_INFO_VALUE      1024
-#endif
+
 #define BIG_INFO_STRING     8192 // used for system info key only
 #define BIG_INFO_KEY        8192
 #define BIG_INFO_VALUE      8192
-#ifdef PATCH_1_1
+
 #define MAX_QPATH 64
 #define MAX_OSPATH 256
-#endif
 
 typedef enum
 {
@@ -49,7 +47,6 @@ typedef struct cvar_s
 	struct cvar_s* hashNext;
 } cvar_t;
 
-#ifdef PATCH_1_1
 typedef enum
 {
 	CA_UNINITIALIZED,
@@ -60,13 +57,11 @@ typedef enum
 } connstate_t;
 
 typedef int fileHandle_t;
-#endif
 
 typedef float vec_t;
 typedef vec_t vec2_t[2];
 typedef vec_t vec3_t[3];
 
-#ifdef PATCH_1_1
 #define Q_COLOR_ESCAPE  '^'
 #define Q_IsColorString( p )  ( p && *( p ) == Q_COLOR_ESCAPE && *( ( p ) + 1 ) && *( ( p ) + 1 ) != Q_COLOR_ESCAPE )
 
@@ -141,7 +136,6 @@ typedef struct
 	int			timeDemoBaseTime;	// each frame will be at this time + frameNum * 50
 	netchan_t	netchan;
 } clientConnection_t;
-#endif
 
 typedef enum
 {
@@ -171,47 +165,6 @@ typedef enum
 	WEAPON_MELEE_FIRE = 0xB,
 	WEAPONSTATES_NUM = 0xC,
 } weaponstate_t;
-
-#ifdef PATCH_1_5
-typedef struct WeaponDef_t
-{
-	int number;
-	char* name;
-	char* displayName;
-	byte pad[0x1E4];
-	int reloadAddTime;
-	byte pad2[0x20];
-	float moveSpeedScale;
-	float adsZoomFov;
-	float adsZoomInFrac;
-	float adsZoomOutFrac;
-	byte pad3[0x44];
-	int adsTransInTime;
-	int adsTransOutTime;
-	byte pad4[0x8];
-	float idleCrouchFactor;
-	float idleProneFactor;
-	byte pad5[0x50];
-	int rechamberWhileAds;
-	float adsViewErrorMin;
-	float adsViewErrorMax;
-	byte pad6[0x14C];
-	float OOPosAnimLength[2];
-	//...
-} WeaponDef_t;
-
-struct WeaponProperties // Custom struct for g_legacyStyle
-{
-	int reloadAddTime;
-	int adsTransInTime;
-	float adsZoomInFrac;
-	float idleCrouchFactor;
-	float idleProneFactor;
-	int rechamberWhileAds;
-	float adsViewErrorMin;
-	float adsViewErrorMax;
-};
-#endif
 
 typedef struct playerState_s
 {
@@ -247,14 +200,11 @@ typedef struct playerState_s
 	unsigned int weapon;
 	weaponstate_t weaponstate;
 	float fWeaponPosFrac;
-	int adsDelayTime;
-	//TODO: check if one of two the above is "int viewmodelIndex" instead
+	int viewmodelIndex;
 	vec3_t viewangles;
-#ifdef PATCH_1_1
-	byte pad[8196];
-#elif PATCH_1_5
-	byte pad[8192];
-#endif
+	int viewHeightTarget;
+	float viewHeightCurrent;
+	byte pad[8188];
 } playerState_t;
 
 typedef struct usercmd_s
@@ -279,14 +229,11 @@ struct pmove_t
 typedef void(*Cvar_Set_t)(const char*, const char*);
 typedef cvar_t* (*Cvar_Get_t)(const char*, const char*, int);
 
-#ifdef PATCH_1_1
 typedef cvar_t* (*Cvar_FindVar_t)(const char*);
-#endif
 
 extern Cvar_Set_t Cvar_Set;
 extern Cvar_Get_t Cvar_Get;
 
-#ifdef PATCH_1_1
 extern Cvar_FindVar_t Cvar_FindVar;
 
 char* Cvar_VariableString(const char*);
@@ -298,7 +245,6 @@ const char* Cmd_Argv(int index);
 int Cmd_Argc();
 
 void Info_SetValueForKey(char* s, const char* key, const char* value);
-#endif
 
 const char* Info_ValueForKey(const char* s, const char* key);
 
@@ -307,7 +253,6 @@ extern DWORD cgame_mp;
 #define GAME_OFF(x) (game_mp + (x - 0x20000000))
 #define CGAME_OFF(x) (cgame_mp + (x - 0x30000000))
 
-#ifdef PATCH_1_1
 typedef void(*CL_BeginDownload_t)(const char*, const char*);
 static CL_BeginDownload_t CL_BeginDownload = (CL_BeginDownload_t)0x4100D0;
 typedef void(*CL_NextDownload_t)(void);
@@ -316,4 +261,3 @@ static CL_NextDownload_t CL_NextDownload = (CL_NextDownload_t)0x410190;
 char* Q_CleanStr(char* string, bool colors = false);
 
 char* Com_CleanHostname(char* hostname, bool colors);
-#endif

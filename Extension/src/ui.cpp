@@ -17,7 +17,6 @@
 
 DWORD ui_mp;
 
-#ifdef PATCH_1_1
 #define UI_FILE_OFF(x) (ui_mp + (x - 0x40000000)) //vmMain in IDA offset
 void UI_DisplayDownloadInfo(const char downloadName, float centerPoint, float yStart, float scale)
 {
@@ -25,14 +24,11 @@ void UI_DisplayDownloadInfo(const char downloadName, float centerPoint, float yS
 	*(int*)&DisplayText = UI_FILE_OFF(0x4000DEA0);
 	DisplayText(downloadName, centerPoint, yStart, 0.25);
 }
-#endif
 
 void UI_Init(DWORD base)
 {
 	ui_mp = base;
-#ifdef PATCH_1_1
 	__call(UI_FILE_OFF(0x4000E895), (int)UI_DisplayDownloadInfo); // Smaller download text (UDP only)
-#endif
 }
 
 
@@ -53,21 +49,17 @@ bool hideConnectionInterrupted = false;
 bool hideWeaponSelection = false;
 bool hideMiddleMessages = false;
 
-#ifdef PATCH_1_1
 bool zoomFovMultiply_enabled = false;
 float zoomFovMultiply_value = 0.0f;
-#endif
 
 extern cvar_t* cl_sensitivityAimMultiply_enabled;
 extern cvar_t* cl_sensitivityAimMultiply;
-#ifdef PATCH_1_1
 extern cvar_t* cg_drawConnectionInterrupted;
 extern cvar_t* cg_drawWeaponSelection;
 extern cvar_t* cg_drawMessagesMiddle;
 
 extern cvar_t* cg_zoomFovMultiply_enabled;
 extern cvar_t* cg_zoomFovMultiply;
-#endif
 
 BOOL(WINAPI* oSwapBuffers)(HDC);
 HGLRC wglContext;
@@ -129,7 +121,6 @@ BOOL __stdcall hSwapBuffers(HDC hdc)
 	ImGui::SetNextWindowFocus();
 	ImGui::Begin("c1cx", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
 
-#ifdef PATCH_1_1
 	ImGui::SeparatorText("User Interface");
 
 	/*Connection Interrupted */
@@ -149,7 +140,6 @@ BOOL __stdcall hSwapBuffers(HDC hdc)
 	ImGui::Checkbox("Hide weapon selection", &hideWeaponSelection);
 	Cvar_Set(cg_drawWeaponSelection->name, hideWeaponSelection ? "0" : "1");
 	/**/
-#endif
 
 	ImGui::SeparatorText("Aim Down Sight");
 
@@ -170,7 +160,6 @@ BOOL __stdcall hSwapBuffers(HDC hdc)
 	if (!sensitivityAimMultiply_enabled)
 		ImGui::EndDisabled();
 	/**/
-#ifdef PATCH_1_1
 
 	/*Zoom fov multiplier*/
 	zoomFovMultiply_enabled = cg_zoomFovMultiply_enabled->integer;
@@ -189,7 +178,6 @@ BOOL __stdcall hSwapBuffers(HDC hdc)
 	if (!zoomFovMultiply_enabled)
 		ImGui::EndDisabled();
 	/**/
-#endif
 
 	ImGui::End();
 	ImGui::EndFrame();
