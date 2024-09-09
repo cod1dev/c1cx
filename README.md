@@ -8,8 +8,8 @@ ___
 See the [Wiki](https://github.com/cod1dev/codextended-client/wiki)
 ___
 #### References
-- The [Killtube](https://www.killtube.org/) community
-- The [Reverse Engineering Discord](https://discord.gg/rtfm) server
+- [Killtube](https://www.killtube.org/)
+- [Reverse Engineering Discord](https://discord.gg/rtfm)
 - [iw2clientdll](https://github.com/xtnded/iw2clientdll)
 - [CoDPlusPlus](https://github.com/kartjom/CoDPlusPlus)
 - [iw3xo-dev](https://github.com/xoxor4d/iw3xo-dev)
