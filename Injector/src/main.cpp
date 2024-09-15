@@ -23,8 +23,10 @@ DWORD GetProcessIdByName(const wchar_t* processName)
     HANDLE hProcList = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
     if (hProcList == INVALID_HANDLE_VALUE)
         return NULL;
+
     PROCESSENTRY32 procEntry;
     procEntry.dwSize = sizeof(procEntry);
+
     if (Process32First(hProcList, &procEntry))
     {
         while (Process32Next(hProcList, &procEntry))
@@ -44,24 +46,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 {
     std::string errorMsg;
 
-    // File paths
+    //// Initialize file paths
     size_t pos;
-    // injector
+    // Injector
     char injectorPath[MAX_PATH];
     GetModuleFileNameA(NULL, injectorPath, MAX_PATH);
-    // Dll extension
+    // Extension DLL
     std::string dllPath(injectorPath);
     pos = dllPath.find_last_of('\\');
     if (pos != std::string::npos)
         dllPath.replace(pos + 1, std::string::npos, "c1cx_lib.dll");
-    // .ini
+    // Extension INI
     std::string iniPath(injectorPath);
     pos = iniPath.find_last_of('\\');
     if (pos != std::string::npos)
         iniPath.replace(pos + 1, std::string::npos, "config.ini");
-    // game
+    // Game client
     std::string gamePath;
-    // Initialize game path
     std::ifstream iniFile(iniPath);
     if (iniFile.good())
     {
@@ -70,7 +71,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
             std::string line;
             while (std::getline(iniFile, line))
             {
-                if (line.find("GamePath=") != std::string::npos)
+                if (line.find("ClientPath=") != std::string::npos)
                 {
                     gamePath = line.substr(line.find("=") + 1);
                     break;
@@ -110,19 +111,20 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
             std::ofstream iniFile(iniPath);
             if (iniFile.is_open())
             {
-                iniFile << "GamePath=" << gamePath;
+                iniFile << "ClientPath=" << gamePath;
                 iniFile.close();
             }
-        }
+         }
         else
         {
             errorMsg = "FAIL GetOpenFileNameA";
         }
     }
-
+    ////
+    
     if (errorMsg.empty())
     {
-        // Explicitly set current directory to prevent error when starting from .ini path
+        // Explicitly set current directory to prevent error when starting using INI path
         size_t lastBackslashPos = gamePath.find_last_of("\\/");
         if (lastBackslashPos != std::string::npos)
         {
@@ -136,14 +138,24 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
             std::string gameFilename = gamePath.substr(found + 1);
             std::wstring gameFilenameW = std::wstring(gameFilename.begin(), gameFilename.end());
 
-            DWORD gameProcessId = NULL;
-            gameProcessId = GetProcessIdByName(gameFilenameW.c_str());
+            DWORD gameProcessId = GetProcessIdByName(gameFilenameW.c_str());
             if (gameProcessId == NULL)
             {
                 //Game is not running, start it.
                 STARTUPINFOA info = { sizeof(info) };
                 PROCESS_INFORMATION processInfo;
-                if (CreateProcessA(gamePath.c_str(), NULL, NULL, NULL, FALSE, 0, NULL, NULL, &info, &processInfo))
+                
+                if (CreateProcessA(
+                    gamePath.c_str(),
+                    NULL,
+                    NULL,
+                    NULL,
+                    FALSE,
+                    0,
+                    NULL,
+                    NULL,
+                    &info,
+                    &processInfo))
                 {
                     CloseHandle(processInfo.hThread);
                     CloseHandle(processInfo.hProcess);
@@ -157,15 +169,38 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
             if (errorMsg.empty())
             {
-                HANDLE hProcess = OpenProcess(PROCESS_CREATE_THREAD | PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE | PROCESS_VM_OPERATION, FALSE, gameProcessId);
+                HANDLE hProcess = OpenProcess(
+                    PROCESS_CREATE_THREAD | PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE | PROCESS_VM_OPERATION,
+                    FALSE,
+                    gameProcessId);
+                
                 if (hProcess != NULL)
                 {
-                    LPVOID pDllPath = VirtualAllocEx(hProcess, NULL, dllPath.length() + 1, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+                    LPVOID pDllPath = VirtualAllocEx(
+                        hProcess,
+                        NULL,
+                        dllPath.length() + 1,
+                        MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+                    
                     if (pDllPath != NULL)
                     {
-                        if (WriteProcessMemory(hProcess, pDllPath, dllPath.c_str(), dllPath.length() + 1, NULL))
+                        if (WriteProcessMemory(
+                            hProcess,
+                            pDllPath,
+                            dllPath.c_str(),
+                            dllPath.length() + 1,
+                            NULL))
                         {
-                            HANDLE hThread = CreateRemoteThread(hProcess, NULL, 0, (LPTHREAD_START_ROUTINE)LoadLibraryA, pDllPath, 0, NULL);
+#if 1 // Set to 0 to stop Windows antivirus flag.
+                            HANDLE hThread = CreateRemoteThread( // TODO: Use an alternative to stop Windows antivirus detection, see IW4x and above.
+                                hProcess,
+                                NULL,
+                                0,
+                                (LPTHREAD_START_ROUTINE)LoadLibraryA,
+                                pDllPath,
+                                0,
+                                NULL);
+
                             if (hThread != NULL)
                             {
                                 WaitForSingleObject(hThread, INFINITE);
@@ -191,6 +226,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
                             {
                                 errorMsg = "FAIL CreateRemoteThread";
                             }
+#endif
                         }
                         else
                         {
@@ -217,13 +253,4 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         MessageBoxA(NULL, errorMsg.c_str(), "c1cx", MB_OK | MB_ICONERROR);
         return 1;
     }
-
-    MSG msg;
-    while (GetMessage(&msg, NULL, 0, 0))
-    {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-    }
-
-    return (int)msg.wParam;
 }
