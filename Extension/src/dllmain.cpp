@@ -167,6 +167,15 @@ void custom_IN_Frame(void)
 	hook_in_frame->hook();
 }
 
+extern const char* writeProtectedCvars[];
+void CL_SystemInfoChanged_Cvar_Set(const char* var_name, const char* value)
+{
+	for (int i = 0; writeProtectedCvars[i]; i++)
+		if (!_stricmp(writeProtectedCvars[i], var_name))
+			return;
+	Cvar_Set(var_name, value);
+}
+
 bool applyHooks()
 {
 	unlock_client_structure(); // make some client cls structure members writeable
@@ -215,6 +224,9 @@ bool applyHooks()
 
 	hook_sv_shutdown = new cHook(0x00459600, (int)custom_SV_Shutdown);
 	hook_sv_shutdown->hook();
+	
+	void CL_SystemInfoChanged_Cvar_Set(const char* var_name, const char* value);
+	__call(0x00415ffe, (int)CL_SystemInfoChanged_Cvar_Set);
 
 	return true;
 }

@@ -14,12 +14,14 @@ CG_ServerCommand_t CG_ServerCommand;
 
 const char* writeProtectedCvars[] =
 {
-	"cl_allowdownload",
+	"cl_allowDownload",
 	"cl_avidemo",
 	"cg_norender",
-	"r_showimages",
+	"r_showImages",
 	"sensitivity",
 	"name",
+	"m_yaw",
+	"m_pitch",
 	NULL
 };
 
@@ -46,7 +48,7 @@ void _CG_ServerCommand(void)
 				{
 					const char* var = Cmd_Argv(1);
 					for (int i = 0; writeProtectedCvars[i]; i++)
-						if (!strcmp(writeProtectedCvars[i], var))
+						if (!_stricmp(writeProtectedCvars[i], var))
 							return;
 				}
 			}
