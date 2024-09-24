@@ -190,7 +190,7 @@ bool applyHooks()
 	void CL_Frame(int msec);
 	__call(0x43822C, (int)CL_Frame);
 
-	char* __cdecl CL_SetServerInfo_HostnameStrncpy(char*, char*, size_t);
+	char* __cdecl CL_SetServerInfo_HostnameStrncpy(char*, const char*, int);
 	__call(0x412A2C, (int)CL_SetServerInfo_HostnameStrncpy);
 
 	void _CL_Connect_f();

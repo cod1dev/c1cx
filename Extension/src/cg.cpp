@@ -243,83 +243,6 @@ __declspec(naked) void zoomFovMultiply_zoomed_Naked()
 	}
 }
 
-#include <stdint.h>
-#include <math.h>
-/*by xoxor4d*/
-void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out)
-{
-	float backoff;
-	float change;
-	int i;
-	float overbounce = 1.001f;
-
-	backoff = DotProduct(in, normal);
-	if (backoff < 0)
-	{
-		backoff *= overbounce;
-	}
-	else
-	{
-		backoff /= overbounce;
-	}
-
-	for (i = 0; i < 3; i++)
-	{
-		change = normal[i] * backoff;
-		out[i] = in[i] - change;
-	}
-}
-void PM_ProjectVelocity(vec3_t in, vec3_t normal, vec3_t out)
-{
-	float speedXY, DotNormalXY, normalisedNormalXY, projectionZ, projectionXYZ;
-	speedXY = in[1] * in[1] + in[0] * in[0];
-	if ((normal[2]) < 0.001f || (speedXY == 0.0f))
-	{
-		VectorCopy(in, out);
-	}
-	else
-	{
-		DotNormalXY = normal[1] * in[1] + in[0] * normal[0];
-		normalisedNormalXY = -DotNormalXY / normal[2];
-		projectionZ = in[2] * in[2] + speedXY;
-		projectionXYZ = sqrtf((projectionZ / (speedXY + normalisedNormalXY * normalisedNormalXY)));
-
-		if (projectionXYZ < 1.0f || normalisedNormalXY < 0.0f || in[2] > 0.0f)
-		{
-			out[0] = projectionXYZ * in[0];
-			out[1] = projectionXYZ * in[1];
-			out[2] = projectionXYZ * normalisedNormalXY;
-		}
-	}
-}
-uint32_t PM_Bounce(vec3_t in, vec3_t normal, vec3_t out)
-{
-	int x_cl_bounce = atoi(Info_ValueForKey(cs1, "x_cl_bounce"));
-	if (x_cl_bounce)
-	{
-		PM_ProjectVelocity(in, normal, out);
-	}
-	else
-	{
-		PM_ClipVelocity(in, normal, out);
-	}
-	return CGAME_OFF(0x3000D830);
-}
-__declspec(naked) void PM_Bounce_Stub()
-{
-	__asm
-	{
-		push esi; // out
-		push ecx; // normal
-		push edx; // in
-		call PM_Bounce;
-		add esp, 12;
-		push eax
-			retn;
-	}
-}
-/**/
-
 void CG_Init(DWORD base)
 {
 	cgame_mp = base;
@@ -331,8 +254,6 @@ void CG_Init(DWORD base)
 	__call(CGAME_OFF(0x3001509E), (int)_CG_DrawFPS);
 	__call(CGAME_OFF(0x300159CC), (int)CG_DrawDisconnect);
 	__call(CGAME_OFF(0x300159D4), (int)CG_DrawDisconnect);
-
-	__jmp(CGAME_OFF(0x3000D82B), (int)PM_Bounce_Stub);
 
 	__jmp(CGAME_OFF(0x30032fe8), (int)sensitivityAimMultiply);
 

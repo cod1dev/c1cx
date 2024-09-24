@@ -7,7 +7,7 @@ DWORD game_mp;
 #include <stdint.h>
 #include <math.h>
 
-extern cvar_t* g_bounce;
+extern cvar_t* jump_bounceEnable;
 
 /*by xoxor4d*/
 void G_PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out)
@@ -57,7 +57,7 @@ void G_PM_ProjectVelocity(vec3_t in, vec3_t normal, vec3_t out)
 }
 uint32_t G_PM_Bounce(vec3_t in, vec3_t normal, vec3_t out)
 {
-	if (g_bounce->integer)
+	if (jump_bounceEnable->integer)
 	{
 		G_PM_ProjectVelocity(in, normal, out);
 	}

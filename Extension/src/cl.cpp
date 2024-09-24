@@ -9,7 +9,7 @@
 
 
 cvar_t* com_cl_running;
-cvar_t* g_bounce;
+cvar_t* jump_bounceEnable;
 cvar_t* cl_wwwDownload;
 cvar_t* cl_allowDownload;
 cvar_t* cl_sensitivityAimMultiply_enabled;
@@ -36,24 +36,13 @@ void Cmd_Minimize()
 	ShowWindow(*gameWindow, SW_MINIMIZE);
 }
 
-char* __cdecl CL_SetServerInfo_HostnameStrncpy(char* a1, char* a2, size_t a3)
+char* __cdecl CL_SetServerInfo_HostnameStrncpy(char* dest, const char* src, int destsize)
 {
-	//return strncpy(a1, Com_CleanHostname(a2, true), a3);
-	errno_t err = strncpy_s(a1, a3, Com_CleanHostname(a2, true), _TRUNCATE);
-	if (err != 0)
-	{
-		// Handle error, possibly by returning a default value or logging an error message
-		return NULL; // For example, returning NULL in case of error
-	}
-	return a1;
+	errno_t err = strncpy_s(dest, destsize + 1, cleanHostname(src, true), _TRUNCATE);
+	if (err)
+		return NULL;
+	return dest;
 }
-
-
-
-
-
-
-
 
 #define APP_NAME "ID_DOWNLOAD"
 #define APP_VERSION "2.0"
@@ -467,7 +456,7 @@ void _CL_Init(void)
 	cl_sensitivityAimMultiply_enabled = Cvar_Get("sensitivityAimMultiply_enabled", "0", CVAR_ARCHIVE);
 	cl_sensitivityAimMultiply = Cvar_Get("sensitivityAimMultiply", "0.5", CVAR_ARCHIVE);
 
-	g_bounce = Cvar_Get("g_bounce", "0", CVAR_ARCHIVE);
+	jump_bounceEnable = Cvar_Get("jump_bounceEnable", "0", CVAR_ARCHIVE);
 	cg_drawConnectionInterrupted = Cvar_Get("cg_drawConnectionInterrupted", "1", CVAR_ARCHIVE);
 	cg_drawFPS = Cvar_Get("cg_drawFPS", "0", CVAR_ARCHIVE);
 	cg_drawFPS_x = Cvar_Get("cg_drawFPS_x", "523", CVAR_ARCHIVE);

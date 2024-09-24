@@ -260,4 +260,4 @@ static CL_NextDownload_t CL_NextDownload = (CL_NextDownload_t)0x410190;
 
 char* Q_CleanStr(char* string, bool colors = false);
 
-char* Com_CleanHostname(char* hostname, bool colors);
+char* cleanHostname(const char* hostname, bool colors);

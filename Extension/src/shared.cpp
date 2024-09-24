@@ -320,7 +320,8 @@ char* Q_CleanStr(char* string, bool colors)
 
 	s = string;
 	d = string;
-	while ((c = *s) != 0) {
+	while ((c = *s) != 0)
+	{
 		if (Q_IsColorString(s) && !colors)
 		{
 			s++;
@@ -337,43 +338,10 @@ char* Q_CleanStr(char* string, bool colors)
 }
 
 #define MAX_HOSTNAME_LENGTH 1024
-char* Com_CleanHostname(char* string, bool colors)
+char* cleanHostname(const char* string, bool colors)
 {
 	char hostname[MAX_HOSTNAME_LENGTH];
 	Q_strncpyz(hostname, string, sizeof(hostname));
-
-	// Remove symbols
 	Q_CleanStr(hostname, colors);
-
-	// Check if hostname is empty when symbols are removed
-	if (hostname[0] == '\0')
-		strncpy_s(hostname, "Unnamed Server", sizeof(hostname));
-
-	// Remove leading spaces
-	int i = 0;
-	while (isspace(hostname[0]))
-	{
-		i = 0;
-		while (hostname[i])
-		{
-			hostname[i] = hostname[i + 1];
-			i++;
-		}
-	}
-
-	// Check if hostname is empty when leading spaces are removed
-	if (hostname[0] == '\0')
-		strncpy_s(hostname, "Unnamed Server", sizeof(hostname));
-
-	// Check if hostname is empty when colors are removed
-	if (colors)
-	{
-		char tempHostname[MAX_HOSTNAME_LENGTH];
-		Q_strncpyz(tempHostname, hostname, sizeof(tempHostname));
-		Q_CleanStr(tempHostname, false);
-		if (tempHostname[0] == '\0')
-			strncpy_s(hostname, "Unnamed Server", sizeof(hostname));
-	}
-
 	return hostname;
 }
