@@ -25,11 +25,27 @@ void UI_DisplayDownloadInfo(const char downloadName, float centerPoint, float yS
 	DisplayText(downloadName, centerPoint, yStart, 0.25);
 }
 
+// Prevent displaying servers twice (double click Refresh List)
+void _UI_StartServerRefresh(qboolean full)
+{
+	bool uiInfo_serverStatus_refreshActive = *(bool*)UI_FILE_OFF(0x401EA698);
+	if(uiInfo_serverStatus_refreshActive)
+		return;
+	
+	void(*UI_StartServerRefresh)(qboolean);
+	*(int*)&UI_StartServerRefresh = UI_FILE_OFF(0x4000EA90);
+	UI_StartServerRefresh(full);
+}
+
 void UI_Init(DWORD base)
 {
 	ui_mp = base;
 	__call(UI_FILE_OFF(0x4000E895), (int)UI_DisplayDownloadInfo); // Smaller download text (UDP only)
+
+	__call(UI_FILE_OFF(0x4000AA55), (int)_UI_StartServerRefresh);
 }
+
+
 
 
 

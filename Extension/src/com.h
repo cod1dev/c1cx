@@ -22,11 +22,7 @@ typedef enum
 typedef struct
 {
 	netadrtype_t type;
-	union
-	{
-		int _ip;
-		unsigned char ip[4];
-	};
+	unsigned char ip[4];
 	unsigned char ipx[10];
 	unsigned short port;
 } netadr_t;
