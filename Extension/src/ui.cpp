@@ -61,6 +61,8 @@ bool imgui_needs_restore = false;
 
 bool sensitivityAimMultiply_enabled = false;
 float sensitivityAimMultiply_value = 0.0f;
+bool sensitivityAimMultiplySniper_enabled = false;
+float sensitivityAimMultiplySniper_value = 0.0f;
 bool hideConnectionInterrupted = false;
 bool hideWeaponSelection = false;
 bool hideMiddleMessages = false;
@@ -70,6 +72,8 @@ float zoomFovMultiply_value = 0.0f;
 
 extern cvar_t* cl_sensitivityAimMultiply_enabled;
 extern cvar_t* cl_sensitivityAimMultiply;
+extern cvar_t* cl_sensitivityAimMultiplySniper_enabled;
+extern cvar_t* cl_sensitivityAimMultiplySniper;
 extern cvar_t* cg_drawConnectionInterrupted;
 extern cvar_t* cg_drawWeaponSelection;
 extern cvar_t* cg_drawMessagesMiddle;
@@ -174,6 +178,24 @@ BOOL __stdcall hSwapBuffers(HDC hdc)
 	Cvar_Set(cl_sensitivityAimMultiply->name, va("%f", (float)sensitivityAimMultiply_value));
 
 	if (!sensitivityAimMultiply_enabled)
+		ImGui::EndDisabled();
+	/**/
+
+	/*Sensitivity aim multiplier sniper*/
+	sensitivityAimMultiplySniper_enabled = cl_sensitivityAimMultiplySniper_enabled->integer;
+	sensitivityAimMultiplySniper_value = cl_sensitivityAimMultiplySniper->value;
+
+	ImGui::Checkbox("Sniper sensitivity scale", &sensitivityAimMultiplySniper_enabled);
+	Cvar_Set(cl_sensitivityAimMultiplySniper_enabled->name, sensitivityAimMultiplySniper_enabled ? "1" : "0");
+
+	if (!sensitivityAimMultiplySniper_enabled)
+		ImGui::BeginDisabled();
+
+	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() - (ImGui::GetStyle().WindowPadding.x * 2));
+	ImGui::SliderFloat("##sensiadssniper", &sensitivityAimMultiplySniper_value, 0.25f, 1.25f, "%.2f", ImGuiSliderFlags_NoInput);
+	Cvar_Set(cl_sensitivityAimMultiplySniper->name, va("%f", (float)sensitivityAimMultiplySniper_value));
+
+	if (!sensitivityAimMultiplySniper_enabled)
 		ImGui::EndDisabled();
 	/**/
 

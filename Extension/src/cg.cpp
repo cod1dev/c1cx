@@ -2,6 +2,7 @@
 #include "hooking.h"
 #include "shared.h"
 #include "cl.h"
+#include <stdint.h>
 #include <mmsystem.h>
 #pragma comment(lib, "winmm.lib")
 
@@ -138,19 +139,59 @@ void _CG_DrawWeaponSelect()
 	}
 }
 
+////
 extern cvar_t* cl_sensitivityAimMultiply_enabled;
 extern cvar_t* cl_sensitivityAimMultiply;
+extern cvar_t* cl_sensitivityAimMultiplySniper_enabled;
+extern cvar_t* cl_sensitivityAimMultiplySniper;
+
+weaponinfo_t* BG_GetWeaponDef(int32_t index)
+{
+	weaponinfo_t* weaponinfo = nullptr;
+	//TODO: check with BG_IsWeaponIndexValid before, or use original function
+	uintptr_t ptr = *(uintptr_t*)(cgame_mp + 0xeef3c);
+	weaponinfo = *(weaponinfo_t**)(ptr + index * 4);
+	return weaponinfo;
+}
+
 float stockCgZoomSensitivity()
 {
 	float* fov_visible_percentage = (float*)CGAME_OFF(0x3020958c); //Visible percentage of cg_fov value
 	float* cg_fov_value = (float*)CGAME_OFF(0x30298c68);
-
 	return (*fov_visible_percentage / *cg_fov_value); //See instruction 30032fe8
 }
+
 float multipliedCgZoomSensitivity()
 {
-	return stockCgZoomSensitivity() * cl_sensitivityAimMultiply->value;
+	bool usingSniper = false;
+	int* pm = (int*)(cgame_mp + 0x19D570);
+	pmove_t* xm = *(pmove_t**)(int)pm;
+	int* weapon = (int*)((int)xm->ps + 176);
+	if (*weapon)
+	{
+		weaponinfo_t* weaponinfo = BG_GetWeaponDef(*weapon);
+		char* adsOverlayShader = weaponinfo->adsOverlayShader;
+		if (*adsOverlayShader)
+			usingSniper = true;
+	}
+
+	if (usingSniper)
+	{
+		if (cl_sensitivityAimMultiplySniper_enabled->integer)
+		{
+			return stockCgZoomSensitivity() * cl_sensitivityAimMultiplySniper->value;
+		}
+		else
+		{
+			return stockCgZoomSensitivity();
+		}
+	}
+	else if (cl_sensitivityAimMultiply_enabled->integer)
+		return stockCgZoomSensitivity() * cl_sensitivityAimMultiply->value;
+	else
+		return stockCgZoomSensitivity();
 }
+
 void sensitivityAimMultiply()
 {
 	float* cg_zoomSensitivity = (float*)CGAME_OFF(0x3020b5f4); //zoomSensitivity var of cg_t struct
@@ -160,10 +201,7 @@ void sensitivityAimMultiply()
 	if (*ads_anim_progress == 1) //ADS animation completed
 	{
 		//ADS
-		if (cl_sensitivityAimMultiply_enabled->integer)
-			*cg_zoomSensitivity = multipliedCgZoomSensitivity();
-		else
-			*cg_zoomSensitivity = stockCgZoomSensitivity();
+		*cg_zoomSensitivity = multipliedCgZoomSensitivity();
 	}
 	else if (*ads_anim_progress != 0) //ADS animation in progress
 	{
@@ -171,10 +209,7 @@ void sensitivityAimMultiply()
 		if (*ads)
 		{
 			//ADS
-			if (cl_sensitivityAimMultiply_enabled->integer)
-				*cg_zoomSensitivity = multipliedCgZoomSensitivity();
-			else
-				*cg_zoomSensitivity = stockCgZoomSensitivity();
+			*cg_zoomSensitivity = multipliedCgZoomSensitivity();
 		}
 		else
 		{
@@ -187,13 +222,18 @@ void sensitivityAimMultiply()
 		//NOT ADS
 		*cg_zoomSensitivity = stockCgZoomSensitivity();
 	}
-
+}
+uintptr_t resume_addr_sensitivityAimMultiply;
+__declspec(naked) void sensitivityAimMultiply_Naked()
+{
 	__asm
 	{
-		fstp st(0)
-		retn
+		call sensitivityAimMultiply;
+		fstp st(0);
+		jmp resume_addr_sensitivityAimMultiply;
 	}
 }
+////
 
 extern cvar_t* cg_zoomFovMultiply_enabled;
 extern cvar_t* cg_zoomFovMultiply;
@@ -257,7 +297,8 @@ void CG_Init(DWORD base)
 	__call(CGAME_OFF(0x300159CC), (int)CG_DrawDisconnect);
 	__call(CGAME_OFF(0x300159D4), (int)CG_DrawDisconnect);
 
-	__jmp(CGAME_OFF(0x30032fe8), (int)sensitivityAimMultiply);
+	__jmp(CGAME_OFF(0x30032fe8), (int)sensitivityAimMultiply_Naked);
+	resume_addr_sensitivityAimMultiply = CGAME_OFF(0x30032fee);
 
 	__jmp(CGAME_OFF(0x30032f1e), (int)zoomFovMultiply_zooming_Naked);
 	resume_addr_zoomFovMultiply_zooming = CGAME_OFF(0x30032f24);

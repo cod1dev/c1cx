@@ -14,6 +14,8 @@ cvar_t* cl_wwwDownload;
 cvar_t* cl_allowDownload;
 cvar_t* cl_sensitivityAimMultiply_enabled;
 cvar_t* cl_sensitivityAimMultiply;
+cvar_t* cl_sensitivityAimMultiplySniper_enabled;
+cvar_t* cl_sensitivityAimMultiplySniper;
 cvar_t* cg_drawConnectionInterrupted;
 cvar_t* cg_drawMessagesMiddle;
 cvar_t* cg_drawFPS;
@@ -455,6 +457,8 @@ void _CL_Init(void)
 
 	cl_sensitivityAimMultiply_enabled = Cvar_Get("sensitivityAimMultiply_enabled", "0", CVAR_ARCHIVE);
 	cl_sensitivityAimMultiply = Cvar_Get("sensitivityAimMultiply", "0.5", CVAR_ARCHIVE);
+	cl_sensitivityAimMultiplySniper_enabled = Cvar_Get("sensitivityAimMultiplySniper_enabled", "0", CVAR_ARCHIVE);
+	cl_sensitivityAimMultiplySniper = Cvar_Get("sensitivityAimMultiplySniper", "0.5", CVAR_ARCHIVE);
 
 	jump_bounceEnable = Cvar_Get("jump_bounceEnable", "0", CVAR_ARCHIVE);
 	cg_drawConnectionInterrupted = Cvar_Get("cg_drawConnectionInterrupted", "1", CVAR_ARCHIVE);

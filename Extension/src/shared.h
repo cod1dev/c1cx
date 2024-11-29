@@ -166,6 +166,32 @@ typedef enum
 	WEAPONSTATES_NUM = 0xC,
 } weaponstate_t;
 
+typedef struct weaponinfo_t
+{
+	int number;
+	char* name;
+	char* displayName;
+	byte gap[0x1E4];
+	int reloadAddTime;
+	byte gap2[0x1C];
+	int fuseTime;
+	float moveSpeedScale;
+	float adsZoomFov;
+	float adsZoomInFrac;
+	float adsZoomOutFrac;
+	char* adsOverlayShader;
+	byte gap3[0x40];
+	int adsTransInTime;
+	int adsTransOutTime;
+	byte gap4[0x8];
+	float idleCrouchFactor;
+	float idleProneFactor;
+	byte gap5[0x50];
+	int cookOffHold;
+	int clipOnly;
+	//...
+} weaponinfo_t;
+
 typedef struct playerState_s
 {
 	int commandTime;
