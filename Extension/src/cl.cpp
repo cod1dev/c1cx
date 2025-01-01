@@ -393,13 +393,6 @@ void _CL_Connect_f()
 	void(*CL_Connect_f)();
 	*(int*)(&CL_Connect_f) = 0x40F6A0;
 	CL_Connect_f();
-
-	/*
-	if (*cls_state == CA_CONNECTING || *cls_state == CA_CHALLENGING) //TODO: check the purpose
-	{
-		Cvar_Set("cl_allowDownload", "0");
-	}
-	*/
 }
 
 void Disconnect_IfEsc()
