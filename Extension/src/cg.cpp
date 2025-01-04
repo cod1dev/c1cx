@@ -15,14 +15,15 @@ CG_ServerCommand_t CG_ServerCommand;
 
 const char* writeProtectedCvars[] =
 {
+	"activeAction",
+	"cg_norender",
 	"cl_allowDownload",
 	"cl_avidemo",
-	"cg_norender",
+	"m_pitch",
+	"m_yaw",
+	"name",
 	"r_showImages",
 	"sensitivity",
-	"name",
-	"m_yaw",
-	"m_pitch",
 	NULL
 };
 
