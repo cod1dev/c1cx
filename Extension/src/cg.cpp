@@ -162,6 +162,7 @@ float stockCgZoomSensitivity()
 	return (*fov_visible_percentage / *cg_fov_value); //See instruction 30032fe8
 }
 
+// FIXME: Since sniper support, sometimes crashes when joining server
 float multipliedCgZoomSensitivity()
 {
 	bool usingSniper = false;
