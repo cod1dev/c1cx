@@ -78,9 +78,6 @@ extern cvar_t* cg_drawConnectionInterrupted;
 extern cvar_t* cg_drawWeaponSelection;
 extern cvar_t* cg_drawMessagesMiddle;
 
-extern cvar_t* cg_zoomFovMultiply_enabled;
-extern cvar_t* cg_zoomFovMultiply;
-
 BOOL(WINAPI* oSwapBuffers)(HDC);
 HGLRC wglContext;
 HWND hWnd_during_imgui_init;
@@ -196,24 +193,6 @@ BOOL __stdcall hSwapBuffers(HDC hdc)
 	Cvar_Set(cl_sensitivityAimMultiplySniper->name, va("%f", (float)sensitivityAimMultiplySniper_value));
 
 	if (!sensitivityAimMultiplySniper_enabled)
-		ImGui::EndDisabled();
-	/**/
-
-	/*Zoom fov multiplier*/
-	zoomFovMultiply_enabled = cg_zoomFovMultiply_enabled->integer;
-	zoomFovMultiply_value = cg_zoomFovMultiply->value;
-
-	ImGui::Checkbox("FOV scale", &zoomFovMultiply_enabled);
-	Cvar_Set(cg_zoomFovMultiply_enabled->name, zoomFovMultiply_enabled ? "1" : "0");
-
-	if (!zoomFovMultiply_enabled)
-		ImGui::BeginDisabled();
-
-	ImGui::SetNextItemWidth(ImGui::GetWindowWidth() - (ImGui::GetStyle().WindowPadding.x * 2));
-	ImGui::SliderFloat("##zoomfov", &zoomFovMultiply_value, 0.80f, 1.20f, "%.2f", ImGuiSliderFlags_NoInput);
-	Cvar_Set(cg_zoomFovMultiply->name, va("%f", (float)zoomFovMultiply_value));
-
-	if (!zoomFovMultiply_enabled)
 		ImGui::EndDisabled();
 	/**/
 

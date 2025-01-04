@@ -22,8 +22,6 @@ cvar_t* cg_drawFPS;
 cvar_t* cg_drawFPS_x;
 cvar_t* cg_drawFPS_y;
 cvar_t* cg_drawWeaponSelection;
-cvar_t* cg_zoomFovMultiply_enabled;
-cvar_t* cg_zoomFovMultiply;
 
 #define PITCH 0
 #define YAW 1
@@ -440,7 +438,7 @@ void _CL_Init(void)
 	* (int*)(&CL_Init) = 0x411E60;
 	CL_Init();
 
-	Cvar_Get("codxt", "1", CVAR_USERINFO | CVAR_ROM);
+	Cvar_Get("c1cx", "1", CVAR_USERINFO | CVAR_ROM);
 
 	Cmd_AddCommand("minimize", Cmd_Minimize);
 
@@ -460,8 +458,6 @@ void _CL_Init(void)
 	cg_drawFPS_y = Cvar_Get("cg_drawFPS_y", "2", CVAR_ARCHIVE);
 	cg_drawWeaponSelection = Cvar_Get("cg_drawWeaponSelection", "1", CVAR_ARCHIVE);
 	cg_drawMessagesMiddle = Cvar_Get("cg_drawMessagesMiddle", "1", CVAR_ARCHIVE);
-	cg_zoomFovMultiply_enabled = Cvar_Get("cg_zoomFovMultiply_enabled", "0", CVAR_ARCHIVE);
-	cg_zoomFovMultiply = Cvar_Get("cg_zoomFovMultiply", "1", CVAR_ARCHIVE);
 
 	Cmd_AddCommand("lookback", Cmd_LookBack);
 }

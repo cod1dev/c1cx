@@ -235,56 +235,6 @@ __declspec(naked) void sensitivityAimMultiply_Naked()
 }
 ////
 
-extern cvar_t* cg_zoomFovMultiply_enabled;
-extern cvar_t* cg_zoomFovMultiply;
-float multipliedzoomFov(float adsZoomFov)
-{
-	if (cg_zoomFovMultiply->value >= 0.80f && cg_zoomFovMultiply->value <= 1.20f)
-		return adsZoomFov * cg_zoomFovMultiply->value;
-	return adsZoomFov * 1;
-}
-void zoomFovMultiply_zooming(float adsZoomFov)
-{
-	if (cg_zoomFovMultiply_enabled->integer)
-		adsZoomFov = multipliedzoomFov(adsZoomFov);
-	__asm
-	{
-		fsub dword ptr[adsZoomFov]
-	}
-}
-uintptr_t resume_addr_zoomFovMultiply_zooming;
-__declspec(naked) void zoomFovMultiply_zooming_Naked()
-{
-	__asm
-	{
-		push[ecx + 0x218];
-		call zoomFovMultiply_zooming;
-		pop ecx
-			jmp resume_addr_zoomFovMultiply_zooming;
-	}
-}
-
-void zoomFovMultiply_zoomed(float adsZoomFov)
-{
-	if (cg_zoomFovMultiply_enabled->integer)
-		adsZoomFov = multipliedzoomFov(adsZoomFov);
-	__asm
-	{
-		fld dword ptr[adsZoomFov]
-	}
-}
-uintptr_t resume_addr_zoomFovMultiply_zoomed;
-__declspec(naked) void zoomFovMultiply_zoomed_Naked()
-{
-	__asm
-	{
-		push[ecx + 0x218];
-		call zoomFovMultiply_zoomed;
-		pop ecx
-			jmp resume_addr_zoomFovMultiply_zoomed;
-	}
-}
-
 void CG_Init(DWORD base)
 {
 	cgame_mp = base;
@@ -299,12 +249,6 @@ void CG_Init(DWORD base)
 
 	__jmp(CGAME_OFF(0x30032fe8), (int)sensitivityAimMultiply_Naked);
 	resume_addr_sensitivityAimMultiply = CGAME_OFF(0x30032fee);
-
-	__jmp(CGAME_OFF(0x30032f1e), (int)zoomFovMultiply_zooming_Naked);
-	resume_addr_zoomFovMultiply_zooming = CGAME_OFF(0x30032f24);
-
-	__jmp(CGAME_OFF(0x30032ea5), (int)zoomFovMultiply_zoomed_Naked);
-	resume_addr_zoomFovMultiply_zoomed = CGAME_OFF(0x30032eab);
 
 	__call(CGAME_OFF(0x30018896), (int)_CG_DrawWeaponSelect);
 }
